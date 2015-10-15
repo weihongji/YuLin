@@ -68,10 +68,32 @@ namespace Exporter
 			Workbook theExcelBook = theExcelApp.Workbooks.Open(filePath);
 			Worksheet theSheet = (Worksheet)theExcelBook.ActiveSheet;
 			var reader = GetReader();
-			for (int i = 4; reader.Read(); i++) {
+			int i;
+			decimal totalLoanBalance = 0, totalOweInterest = 0, tmp_decimal;
+			for (i = 4; reader.Read(); i++) {
 				for (int j = 0; j < NonAccrualColumnCount; j++) {
 					((Range)theSheet.Cells[i, j + 1]).Value2 = reader[j];
 				}
+				if (decimal.TryParse(reader[2].ToString(), out tmp_decimal)) {
+					totalLoanBalance += tmp_decimal;
+				}
+				if (decimal.TryParse(reader[4].ToString(), out tmp_decimal)) {
+					totalOweInterest += tmp_decimal;
+				}
+			}
+
+			//Totals
+			if (i > 4) { // At least one row of data
+				((Range)theSheet.Cells[i, 1]).Value2 = "合计";
+				((Range)theSheet.Cells[i, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
+
+				((Range)theSheet.Cells[i, 3]).Value2 = totalLoanBalance;
+				((Range)theSheet.Cells[i, 5]).Value2 = totalOweInterest;
+			}
+
+			//绘制数据部分的表格线
+			if (i > 4) { // At least one row of data
+				theSheet.Range[theSheet.Cells[4, 1], theSheet.Cells[i, NonAccrualColumnCount]].Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
 			}
 
 			/*****************************将生成的Excel报表存储到Export文件夹中*****************************/
