@@ -5,6 +5,7 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Configuration;
 using Microsoft.Office.Interop.Excel;
 
 using DataAccess;
@@ -27,9 +28,26 @@ namespace Exporter
 			return string.Empty;
 		}
 
+		private string GetReportFolder() {
+			var dir = (ConfigurationManager.AppSettings["ReportDirectory"] ?? "").Trim().Replace("/", @"\");
+			if (dir.IndexOf(':') > 0) { // full path
+				return dir;
+			}
+
+			// Get full path
+			if (dir.IndexOf('\\') == 0) {
+				dir = dir.Substring(1);
+			}
+			if (dir.Length == 0) {
+				dir = "Report";
+			}
+			return System.Environment.CurrentDirectory + "\\" + dir;
+		}
+
 		private string GetReportFile() {
 			var template = @"Template\榆林分行月末风险贷款情况表.xls";
-			var reportFolder = System.Environment.CurrentDirectory + "\\Report";
+
+			var reportFolder = GetReportFolder();
 			if (!Directory.Exists(reportFolder)) {
 				Directory.CreateDirectory(reportFolder);
 			}

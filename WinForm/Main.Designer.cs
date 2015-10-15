@@ -57,13 +57,13 @@
 			this.cmbYear = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.panelReport = new System.Windows.Forms.Panel();
+			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+			this.label11 = new System.Windows.Forms.Label();
 			this.cmbReportMonth = new System.Windows.Forms.ComboBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.btnExport = new System.Windows.Forms.Button();
 			this.label8 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-			this.label11 = new System.Windows.Forms.Label();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
@@ -134,8 +134,8 @@
 			// 
 			// panelContent
 			// 
-			this.panelContent.Controls.Add(this.panelImport);
 			this.panelContent.Controls.Add(this.panelReport);
+			this.panelContent.Controls.Add(this.panelImport);
 			this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panelContent.Location = new System.Drawing.Point(0, 35);
 			this.panelContent.Name = "panelContent";
@@ -419,6 +419,25 @@
 			this.panelReport.Size = new System.Drawing.Size(695, 494);
 			this.panelReport.TabIndex = 1;
 			// 
+			// flowLayoutPanel2
+			// 
+			this.flowLayoutPanel2.Controls.Add(this.label11);
+			this.flowLayoutPanel2.Location = new System.Drawing.Point(388, 240);
+			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+			this.flowLayoutPanel2.Size = new System.Drawing.Size(224, 66);
+			this.flowLayoutPanel2.TabIndex = 13;
+			// 
+			// label11
+			// 
+			this.label11.AutoSize = true;
+			this.label11.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label11.Location = new System.Drawing.Point(4, 4);
+			this.label11.Margin = new System.Windows.Forms.Padding(4);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(212, 34);
+			this.label11.TabIndex = 12;
+			this.label11.Text = "导出过程可能需要几分钟或更多，请您耐心等待导入完毕。";
+			// 
 			// cmbReportMonth
 			// 
 			this.cmbReportMonth.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -466,25 +485,6 @@
 			// openFileDialog1
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
-			// 
-			// flowLayoutPanel2
-			// 
-			this.flowLayoutPanel2.Controls.Add(this.label11);
-			this.flowLayoutPanel2.Location = new System.Drawing.Point(373, 240);
-			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-			this.flowLayoutPanel2.Size = new System.Drawing.Size(224, 66);
-			this.flowLayoutPanel2.TabIndex = 13;
-			// 
-			// label11
-			// 
-			this.label11.AutoSize = true;
-			this.label11.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label11.Location = new System.Drawing.Point(4, 4);
-			this.label11.Margin = new System.Windows.Forms.Padding(4);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(212, 34);
-			this.label11.TabIndex = 12;
-			this.label11.Text = "导入过程可能需要几分钟或更多，请您耐心等待导入完毕。";
 			// 
 			// Main
 			// 
