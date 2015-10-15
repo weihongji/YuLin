@@ -9,13 +9,16 @@ using System.IO;
 
 using DataAccess;
 using Entities;
+using Logging;
 
 namespace Importer
 {
 	public class ExcelImporter
 	{
-		#region Create import instance and backup imported files
 		private string[] targetFileNames = { "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls" };
+		private Logger logger = Logger.GetLogger("Importer");
+
+		#region Create import instance and backup imported files
 		public string CreateImport(DateTime asOfDate, string[] sourceFiles) {
 			var result = string.Empty;
 			var dao = new SqlDbHelper();
@@ -212,6 +215,12 @@ namespace Importer
 						}
 						dataRowIndex++;
 						sql.AppendLine(GetInsertSql4Public(reader, importItemId, sheetIndex));
+						// Top 5 trial for exception track
+						if (dataRowIndex == 3) {
+							dao.ExecuteNonQuery(sql.ToString());
+							sql.Clear();
+						}
+						// Batch inserts
 						if (dataRowIndex > 1 && dataRowIndex % 1000 == 0) {
 							dao.ExecuteNonQuery(sql.ToString());
 							sql.Clear();
