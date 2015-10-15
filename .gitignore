@@ -1,6 +1,13 @@
+/DataAccess/bin
+/DataAccess/obj
 /Entities/bin
 /Entities/obj
 /Exporter/bin
 /Exporter/obj
+/Importer/bin
+/Importer/obj
+/WinForm/bin/WinForm.vshost*
 /WinForm/obj
+/Export
+/Import
 /YuLin.v11.suo
