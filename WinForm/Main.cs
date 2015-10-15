@@ -204,6 +204,7 @@ namespace WinForm
 					this.cmbReportMonth.Items.Add(value);
 				}
 			}
+			this.txtReportPath.Text = ExcelExporter.GetReportFolder();
 		}
 
 		private bool IsValidToExport(out DateTime asOfDate) {

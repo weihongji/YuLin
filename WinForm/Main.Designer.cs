@@ -33,6 +33,13 @@
 			this.menuReports = new System.Windows.Forms.ToolStripMenuItem();
 			this.menu_Report_LoanRisk = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
+			this.panelReport = new System.Windows.Forms.Panel();
+			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+			this.label11 = new System.Windows.Forms.Label();
+			this.cmbReportMonth = new System.Windows.Forms.ComboBox();
+			this.label9 = new System.Windows.Forms.Label();
+			this.btnExport = new System.Windows.Forms.Button();
+			this.label8 = new System.Windows.Forms.Label();
 			this.panelImport = new System.Windows.Forms.Panel();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.label10 = new System.Windows.Forms.Label();
@@ -56,21 +63,16 @@
 			this.cmbMonth = new System.Windows.Forms.ComboBox();
 			this.cmbYear = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.panelReport = new System.Windows.Forms.Panel();
-			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-			this.label11 = new System.Windows.Forms.Label();
-			this.cmbReportMonth = new System.Windows.Forms.ComboBox();
-			this.label9 = new System.Windows.Forms.Label();
-			this.btnExport = new System.Windows.Forms.Button();
-			this.label8 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.label12 = new System.Windows.Forms.Label();
+			this.txtReportPath = new System.Windows.Forms.TextBox();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
-			this.panelImport.SuspendLayout();
-			this.flowLayoutPanel1.SuspendLayout();
 			this.panelReport.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
+			this.panelImport.SuspendLayout();
+			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panelMenu
@@ -141,6 +143,84 @@
 			this.panelContent.Name = "panelContent";
 			this.panelContent.Size = new System.Drawing.Size(695, 494);
 			this.panelContent.TabIndex = 2;
+			// 
+			// panelReport
+			// 
+			this.panelReport.Controls.Add(this.txtReportPath);
+			this.panelReport.Controls.Add(this.label12);
+			this.panelReport.Controls.Add(this.flowLayoutPanel2);
+			this.panelReport.Controls.Add(this.cmbReportMonth);
+			this.panelReport.Controls.Add(this.label9);
+			this.panelReport.Controls.Add(this.btnExport);
+			this.panelReport.Controls.Add(this.label8);
+			this.panelReport.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panelReport.Location = new System.Drawing.Point(0, 0);
+			this.panelReport.Name = "panelReport";
+			this.panelReport.Size = new System.Drawing.Size(695, 494);
+			this.panelReport.TabIndex = 1;
+			// 
+			// flowLayoutPanel2
+			// 
+			this.flowLayoutPanel2.Controls.Add(this.label11);
+			this.flowLayoutPanel2.Location = new System.Drawing.Point(388, 240);
+			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+			this.flowLayoutPanel2.Size = new System.Drawing.Size(224, 66);
+			this.flowLayoutPanel2.TabIndex = 13;
+			// 
+			// label11
+			// 
+			this.label11.AutoSize = true;
+			this.label11.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label11.Location = new System.Drawing.Point(4, 4);
+			this.label11.Margin = new System.Windows.Forms.Padding(4);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(212, 34);
+			this.label11.TabIndex = 12;
+			this.label11.Text = "导出过程可能需要几分钟或更多，请您耐心等待导入完毕。";
+			// 
+			// cmbReportMonth
+			// 
+			this.cmbReportMonth.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.cmbReportMonth.FormattingEnabled = true;
+			this.cmbReportMonth.Items.AddRange(new object[] {
+            "2015-09",
+            "2015-08",
+            "2015-07"});
+			this.cmbReportMonth.Location = new System.Drawing.Point(226, 113);
+			this.cmbReportMonth.Name = "cmbReportMonth";
+			this.cmbReportMonth.Size = new System.Drawing.Size(116, 25);
+			this.cmbReportMonth.TabIndex = 0;
+			// 
+			// label9
+			// 
+			this.label9.AutoSize = true;
+			this.label9.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label9.Location = new System.Drawing.Point(162, 118);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(68, 17);
+			this.label9.TabIndex = 8;
+			this.label9.Text = "数据月份：";
+			// 
+			// btnExport
+			// 
+			this.btnExport.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnExport.Location = new System.Drawing.Point(203, 237);
+			this.btnExport.Name = "btnExport";
+			this.btnExport.Size = new System.Drawing.Size(152, 34);
+			this.btnExport.TabIndex = 1;
+			this.btnExport.Text = "导出 Excel";
+			this.btnExport.UseVisualStyleBackColor = true;
+			this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label8.Location = new System.Drawing.Point(161, 39);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(227, 21);
+			this.label8.TabIndex = 6;
+			this.label8.Text = "榆林分行9月末风险贷款情况表";
 			// 
 			// panelImport
 			// 
@@ -406,85 +486,31 @@
 			this.label1.TabIndex = 0;
 			this.label1.Text = "月份：";
 			// 
-			// panelReport
-			// 
-			this.panelReport.Controls.Add(this.flowLayoutPanel2);
-			this.panelReport.Controls.Add(this.cmbReportMonth);
-			this.panelReport.Controls.Add(this.label9);
-			this.panelReport.Controls.Add(this.btnExport);
-			this.panelReport.Controls.Add(this.label8);
-			this.panelReport.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panelReport.Location = new System.Drawing.Point(0, 0);
-			this.panelReport.Name = "panelReport";
-			this.panelReport.Size = new System.Drawing.Size(695, 494);
-			this.panelReport.TabIndex = 1;
-			// 
-			// flowLayoutPanel2
-			// 
-			this.flowLayoutPanel2.Controls.Add(this.label11);
-			this.flowLayoutPanel2.Location = new System.Drawing.Point(388, 240);
-			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-			this.flowLayoutPanel2.Size = new System.Drawing.Size(224, 66);
-			this.flowLayoutPanel2.TabIndex = 13;
-			// 
-			// label11
-			// 
-			this.label11.AutoSize = true;
-			this.label11.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label11.Location = new System.Drawing.Point(4, 4);
-			this.label11.Margin = new System.Windows.Forms.Padding(4);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(212, 34);
-			this.label11.TabIndex = 12;
-			this.label11.Text = "导出过程可能需要几分钟或更多，请您耐心等待导入完毕。";
-			// 
-			// cmbReportMonth
-			// 
-			this.cmbReportMonth.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.cmbReportMonth.FormattingEnabled = true;
-			this.cmbReportMonth.Items.AddRange(new object[] {
-            "2015-09",
-            "2015-08",
-            "2015-07"});
-			this.cmbReportMonth.Location = new System.Drawing.Point(226, 113);
-			this.cmbReportMonth.Name = "cmbReportMonth";
-			this.cmbReportMonth.Size = new System.Drawing.Size(116, 25);
-			this.cmbReportMonth.TabIndex = 0;
-			// 
-			// label9
-			// 
-			this.label9.AutoSize = true;
-			this.label9.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label9.Location = new System.Drawing.Point(162, 118);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(68, 17);
-			this.label9.TabIndex = 8;
-			this.label9.Text = "数据月份：";
-			// 
-			// btnExport
-			// 
-			this.btnExport.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnExport.Location = new System.Drawing.Point(203, 237);
-			this.btnExport.Name = "btnExport";
-			this.btnExport.Size = new System.Drawing.Size(152, 34);
-			this.btnExport.TabIndex = 1;
-			this.btnExport.Text = "导出 Excel";
-			this.btnExport.UseVisualStyleBackColor = true;
-			this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
-			// 
-			// label8
-			// 
-			this.label8.AutoSize = true;
-			this.label8.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label8.Location = new System.Drawing.Point(161, 39);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(227, 21);
-			this.label8.TabIndex = 6;
-			this.label8.Text = "榆林分行9月末风险贷款情况表";
-			// 
 			// openFileDialog1
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
+			// 
+			// label12
+			// 
+			this.label12.AutoSize = true;
+			this.label12.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label12.Location = new System.Drawing.Point(112, 328);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(92, 17);
+			this.label12.TabIndex = 14;
+			this.label12.Text = "报表存放路径：";
+			// 
+			// txtReportPath
+			// 
+			this.txtReportPath.BackColor = System.Drawing.SystemColors.Control;
+			this.txtReportPath.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.txtReportPath.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.txtReportPath.Location = new System.Drawing.Point(203, 328);
+			this.txtReportPath.Multiline = true;
+			this.txtReportPath.Name = "txtReportPath";
+			this.txtReportPath.Size = new System.Drawing.Size(429, 74);
+			this.txtReportPath.TabIndex = 15;
+			this.txtReportPath.Text = "E:\\Report";
 			// 
 			// Main
 			// 
@@ -503,14 +529,14 @@
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.panelContent.ResumeLayout(false);
-			this.panelImport.ResumeLayout(false);
-			this.panelImport.PerformLayout();
-			this.flowLayoutPanel1.ResumeLayout(false);
-			this.flowLayoutPanel1.PerformLayout();
 			this.panelReport.ResumeLayout(false);
 			this.panelReport.PerformLayout();
 			this.flowLayoutPanel2.ResumeLayout(false);
 			this.flowLayoutPanel2.PerformLayout();
+			this.panelImport.ResumeLayout(false);
+			this.panelImport.PerformLayout();
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -556,6 +582,8 @@
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
 		private System.Windows.Forms.Label label11;
+		private System.Windows.Forms.TextBox txtReportPath;
+		private System.Windows.Forms.Label label12;
 
 
 	}

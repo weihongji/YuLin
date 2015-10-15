@@ -28,7 +28,7 @@ namespace Exporter
 			return string.Empty;
 		}
 
-		private string GetReportFolder() {
+		public static string GetReportFolder() {
 			var dir = (ConfigurationManager.AppSettings["ReportDirectory"] ?? "").Trim().Replace("/", @"\");
 			if (dir.IndexOf(':') > 0) { // full path
 				return dir;
