@@ -6,8 +6,9 @@
 /Exporter/obj
 /Importer/bin
 /Importer/obj
+/WinForm/bin/Export
+/WinForm/bin/Import
+/WinForm/bin/Report
 /WinForm/bin/WinForm.vshost*
 /WinForm/obj
-/Export
-/Import
 /YuLin.v11.suo

@@ -88,7 +88,7 @@ namespace WinForm
 						InitImportPanel();
 					}
 					else {
-						MessageBox.Show("Error: " + result, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBox.Show("发生错误：" + result, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 				}
 				catch (Exception ex) {

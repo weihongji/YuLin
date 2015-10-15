@@ -50,10 +50,10 @@ namespace Importer
 			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.NonAccrual);
 			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Overdue);
 
-			var state = ChangeImportState(importId, XEnum.ImportState.Initial, XEnum.ImportState.AllCopied);
+			if (IsAllCopied(importId)) {
+				ChangeImportState(importId, XEnum.ImportState.AllCopied);
 
-			//Import data into database
-			if (state == XEnum.ImportState.AllCopied) {
+				//Import data into database
 				result = ImportToDatabase(importId, importFolder);
 			}
 
@@ -124,6 +124,8 @@ namespace Importer
 			if (!String.IsNullOrEmpty(result)) {
 				return result;
 			}
+
+			ChangeImportState(importId, XEnum.ImportState.Imported);
 
 			return string.Empty;
 		}
@@ -438,8 +440,6 @@ namespace Importer
 				sql.AppendLine("WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}) AND OrgNo IS NULL");
 				var dao = new SqlDbHelper();
 				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId, (int)XEnum.ImportItemType.Private));
-
-				ChangeImportState(importId, XEnum.ImportState.AllCopied, XEnum.ImportState.Imported);
 			}
 			catch (Exception ex) {
 				return ex.Message;
@@ -447,14 +447,19 @@ namespace Importer
 			return string.Empty;
 		}
 
-		public XEnum.ImportState ChangeImportState(int importId, XEnum.ImportState fromState, XEnum.ImportState toState) {
+		public bool IsAllCopied(int importId) {
+			var dao = new SqlDbHelper();
+			var count = (int)dao.ExecuteScalar(string.Format("SELECT COUNT(*) FROM ImportItem WHERE ImportId = {0}", importId));
+			return count == 5;
+		}
+
+		public XEnum.ImportState ChangeImportState(int importId, XEnum.ImportState toState) {
+			
 			var sql = new StringBuilder();
-			sql.AppendLine("IF 5 = (SELECT COUNT(*) FROM ImportItem WHERE ImportId = {0}) BEGIN");
-			sql.AppendLine("	UPDATE Import SET State = {1} WHERE Id = {0} AND State = {2}");
-			sql.AppendLine("END");
+			sql.AppendLine("UPDATE Import SET State = {1} WHERE Id = {0} AND State < {1}");
 			sql.AppendLine("SELECT State FROM Import WHERE Id = {0}");
 			var dao = new SqlDbHelper();
-			var state = (short)dao.ExecuteScalar(string.Format(sql.ToString(), importId, (int)fromState, (int)toState));
+			var state = (short)dao.ExecuteScalar(string.Format(sql.ToString(), importId, (int)toState));
 			return (XEnum.ImportState)state;
 		}
 		#endregion

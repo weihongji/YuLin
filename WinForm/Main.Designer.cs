@@ -34,6 +34,8 @@
 			this.menu_Report_LoanRisk = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
 			this.panelImport = new System.Windows.Forms.Panel();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this.label10 = new System.Windows.Forms.Label();
 			this.lblImportOverdue = new System.Windows.Forms.Label();
 			this.lblImportNonAccrual = new System.Windows.Forms.Label();
 			this.lblImportPrivate = new System.Windows.Forms.Label();
@@ -60,14 +62,15 @@
 			this.btnExport = new System.Windows.Forms.Button();
 			this.label8 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			this.label10 = new System.Windows.Forms.Label();
+			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+			this.label11 = new System.Windows.Forms.Label();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
 			this.panelImport.SuspendLayout();
-			this.panelReport.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
+			this.panelReport.SuspendLayout();
+			this.flowLayoutPanel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panelMenu
@@ -103,14 +106,14 @@
 			// menu_Mgmt_Import
 			// 
 			this.menu_Mgmt_Import.Name = "menu_Mgmt_Import";
-			this.menu_Mgmt_Import.Size = new System.Drawing.Size(152, 22);
+			this.menu_Mgmt_Import.Size = new System.Drawing.Size(144, 22);
 			this.menu_Mgmt_Import.Text = "导入数据 (&I)";
 			this.menu_Mgmt_Import.Click += new System.EventHandler(this.menu_Mgmt_Import_Click);
 			// 
 			// menu_Mgmt_Exit
 			// 
 			this.menu_Mgmt_Exit.Name = "menu_Mgmt_Exit";
-			this.menu_Mgmt_Exit.Size = new System.Drawing.Size(152, 22);
+			this.menu_Mgmt_Exit.Size = new System.Drawing.Size(144, 22);
 			this.menu_Mgmt_Exit.Text = "退出系统 (&X)";
 			this.menu_Mgmt_Exit.Click += new System.EventHandler(this.menu_Mgmt_Exit_Click);
 			// 
@@ -167,6 +170,25 @@
 			this.panelImport.Name = "panelImport";
 			this.panelImport.Size = new System.Drawing.Size(695, 494);
 			this.panelImport.TabIndex = 0;
+			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Controls.Add(this.label10);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(373, 361);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(224, 66);
+			this.flowLayoutPanel1.TabIndex = 12;
+			// 
+			// label10
+			// 
+			this.label10.AutoSize = true;
+			this.label10.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label10.Location = new System.Drawing.Point(4, 4);
+			this.label10.Margin = new System.Windows.Forms.Padding(4);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(212, 34);
+			this.label10.TabIndex = 12;
+			this.label10.Text = "导入过程可能需要几分钟或更多，请您耐心等待导入完毕。";
 			// 
 			// lblImportOverdue
 			// 
@@ -386,6 +408,7 @@
 			// 
 			// panelReport
 			// 
+			this.panelReport.Controls.Add(this.flowLayoutPanel2);
 			this.panelReport.Controls.Add(this.cmbReportMonth);
 			this.panelReport.Controls.Add(this.label9);
 			this.panelReport.Controls.Add(this.btnExport);
@@ -444,24 +467,24 @@
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
 			// 
-			// flowLayoutPanel1
+			// flowLayoutPanel2
 			// 
-			this.flowLayoutPanel1.Controls.Add(this.label10);
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(373, 361);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(224, 66);
-			this.flowLayoutPanel1.TabIndex = 12;
+			this.flowLayoutPanel2.Controls.Add(this.label11);
+			this.flowLayoutPanel2.Location = new System.Drawing.Point(373, 240);
+			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+			this.flowLayoutPanel2.Size = new System.Drawing.Size(224, 66);
+			this.flowLayoutPanel2.TabIndex = 13;
 			// 
-			// label10
+			// label11
 			// 
-			this.label10.AutoSize = true;
-			this.label10.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label10.Location = new System.Drawing.Point(4, 4);
-			this.label10.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(212, 34);
-			this.label10.TabIndex = 12;
-			this.label10.Text = "导入过程可能需要几分钟或更多，请您耐心等待导入完毕。";
+			this.label11.AutoSize = true;
+			this.label11.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label11.Location = new System.Drawing.Point(4, 4);
+			this.label11.Margin = new System.Windows.Forms.Padding(4);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(212, 34);
+			this.label11.TabIndex = 12;
+			this.label11.Text = "导入过程可能需要几分钟或更多，请您耐心等待导入完毕。";
 			// 
 			// Main
 			// 
@@ -482,10 +505,12 @@
 			this.panelContent.ResumeLayout(false);
 			this.panelImport.ResumeLayout(false);
 			this.panelImport.PerformLayout();
-			this.panelReport.ResumeLayout(false);
-			this.panelReport.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
+			this.panelReport.ResumeLayout(false);
+			this.panelReport.PerformLayout();
+			this.flowLayoutPanel2.ResumeLayout(false);
+			this.flowLayoutPanel2.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -529,6 +554,8 @@
 		private System.Windows.Forms.Label lblImportLoan;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Label label10;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+		private System.Windows.Forms.Label label11;
 
 
 	}
