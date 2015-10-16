@@ -1,0 +1,7 @@
+Microsoft.Jet.OLEDB Provider
+Download from: https://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=13255
+
+Set the platform to x86 instead of the default <Any CPU> in Visual Studio -> Configuration Manager
+
+Jesse
+2015-10-11 11:06
