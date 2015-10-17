@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
 using System.Configuration;
@@ -10,12 +11,14 @@ using Microsoft.Office.Interop.Excel;
 
 using DataAccess;
 using Entities;
+using Logging;
 
 namespace Exporter
 {
 	public class ExcelExporter
 	{
-		private readonly int NonAccrualColumnCount = 15;
+		private static readonly int NonAccrualColumnCount = 15;
+		private Logger logger = Logger.GetLogger("Importer");
 
 		public DateTime AsOfDate { get; set; }
 
@@ -24,45 +27,139 @@ namespace Exporter
 		}
 
 		public string ExportData() {
-			OutExcel();
+			OutExcelx();
 			return string.Empty;
 		}
+		public static void TestInsertRow2() {
+			Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
+			excelApp.DisplayAlerts = false;
 
-		public static string GetReportFolder() {
-			var dir = (ConfigurationManager.AppSettings["ReportDirectory"] ?? "").Trim().Replace("/", @"\");
-			if (dir.IndexOf(':') > 0) { // full path
-				return dir;
-			}
+			string workbookPath = @"E:\Project\2015\YuLin\Git\Solution\WinForm\bin\Report\a.xls";
 
-			// Get full path
-			if (dir.IndexOf('\\') == 0) {
-				dir = dir.Substring(1);
-			}
-			if (dir.Length == 0) {
-				dir = "Report";
-			}
-			return System.Environment.CurrentDirectory + "\\" + dir;
+			Microsoft.Office.Interop.Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(workbookPath,
+					0, false, 5, "", "", false, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "",
+					true, false, 0, true, false, false);
+
+			Microsoft.Office.Interop.Excel.Sheets worksheets = excelWorkbook.Worksheets;
+
+			worksheets[1].Delete();
+
+			worksheets[1].Name = "Total Monthly";
+
+			excelWorkbook.Save();
+
+			excelWorkbook.Close();
+
+			System.Runtime.InteropServices.Marshal.ReleaseComObject(worksheets);
+
+			excelApp.Quit();
 		}
 
-		private string GetReportFile() {
-			var template = @"Template\榆林分行月末风险贷款情况表.xls";
+		public static void TestInsertRow() {
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			theExcelApp.DisplayAlerts = false;
 
-			var reportFolder = GetReportFolder();
-			if (!Directory.Exists(reportFolder)) {
-				Directory.CreateDirectory(reportFolder);
+			bool excelOpened = false;
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			Worksheet theSheetTemplate = null;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(@"E:\Project\2015\YuLin\Git\Solution\WinForm\bin\Report\a.xls");
+				excelOpened = true;
+
+				theSheet = (Worksheet)theExcelBook.Worksheets[1];
+				theSheet.Delete();
+
+				//Range oRange;
+				//theSheet = (Worksheet)theExcelBook.Sheets[1];
+				//oRange = (Range)theSheet.get_Range("1:3");
+				//oRange.Delete();
+				////((Range)theSheet.Cells[1, 1]).Select();
+
+				//theSheet = (Worksheet)theExcelBook.Sheets[3];
+				//oRange = (Range)theSheet.get_Range("1:3");
+				//oRange.Delete();
+
+
+				//int sheetCount = theExcelBook.Sheets.Count;
+				//for (int i = sheetCount; i >= 1; i--) {
+				//	theSheet = (Worksheet)theExcelBook.Sheets[i];
+				//	theSheet.Copy(Type.Missing, theSheet);
+				//	((Worksheet)theExcelBook.Sheets[i + 1]).Name = theSheet.Name + "Template";
+				//}
+
+				//Range r = theSheet.get_Range("A1", "C10"); //theSheet.get_Range("A1", "A1").EntireRow;
+				//r.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+				//((Range)theSheet.Cells[1, 1]).Value2 = "xxx";
+
+				//int startrow = 1;
+				//var oRange = (Range)theSheet.get_Range(String.Format("{0}:{0}", startrow), System.Type.Missing);
+				//oRange.Select();
+				//oRange.Copy();
+				////oApp.Selection.Copy();
+
+				//oRange = theSheet.get_Range(String.Format("{0}:{1}", startrow + 1, startrow + 6 - 1), System.Type.Missing);
+				//oRange.Select();
+				//oRange.Insert();
+				//((Range)theSheet.Cells[1, 1]).Select();
+
+				//theSheetTemplate.Activate();
+				//var oRange = (Range)theSheetTemplate.get_Range("1:3");
+				//oRange.Select();
+				//oRange.Copy();
+
+				//theSheet.Activate();
+				//oRange = theSheet.get_Range("1:1");
+				//oRange.Select();
+				//oRange.Insert();
+				//((Range)theSheet.Cells[1, 1]).Select();
+
+
+
+				/*****************************将生成的Excel报表存储到Export文件夹中*****************************/
 			}
-			var report = string.Format(@"{0}\榆林分行{1}月末风险贷款情况表.xls", reportFolder, this.AsOfDate.Month);
-			if (File.Exists(template)) {
-				File.Copy(template, report, true);
+			catch (Exception ex) {
+				//SHOULD BE REMOVED SINCE DUPLICATE WITH finally BLOCK
+				//SHOULD BE REMOVED SINCE DUPLICATE WITH finally BLOCK
+				//SHOULD BE REMOVED SINCE DUPLICATE WITH finally BLOCK
+				//SHOULD BE REMOVED SINCE DUPLICATE WITH finally BLOCK
+				//SHOULD BE REMOVED SINCE DUPLICATE WITH finally BLOCK
+				if (excelOpened) {
+					theExcelBook.Save();
+					theExcelBook.Close(false, null, null);
+					theExcelApp.Quit();
+					if (theSheet != null) {
+						System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+					}
+					if (theSheetTemplate != null) {
+						System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheetTemplate);
+					}
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+					GC.Collect();
+				}
+				throw ex;
 			}
-			else {
-				throw new FileNotFoundException("Excel template directory doesn't exist.");
+			finally {
+				if (excelOpened) {
+					theExcelBook.Save();
+					theExcelBook.Close(false, null, null);
+					theExcelApp.Quit();
+					if (theSheet != null) {
+						System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+					}
+					if (theSheetTemplate != null) {
+						System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheetTemplate);
+					}
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+					GC.Collect();
+				}
 			}
-			return report;
 		}
 
 		private void OutExcel() {
-			var filePath = GetReportFile();
+			var filePath = InitReportFile();
 			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
 
 			Workbook theExcelBook = theExcelApp.Workbooks.Open(filePath);
@@ -106,6 +203,123 @@ namespace Exporter
 			GC.Collect();
 		}
 
+		private void OutExcelx() {
+			var filePath = InitReportFile();
+			int rowsBeforeColumnHeader = 2;
+			CreateDataSheet(filePath, 1, rowsBeforeColumnHeader);
+
+			var oleConn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
+			oleConn.Open();
+			decimal totalLoanBalance = 0, totalOweInterest = 0, tmp_decimal;
+			var reader = GetReader();
+			int dataRowIndex = 0;
+			while (reader.Read()) {
+				if (string.IsNullOrWhiteSpace(DataUtility.GetValue(reader, 0))) { // Going to end
+					break;
+				}
+				dataRowIndex++;
+				var sql = GetInsertSql4LoanRiskPerMonth_FYJ(reader);
+				try {
+					OleDbCommand cmd = new OleDbCommand(sql, oleConn);
+					cmd.ExecuteNonQuery();
+				}
+				catch (Exception ex) {
+					logger.Error("Running INSERT: " + sql.ToString(), ex);
+					throw ex;
+				}
+				// Calculate totals
+				if (decimal.TryParse(reader[2].ToString(), out tmp_decimal)) {
+					totalLoanBalance += tmp_decimal;
+				}
+				if (decimal.TryParse(reader[4].ToString(), out tmp_decimal)) {
+					totalOweInterest += tmp_decimal;
+				}
+			}
+			oleConn.Close();
+			logger.DebugFormat("{0} records exported.", dataRowIndex);
+
+			FormatReport4LoanRiskPerMonth_FYJ(filePath, dataRowIndex, totalLoanBalance, totalOweInterest);
+		}
+
+		private void FormatReport4LoanRiskPerMonth_FYJ(string filePath, int dataRowCount, decimal totalLoanBalance, decimal totalOweInterest) {
+			if (dataRowCount == 0) {
+				return;
+			}
+			int sheetIndex = 1;
+			int rowsBeforeColumnHeader = 2;
+			int rowsBeforeData = rowsBeforeColumnHeader + 1;
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			theExcelApp.DisplayAlerts = false; // Without this line, the template sheet cannot be deleted.
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			Worksheet theSheetTemplate = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+
+				theSheet = (Worksheet)theExcelBook.Sheets[sheetIndex];
+				theSheetTemplate = (Worksheet)theExcelBook.Sheets[sheetIndex + 1];
+
+				//Header
+				theSheetTemplate.Activate();
+				var oRange = (Range)theSheetTemplate.get_Range("1:" + rowsBeforeColumnHeader.ToString());
+				oRange.Select();
+				oRange.Copy();
+
+				theSheet.Activate();
+				oRange = theSheet.get_Range("1:1");
+				oRange.Select();
+				oRange.Insert();
+
+				//Totals
+				int totalRowIndex = rowsBeforeData + dataRowCount + 1;
+				((Range)theSheet.Cells[totalRowIndex, 1]).Value2 = "合计";
+				((Range)theSheet.Cells[totalRowIndex, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
+				((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = totalLoanBalance;
+				((Range)theSheet.Cells[totalRowIndex, 5]).Value2 = totalOweInterest;
+
+				//绘制数据部分的表格线
+				int dataRowStartIndex = rowsBeforeData + 1;
+				Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[totalRowIndex, NonAccrualColumnCount]];
+				dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
+				dataRange.Font.Size = 10;
+
+				theSheetTemplate.Delete();
+
+				theExcelBook.Save();
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theSheetTemplate != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheetTemplate);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+		}
+
+		private string GetInsertSql4LoanRiskPerMonth_FYJ(SqlDataReader reader) {
+			var sql = new StringBuilder();
+			sql.AppendLine("INSERT INTO [非应计$] ([行名], [客户名称], [贷款余额], [七级分类], [欠息金额], [放款日期], [到期日期], [逾期天数], [欠息天数], [担保方式], [行业], [客户类型], [贷款类型], [是否本月新增], [备注])");
+			sql.AppendLine("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}");
+			return string.Format(sql.ToString(), DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 3), DataUtility.GetSqlValue(reader, 4), DataUtility.GetSqlValue(reader, 5), DataUtility.GetSqlValue(reader, 6), DataUtility.GetSqlValue(reader, 7), DataUtility.GetSqlValue(reader, 8), DataUtility.GetSqlValue(reader, 9), DataUtility.GetSqlValue(reader, 10), DataUtility.GetSqlValue(reader, 11), DataUtility.GetSqlValue(reader, 12), DataUtility.GetSqlValue(reader, 13), DataUtility.GetSqlValue(reader, 14));
+		}
+
 		public SqlDataReader GetReader() {
 			var sql = new StringBuilder();
 			sql.AppendLine("DECLARE @importId as int");
@@ -134,6 +348,81 @@ namespace Exporter
 			var dao = new SqlDbHelper();
 			var reader = dao.ExecuteReader(string.Format(sql.ToString(), (int)XEnum.ImportItemType.Loan, (int)XEnum.ImportItemType.Private, (int)XEnum.ImportItemType.Public, (int)XEnum.ImportItemType.NonAccrual, (int)XEnum.ImportItemType.Overdue));
 			return reader;
+		}
+
+		public static string GetReportFolder() {
+			var dir = (ConfigurationManager.AppSettings["ReportDirectory"] ?? "").Trim().Replace("/", @"\");
+			if (dir.IndexOf(':') > 0) { // full path
+				return dir;
+			}
+
+			// Get full path
+			if (dir.IndexOf('\\') == 0) {
+				dir = dir.Substring(1);
+			}
+			if (dir.Length == 0) {
+				dir = "Report";
+			}
+			return System.Environment.CurrentDirectory + "\\" + dir;
+		}
+
+		private string InitReportFile() {
+			var template = @"Template\榆林分行月末风险贷款情况表.xls";
+
+			var reportFolder = GetReportFolder();
+			if (!Directory.Exists(reportFolder)) {
+				Directory.CreateDirectory(reportFolder);
+			}
+			var report = string.Format(@"{0}\榆林分行{1}月末风险贷款情况表.xls", reportFolder, this.AsOfDate.Month);
+			if (File.Exists(template)) {
+				File.Copy(template, report, true);
+			}
+			else {
+				throw new FileNotFoundException("Excel template directory doesn't exist.");
+			}
+			return report;
+		}
+
+		private void CreateDataSheet(string filePath, int sheetIndex, int rowsBeforeColumnHeader) {
+			if (rowsBeforeColumnHeader == 0) {
+				return;
+			}
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			Worksheet theSheetTemplate = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+
+				theSheet = (Worksheet)theExcelBook.Sheets[sheetIndex];
+				theSheet.Copy(Type.Missing, theSheet);
+				((Worksheet)theExcelBook.Sheets[sheetIndex + 1]).Name = theSheet.Name + "Template";
+
+				// Make the column header row as the first row
+				var range = (Range)theSheet.get_Range("1:" + rowsBeforeColumnHeader.ToString());
+				range.Delete();
+
+				theExcelBook.Save();
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theSheetTemplate != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheetTemplate);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
 		}
 	}
 }

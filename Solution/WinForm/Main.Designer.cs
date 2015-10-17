@@ -25,6 +25,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			this.panelMenu = new System.Windows.Forms.Panel();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.menuMgmt = new System.Windows.Forms.ToolStripMenuItem();
@@ -34,6 +35,8 @@
 			this.menu_Report_LoanRisk = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
 			this.panelReport = new System.Windows.Forms.Panel();
+			this.btnOpenReportFolder = new System.Windows.Forms.Button();
+			this.label12 = new System.Windows.Forms.Label();
 			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
 			this.label11 = new System.Windows.Forms.Label();
 			this.cmbReportMonth = new System.Windows.Forms.ComboBox();
@@ -64,8 +67,9 @@
 			this.cmbYear = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-			this.label12 = new System.Windows.Forms.Label();
-			this.txtReportPath = new System.Windows.Forms.TextBox();
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.txtReportPath = new System.Windows.Forms.Label();
+			this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
@@ -73,6 +77,7 @@
 			this.flowLayoutPanel2.SuspendLayout();
 			this.panelImport.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
+			this.flowLayoutPanel3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panelMenu
@@ -146,7 +151,7 @@
 			// 
 			// panelReport
 			// 
-			this.panelReport.Controls.Add(this.txtReportPath);
+			this.panelReport.Controls.Add(this.flowLayoutPanel3);
 			this.panelReport.Controls.Add(this.label12);
 			this.panelReport.Controls.Add(this.flowLayoutPanel2);
 			this.panelReport.Controls.Add(this.cmbReportMonth);
@@ -158,6 +163,27 @@
 			this.panelReport.Name = "panelReport";
 			this.panelReport.Size = new System.Drawing.Size(695, 494);
 			this.panelReport.TabIndex = 1;
+			// 
+			// btnOpenReportFolder
+			// 
+			this.btnOpenReportFolder.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnOpenReportFolder.Location = new System.Drawing.Point(72, 3);
+			this.btnOpenReportFolder.Name = "btnOpenReportFolder";
+			this.btnOpenReportFolder.Size = new System.Drawing.Size(74, 24);
+			this.btnOpenReportFolder.TabIndex = 17;
+			this.btnOpenReportFolder.Text = "打开目录";
+			this.btnOpenReportFolder.UseVisualStyleBackColor = true;
+			this.btnOpenReportFolder.Click += new System.EventHandler(this.btnOpenReportFolder_Click);
+			// 
+			// label12
+			// 
+			this.label12.AutoSize = true;
+			this.label12.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label12.Location = new System.Drawing.Point(112, 328);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(92, 17);
+			this.label12.TabIndex = 14;
+			this.label12.Text = "报表存放路径：";
 			// 
 			// flowLayoutPanel2
 			// 
@@ -490,27 +516,25 @@
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
 			// 
-			// label12
-			// 
-			this.label12.AutoSize = true;
-			this.label12.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label12.Location = new System.Drawing.Point(112, 328);
-			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(92, 17);
-			this.label12.TabIndex = 14;
-			this.label12.Text = "报表存放路径：";
-			// 
 			// txtReportPath
 			// 
-			this.txtReportPath.BackColor = System.Drawing.SystemColors.Control;
-			this.txtReportPath.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.txtReportPath.AutoSize = true;
 			this.txtReportPath.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.txtReportPath.Location = new System.Drawing.Point(203, 328);
-			this.txtReportPath.Multiline = true;
+			this.txtReportPath.Location = new System.Drawing.Point(3, 8);
+			this.txtReportPath.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
 			this.txtReportPath.Name = "txtReportPath";
-			this.txtReportPath.Size = new System.Drawing.Size(429, 74);
-			this.txtReportPath.TabIndex = 15;
+			this.txtReportPath.Size = new System.Drawing.Size(63, 17);
+			this.txtReportPath.TabIndex = 18;
 			this.txtReportPath.Text = "E:\\Report";
+			// 
+			// flowLayoutPanel3
+			// 
+			this.flowLayoutPanel3.Controls.Add(this.txtReportPath);
+			this.flowLayoutPanel3.Controls.Add(this.btnOpenReportFolder);
+			this.flowLayoutPanel3.Location = new System.Drawing.Point(196, 320);
+			this.flowLayoutPanel3.Name = "flowLayoutPanel3";
+			this.flowLayoutPanel3.Size = new System.Drawing.Size(455, 52);
+			this.flowLayoutPanel3.TabIndex = 19;
 			// 
 			// Main
 			// 
@@ -537,6 +561,8 @@
 			this.panelImport.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
+			this.flowLayoutPanel3.ResumeLayout(false);
+			this.flowLayoutPanel3.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -582,8 +608,11 @@
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
 		private System.Windows.Forms.Label label11;
-		private System.Windows.Forms.TextBox txtReportPath;
 		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.ToolTip toolTip1;
+		private System.Windows.Forms.Button btnOpenReportFolder;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
+		private System.Windows.Forms.Label txtReportPath;
 
 
 	}

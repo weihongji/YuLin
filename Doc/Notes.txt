@@ -43,3 +43,6 @@ Column S：贷款状态
 			本月收回 = 和上月做比较，多出来的为减少
 		大中客户
 			非应计 Sheet > 客户类型 = 公司类
+
+Utility to check OLEDB driver
+Check head row number, column number, sheet number, first column name, last column name

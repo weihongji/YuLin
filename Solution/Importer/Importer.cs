@@ -25,7 +25,9 @@ namespace Importer
 			var dateString = asOfDate.ToString("yyyyMMdd");
 			var sql = new StringBuilder();
 			sql.AppendLine(string.Format("SELECT ISNULL(MAX(Id), 0) FROM Import WHERE ImportDate = '{0}'", dateString));
+			logger.DebugFormat("Getting existing import id for {0}", dateString);
 			var importId = (int)dao.ExecuteScalar(sql.ToString());
+			logger.DebugFormat("Existing import id = {0}", importId);
 			if (importId == 0) {
 				sql.Clear();
 				sql.AppendLine(string.Format("INSERT INTO Import (ImportDate) VALUES ('{0}')", dateString));
@@ -37,6 +39,7 @@ namespace Importer
 				sql.AppendLine(string.Format("UPDATE Import SET ModifyDate = getdate() WHERE Id = {0}", importId));
 				dao.ExecuteNonQuery(sql.ToString());
 			}
+
 			var importRootFolder = System.Environment.CurrentDirectory + "\\Import";
 			if (!Directory.Exists(importRootFolder)) {
 				Directory.CreateDirectory(importRootFolder);
@@ -47,19 +50,23 @@ namespace Importer
 			}
 
 			// Create/update import items records
+			logger.DebugFormat("Copying source files to {0}", importFolder);
 			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Loan);
 			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Public);
 			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Private);
 			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.NonAccrual);
 			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Overdue);
+			logger.DebugFormat("Source files copy done", importFolder);
 
 			if (IsAllCopied(importId)) {
+				logger.Debug("All copied");
 				ChangeImportState(importId, XEnum.ImportState.AllCopied);
 
 				//Import data into database
 				result = ImportToDatabase(importId, importFolder);
 			}
 
+			logger.DebugFormat("Import #{0} created", importId);
 			return result;
 		}
 
@@ -97,38 +104,45 @@ namespace Importer
 
 		#region "Import excel data to database"
 		public string ImportToDatabase(int importId, string importFolder) {
+			logger.Debug("Importing Loan to database");
 			var result = ImportLoan(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Loan]);
 			if (!String.IsNullOrEmpty(result)) {
 				return result;
 			}
 
+			logger.Debug("Importing Public to database");
 			result = ImportPublic(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Public]);
 			if (!String.IsNullOrEmpty(result)) {
 				return result;
 			}
 
+			logger.Debug("Importing Private to database");
 			result = ImportPrivate(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Private]);
 			if (!String.IsNullOrEmpty(result)) {
 				return result;
 			}
 
+			logger.Debug("Importing NonAccrual to database");
 			result = ImportNonAccrual(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.NonAccrual]);
 			if (!String.IsNullOrEmpty(result)) {
 				return result;
 			}
 
+			logger.Debug("Importing Overdue to database");
 			result = ImportOverdue(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Overdue]);
 			if (!String.IsNullOrEmpty(result)) {
 				return result;
 			}
 
 			//Assigning org number ...
+			logger.Debug("Assigning org number to Private");
 			result = AssignOrgNo(importId);
 			if (!String.IsNullOrEmpty(result)) {
 				return result;
 			}
 
 			ChangeImportState(importId, XEnum.ImportState.Imported);
+			logger.Debug("Import to database done");
 
 			return string.Empty;
 		}
@@ -141,8 +155,10 @@ namespace Importer
 			var oleOpened = false;
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			try {
+				logger.Debug("Opening connection to " + filePath);
 				oconn.Open();
 				oleOpened = true;
+				logger.Debug("Opened");
 
 				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 				string sheet1 = dt.Rows[0][2].ToString();
@@ -156,22 +172,43 @@ namespace Importer
 				int importItemId = importItemIdObject == DBNull.Value ? 0 : (int)importItemIdObject;
 				dao.ExecuteNonQuery("DELETE FROM ImportLoan WHERE ImportItemId = " + importItemId.ToString());
 				while (reader.Read()) {
-					if (string.IsNullOrWhiteSpace(GetValue(reader, 0))) { // Going to end
+					if (string.IsNullOrWhiteSpace(DataUtility.GetValue(reader, 0))) { // Going to end
 						break;
 					}
 					dataRowIndex++;
 					sql.AppendLine(GetInsertSql4Loan(reader, importItemId));
+					// Top 3 trial for exception track
+					if (dataRowIndex == 3) {
+						try {
+							dao.ExecuteNonQuery(sql.ToString());
+							sql.Clear();
+						}
+						catch (Exception ex) {
+							logger.Error("Running INSERT: " + sql.ToString(), ex);
+							throw ex;
+						}
+					}
+					// Batch inserts
 					if (dataRowIndex > 1 && dataRowIndex % 1000 == 0) {
 						dao.ExecuteNonQuery(sql.ToString());
 						sql.Clear();
 					}
 				}
 				if (sql.Length > 0) {
-					dao.ExecuteNonQuery(sql.ToString());
+					try {
+						dao.ExecuteNonQuery(sql.ToString());
+						sql.Clear();
+					}
+					catch (Exception ex) {
+						logger.Error("Running INSERT: " + sql.ToString(), ex);
+						throw ex;
+					}
 				}
+				logger.DebugFormat("{0} records imported.", dataRowIndex);
 			}
-			catch (DataException ee) {
-				return ee.Message;
+			catch (Exception ex) {
+				logger.Error("Outest catch", ex);
+				return ex.Message;
 			}
 			finally {
 				if (oleOpened) {
@@ -189,15 +226,22 @@ namespace Importer
 			var oleOpened = false;
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			try {
+				logger.Debug("Opening connection to " + filePath);
 				oconn.Open();
 				oleOpened = true;
+				logger.Debug("Opened");
 
 				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-				string sheet1;
-				for (int sheetIndex = 0; sheetIndex < 3; sheetIndex++) {
-					sheet1 = dt.Rows[sheetIndex * 2][2].ToString();
+				string sheetName;
+				int maxSheets = 3;
+				for (int sheetIndex = 0; sheetIndex < maxSheets; sheetIndex++) {
+					if (dt.Rows.Count < sheetIndex * 2 + 1) {
+						break;
+					}
+					sheetName = dt.Rows[sheetIndex * 2][2].ToString();
+					logger.Debug("Importing sheet " + (sheetName.EndsWith("$") ? sheetName.Substring(0, sheetName.Length - 1) : sheetName));
 
-					OleDbCommand ocmd = new OleDbCommand(string.Format("select * from [{0}]", sheet1), oconn);
+					OleDbCommand ocmd = new OleDbCommand(string.Format("select * from [{0}]", sheetName), oconn);
 					OleDbDataReader reader = ocmd.ExecuteReader();
 					int skipRows = sheetIndex == 0 ? 1 : 0;
 					for (int i = 0; i < skipRows && reader.Read(); i++) {
@@ -210,15 +254,21 @@ namespace Importer
 					int importItemId = importItemIdObject == DBNull.Value ? 0 : (int)importItemIdObject;
 					dao.ExecuteNonQuery("DELETE FROM ImportPublic WHERE ImportItemId = " + importItemId.ToString());
 					while (reader.Read()) {
-						if (string.IsNullOrWhiteSpace(GetValue(reader, 0))) { // Going to end
+						if (string.IsNullOrWhiteSpace(DataUtility.GetValue(reader, 0))) { // Going to end
 							break;
 						}
 						dataRowIndex++;
 						sql.AppendLine(GetInsertSql4Public(reader, importItemId, sheetIndex));
-						// Top 5 trial for exception track
+						// Top 3 trial for exception track
 						if (dataRowIndex == 3) {
-							dao.ExecuteNonQuery(sql.ToString());
-							sql.Clear();
+							try {
+								dao.ExecuteNonQuery(sql.ToString());
+								sql.Clear();
+							}
+							catch (Exception ex) {
+								logger.Error("Running INSERT: " + sql.ToString(), ex);
+								throw ex;
+							}
 						}
 						// Batch inserts
 						if (dataRowIndex > 1 && dataRowIndex % 1000 == 0) {
@@ -227,12 +277,20 @@ namespace Importer
 						}
 					}
 					if (sql.Length > 0) {
-						dao.ExecuteNonQuery(sql.ToString());
+						try {
+							dao.ExecuteNonQuery(sql.ToString());
+						}
+						catch (Exception ex) {
+							logger.Error("Running INSERT: " + sql.ToString(), ex);
+							throw ex;
+						}
 					}
+					logger.DebugFormat("{0} records imported.", dataRowIndex);
 				}
 			}
-			catch (DataException ee) {
-				return ee.Message;
+			catch (Exception ex) {
+				logger.Error("Outest catch", ex);
+				return ex.Message;
 			}
 			finally {
 				if (oleOpened) {
@@ -250,8 +308,10 @@ namespace Importer
 			var oleOpened = false;
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			try {
+				logger.Debug("Opening connection to " + filePath);
 				oconn.Open();
 				oleOpened = true;
+				logger.Debug("Opened");
 
 				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 				string sheet1 = dt.Rows[0][2].ToString();
@@ -269,22 +329,43 @@ namespace Importer
 				int importItemId = importItemIdObject == DBNull.Value ? 0 : (int)importItemIdObject;
 				dao.ExecuteNonQuery("DELETE FROM ImportPrivate WHERE ImportItemId = " + importItemId.ToString());
 				while (reader.Read()) {
-					if (string.IsNullOrWhiteSpace(GetValue(reader, 0))) {
+					if (string.IsNullOrWhiteSpace(DataUtility.GetValue(reader, 0))) {
 						break;
 					}
 					dataRowIndex++;
 					sql.AppendLine(GetInsertSql4Private(reader, importItemId));
+					// Top 3 trial for exception track
+					if (dataRowIndex == 3) {
+						try {
+							dao.ExecuteNonQuery(sql.ToString());
+							sql.Clear();
+						}
+						catch (Exception ex) {
+							logger.Error("Running INSERT: " + sql.ToString(), ex);
+							throw ex;
+						}
+					}
+					// Batch inserts
 					if (dataRowIndex > 1 && dataRowIndex % 1000 == 0) {
 						dao.ExecuteNonQuery(sql.ToString());
 						sql.Clear();
 					}
 				}
 				if (sql.Length > 0) {
-					dao.ExecuteNonQuery(sql.ToString());
+					try {
+						dao.ExecuteNonQuery(sql.ToString());
+						sql.Clear();
+					}
+					catch (Exception ex) {
+						logger.Error("Running INSERT: " + sql.ToString(), ex);
+						throw ex;
+					}
 				}
+				logger.DebugFormat("{0} records imported.", dataRowIndex);
 			}
-			catch (DataException ee) {
-				return ee.Message;
+			catch (Exception ex) {
+				logger.Error("Outest catch", ex);
+				return ex.Message;
 			}
 			finally {
 				if (oleOpened) {
@@ -302,8 +383,10 @@ namespace Importer
 			var oleOpened = false;
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			try {
+				logger.Debug("Opening connection to " + filePath);
 				oconn.Open();
 				oleOpened = true;
+				logger.Debug("Opened");
 
 				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 				string sheet1 = dt.Rows[0][2].ToString();
@@ -317,22 +400,43 @@ namespace Importer
 				int importItemId = importItemIdObject == DBNull.Value ? 0 : (int)importItemIdObject;
 				dao.ExecuteNonQuery("DELETE FROM ImportNonAccrual WHERE ImportItemId = " + importItemId.ToString());
 				while (reader.Read()) {
-					if (GetValue(reader, 0).Equals("本页小计")) { // Going to end
+					if (DataUtility.GetValue(reader, 0).Equals("本页小计")) { // Going to end
 						break;
 					}
 					dataRowIndex++;
 					sql.AppendLine(GetInsertSql4NonAccrual(reader, importItemId));
+					// Top 3 trial for exception track
+					if (dataRowIndex == 3) {
+						try {
+							dao.ExecuteNonQuery(sql.ToString());
+							sql.Clear();
+						}
+						catch (Exception ex) {
+							logger.Error("Running INSERT: " + sql.ToString(), ex);
+							throw ex;
+						}
+					}
+					// Batch inserts
 					if (dataRowIndex > 1 && dataRowIndex % 1000 == 0) {
 						dao.ExecuteNonQuery(sql.ToString());
 						sql.Clear();
 					}
 				}
 				if (sql.Length > 0) {
-					dao.ExecuteNonQuery(sql.ToString());
+					try {
+						dao.ExecuteNonQuery(sql.ToString());
+						sql.Clear();
+					}
+					catch (Exception ex) {
+						logger.Error("Running INSERT: " + sql.ToString(), ex);
+						throw ex;
+					}
 				}
+				logger.DebugFormat("{0} records imported.", dataRowIndex);
 			}
-			catch (DataException ee) {
-				return ee.Message;
+			catch (Exception ex) {
+				logger.Error("Outest catch", ex);
+				return ex.Message;
 			}
 			finally {
 				if (oleOpened) {
@@ -350,8 +454,10 @@ namespace Importer
 			var oleOpened = false;
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			try {
+				logger.Debug("Opening connection to " + filePath);
 				oconn.Open();
 				oleOpened = true;
+				logger.Debug("Opened");
 
 				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 				string sheet1 = dt.Rows[0][2].ToString();
@@ -365,19 +471,43 @@ namespace Importer
 				int importItemId = importItemIdObject == DBNull.Value ? 0 : (int)importItemIdObject;
 				dao.ExecuteNonQuery("DELETE FROM ImportOverdue WHERE ImportItemId = " + importItemId.ToString());
 				while (reader.Read()) {
-					if (GetValue(reader, 0).Equals("本页小计")) { // Going to end
+					if (DataUtility.GetValue(reader, 0).Equals("本页小计")) { // Going to end
 						break;
 					}
 					dataRowIndex++;
 					sql.AppendLine(GetInsertSql4Overdue(reader, importItemId));
-					if (dataRowIndex > 200) {
-						break;
+					// Top 3 trial for exception track
+					if (dataRowIndex == 3) {
+						try {
+							dao.ExecuteNonQuery(sql.ToString());
+							sql.Clear();
+						}
+						catch (Exception ex) {
+							logger.Error("Running INSERT: " + sql.ToString(), ex);
+							throw ex;
+						}
+					}
+					// Batch inserts
+					if (dataRowIndex > 1 && dataRowIndex % 1000 == 0) {
+						dao.ExecuteNonQuery(sql.ToString());
+						sql.Clear();
 					}
 				}
-				dao.ExecuteNonQuery(sql.ToString());
+				if (sql.Length > 0) {
+					try {
+						dao.ExecuteNonQuery(sql.ToString());
+						sql.Clear();
+					}
+					catch (Exception ex) {
+						logger.Error("Running INSERT: " + sql.ToString(), ex);
+						throw ex;
+					}
+				}
+				logger.DebugFormat("{0} records imported.", dataRowIndex);
 			}
-			catch (DataException ee) {
-				return ee.Message;
+			catch (Exception ex) {
+				logger.Error("Outest catch", ex);
+				return ex.Message;
 			}
 			finally {
 				if (oleOpened) {
@@ -389,45 +519,29 @@ namespace Importer
 
 		private string GetInsertSql4Loan(OleDbDataReader reader, int importItemId) {
 			var pattern = "INSERT INTO ImportLoan (ImportItemId, OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, CurrencyType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, ColumnM, DueBillNo, LoanStartDate, LoanEndDate, ZhiHuanZhuanRang, HeXiaoFlag, LoanState, LoanType, LoanTypeName, Direction, ZhuanLieYuQi, ZhuanLieFYJ, InterestEndDate, LiLvType, LiLvSymbol, LiLvJiaJianMa, LiLvYiJu, YuQiLiLvYiJu, YuQiLiLvType, YuQiLiLvSymbol, YuQiLiLvJiaJianMa, ContractInterestRatio, ContractOverdueInterestRate, ChargeAccount) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36})";
-			return string.Format(pattern, importItemId, GetSqlValue(reader, 0), GetSqlValue(reader, 1), GetSqlValue(reader, 2), GetSqlValue(reader, 3), GetSqlValue(reader, 4), GetSqlValue(reader, 5), GetSqlValue(reader, 6), GetSqlValue(reader, 7), GetSqlValue(reader, 8), GetSqlValue(reader, 9), GetSqlValue(reader, 10), GetSqlValue(reader, 11), GetSqlValue(reader, 12), GetSqlValue(reader, 13), GetSqlValue(reader, 14), GetSqlValue(reader, 15), GetSqlValue(reader, 16), GetSqlValue(reader, 17), GetSqlValue(reader, 18), GetSqlValue(reader, 19), GetSqlValue(reader, 20), GetSqlValue(reader, 21), GetSqlValue(reader, 22), GetSqlValue(reader, 23), GetSqlValue(reader, 24), GetSqlValue(reader, 25), GetSqlValue(reader, 26), GetSqlValue(reader, 27), GetSqlValue(reader, 28), GetSqlValue(reader, 29), GetSqlValue(reader, 30), GetSqlValue(reader, 31), GetSqlValue(reader, 32), GetSqlValue(reader, 33), GetSqlValue(reader, 34), GetSqlValue(reader, 35));
+			return string.Format(pattern, importItemId, DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 3), DataUtility.GetSqlValue(reader, 4), DataUtility.GetSqlValue(reader, 5), DataUtility.GetSqlValue(reader, 6), DataUtility.GetSqlValue(reader, 7), DataUtility.GetSqlValue(reader, 8), DataUtility.GetSqlValue(reader, 9), DataUtility.GetSqlValue(reader, 10), DataUtility.GetSqlValue(reader, 11), DataUtility.GetSqlValue(reader, 12), DataUtility.GetSqlValue(reader, 13), DataUtility.GetSqlValue(reader, 14), DataUtility.GetSqlValue(reader, 15), DataUtility.GetSqlValue(reader, 16), DataUtility.GetSqlValue(reader, 17), DataUtility.GetSqlValue(reader, 18), DataUtility.GetSqlValue(reader, 19), DataUtility.GetSqlValue(reader, 20), DataUtility.GetSqlValue(reader, 21), DataUtility.GetSqlValue(reader, 22), DataUtility.GetSqlValue(reader, 23), DataUtility.GetSqlValue(reader, 24), DataUtility.GetSqlValue(reader, 25), DataUtility.GetSqlValue(reader, 26), DataUtility.GetSqlValue(reader, 27), DataUtility.GetSqlValue(reader, 28), DataUtility.GetSqlValue(reader, 29), DataUtility.GetSqlValue(reader, 30), DataUtility.GetSqlValue(reader, 31), DataUtility.GetSqlValue(reader, 32), DataUtility.GetSqlValue(reader, 33), DataUtility.GetSqlValue(reader, 34), DataUtility.GetSqlValue(reader, 35));
 		}
 
 		private string GetInsertSql4Public(OleDbDataReader reader, int importItemId, int type) {
 			var pattern = "INSERT INTO ImportPublic (ImportItemId, PublicType, OrgName, OrgName2, CustomerNo, CustomerName, OrgType, OrgCode, ContractNo, DueBillNo, ActualPutOutDate, ActualMaturity, IndustryType1, IndustryType2, IndustryType3, IndustryType4, TermMonth, CurrencyType, Direction1, Direction2, Direction3, Direction4, OccurType, BusinessType, SubjectNo, Balance, ClassifyResult, CreditLevel, MyBankIndType, MyBankIndTypeName, Scope, ScopeName, OverdueDays, OweInterestDays, Balance1, ActualBusinessRate, RateFloat, VouchTypeName, BailRatio, NormalBalance, OverdueBalance, BadBalance, FContractNo, IsAgricultureCredit, IsINRZ) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36}, {37}, {38}, {39}, {40}, {41}, {42}, {43}, {44})";
-			return string.Format(pattern, importItemId, type, GetSqlValue(reader, 0), GetSqlValue(reader, 1), GetSqlValue(reader, 2), GetSqlValue(reader, 3), GetSqlValue(reader, 4), "NULL", GetSqlValue(reader, 6), GetSqlValue(reader, 7), GetSqlValue(reader, 8), GetSqlValue(reader, 9), GetSqlValue(reader, 10), GetSqlValue(reader, 11), GetSqlValue(reader, 12), GetSqlValue(reader, 13), GetSqlValue(reader, 14), GetSqlValue(reader, 15), GetSqlValue(reader, 16), GetSqlValue(reader, 17), GetSqlValue(reader, 18), GetSqlValue(reader, 19), GetSqlValue(reader, 20), GetSqlValue(reader, 21), GetSqlValue(reader, 22), GetSqlValue(reader, 23), GetSqlValue(reader, 24), GetSqlValue(reader, 25), GetSqlValue(reader, 26), GetSqlValue(reader, 27), GetSqlValue(reader, 28), GetSqlValue(reader, 29), GetSqlValue(reader, 30), GetSqlValue(reader, 31), GetSqlValue(reader, 32), GetSqlValue(reader, 33), GetSqlValue(reader, 34), GetSqlValue(reader, 35), GetSqlValue(reader, 36), GetSqlValue(reader, 37), GetSqlValue(reader, 38), GetSqlValue(reader, 39), GetSqlValue(reader, 40), GetSqlValue(reader, 41), GetSqlValue(reader, 42));
+			return string.Format(pattern, importItemId, type, DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 3), DataUtility.GetSqlValue(reader, 4), "NULL", DataUtility.GetSqlValue(reader, 6), DataUtility.GetSqlValue(reader, 7), DataUtility.GetSqlValue(reader, 8), DataUtility.GetSqlValue(reader, 9), DataUtility.GetSqlValue(reader, 10), DataUtility.GetSqlValue(reader, 11), DataUtility.GetSqlValue(reader, 12), DataUtility.GetSqlValue(reader, 13), DataUtility.GetSqlValue(reader, 14), DataUtility.GetSqlValue(reader, 15), DataUtility.GetSqlValue(reader, 16), DataUtility.GetSqlValue(reader, 17), DataUtility.GetSqlValue(reader, 18), DataUtility.GetSqlValue(reader, 19), DataUtility.GetSqlValue(reader, 20), DataUtility.GetSqlValue(reader, 21), DataUtility.GetSqlValue(reader, 22), DataUtility.GetSqlValue(reader, 23), DataUtility.GetSqlValue(reader, 24), DataUtility.GetSqlValue(reader, 25), DataUtility.GetSqlValue(reader, 26), DataUtility.GetSqlValue(reader, 27), DataUtility.GetSqlValue(reader, 28), DataUtility.GetSqlValue(reader, 29), DataUtility.GetSqlValue(reader, 30), DataUtility.GetSqlValue(reader, 31), DataUtility.GetSqlValue(reader, 32), DataUtility.GetSqlValue(reader, 33), DataUtility.GetSqlValue(reader, 34), DataUtility.GetSqlValue(reader, 35), DataUtility.GetSqlValue(reader, 36), DataUtility.GetSqlValue(reader, 37), DataUtility.GetSqlValue(reader, 38), DataUtility.GetSqlValue(reader, 39), DataUtility.GetSqlValue(reader, 40), DataUtility.GetSqlValue(reader, 41), DataUtility.GetSqlValue(reader, 42));
 		}
 
 		private string GetInsertSql4Private(OleDbDataReader reader, int importItemId) {
 			var pattern = "INSERT INTO ImportPrivate (ImportItemId, OrgName, OrgName2, ProductName, ProductType, LoanMonths, ZongHeShouXinEDu, DangerLevel, RepaymentMethod, CustomerName, CurrencyType, ContractStartDate, ContractEndDate, InterestRatio, DanBaoFangShi, LoanBalance, Direction1, Direction2, Direction3, Direction4, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24})";
-			return string.Format(pattern, importItemId, GetSqlValue(reader, 0), GetSqlValue(reader, 1), GetSqlValue(reader, 2), GetSqlValue(reader, 3), GetSqlValue(reader, 4), GetSqlValue(reader, 5), GetSqlValue(reader, 6), GetSqlValue(reader, 7), GetSqlValue(reader, 8), GetSqlValue(reader, 10), GetSqlValue(reader, 11), GetSqlValue(reader, 12), GetSqlValue(reader, 13), GetSqlValue(reader, 14), GetSqlValue(reader, 15), GetSqlValue(reader, 16), GetSqlValue(reader, 17), GetSqlValue(reader, 18), GetSqlValue(reader, 19), GetSqlValue(reader, 20), GetSqlValue(reader, 21), GetSqlValue(reader, 22), GetSqlValue(reader, 23), GetSqlValue(reader, 24));
+			return string.Format(pattern, importItemId, DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 3), DataUtility.GetSqlValue(reader, 4), DataUtility.GetSqlValue(reader, 5), DataUtility.GetSqlValue(reader, 6), DataUtility.GetSqlValue(reader, 7), DataUtility.GetSqlValue(reader, 8), DataUtility.GetSqlValue(reader, 10), DataUtility.GetSqlValue(reader, 11), DataUtility.GetSqlValue(reader, 12), DataUtility.GetSqlValue(reader, 13), DataUtility.GetSqlValue(reader, 14), DataUtility.GetSqlValue(reader, 15), DataUtility.GetSqlValue(reader, 16), DataUtility.GetSqlValue(reader, 17), DataUtility.GetSqlValue(reader, 18), DataUtility.GetSqlValue(reader, 19), DataUtility.GetSqlValue(reader, 20), DataUtility.GetSqlValue(reader, 21), DataUtility.GetSqlValue(reader, 22), DataUtility.GetSqlValue(reader, 23), DataUtility.GetSqlValue(reader, 24));
 		}
 
 		private string GetInsertSql4NonAccrual(OleDbDataReader reader, int importItemId) {
-			var pattern = "INSERT INTO ImportNonAccrual (ImportItemId, OrgName, CustomerName, LoanBalance, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, InterestOverdueDays, DanBaoFangShi, Industry, CustomerType, LoanType, IsNew, LoanAccount, CustomerNo) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16})";
-			return string.Format(pattern, importItemId, GetSqlValue(reader, 0), GetSqlValue(reader, 1), GetSqlValue(reader, 2), GetSqlValue(reader, 3), GetSqlValue(reader, 4), GetSqlValue(reader, 5), GetSqlValue(reader, 6), GetSqlValue(reader, 7), GetSqlValue(reader, 8), GetSqlValue(reader, 9), GetSqlValue(reader, 10), GetSqlValue(reader, 11), GetSqlValue(reader, 12), GetSqlValue(reader, 13), GetSqlValue(reader, 14), GetSqlValue(reader, 15));
+			//var pattern = "INSERT INTO ImportNonAccrual (ImportItemId, OrgName, CustomerName, LoanBalance, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, InterestOverdueDays, DanBaoFangShi, Industry, CustomerType, LoanType, IsNew, LoanAccount, CustomerNo) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16})";
+			//return string.Format(pattern, importItemId, DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 3), DataUtility.GetSqlValue(reader, 4), DataUtility.GetSqlValue(reader, 5), DataUtility.GetSqlValue(reader, 6), DataUtility.GetSqlValue(reader, 7), DataUtility.GetSqlValue(reader, 8), DataUtility.GetSqlValue(reader, 9), DataUtility.GetSqlValue(reader, 10), DataUtility.GetSqlValue(reader, 11), DataUtility.GetSqlValue(reader, 12), DataUtility.GetSqlValue(reader, 13), DataUtility.GetSqlValue(reader, 14), DataUtility.GetSqlValue(reader, 15));
+			var pattern = "INSERT INTO ImportNonAccrual (ImportItemId, OrgName, CustomerName, LoanAccount, DanBaoFangShi) VALUES ({0}, {1}, {2}, {3}, {4})";
+			return string.Format(pattern, importItemId, DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 9));
 		}
 
 		private string GetInsertSql4Overdue(OleDbDataReader reader, int importItemId) {
 			var pattern = "INSERT INTO ImportOverdue (ImportItemId, OrgName, CustomerName, LoanAccount, CustomerNo, LoanType, LoanStartDate, LoanEndDate, CapitalOverdueBalance, InterestBalance, DanBaoFangShi) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10})";
-			return string.Format(pattern, importItemId, GetSqlValue(reader, 0), GetSqlValue(reader, 1), GetSqlValue(reader, 2), GetSqlValue(reader, 3), GetSqlValue(reader, 4), GetSqlValue(reader, 5), GetSqlValue(reader, 6), GetSqlValue(reader, 7), GetSqlValue(reader, 8), GetSqlValue(reader, 9));
-		}
-
-		public string GetValue(OleDbDataReader reader, int column) {
-			object val = reader[column];
-			var s = string.Empty;
-			if (val != DBNull.Value) {
-				s = val.ToString().Trim();
-			}
-			return s;
-		}
-
-		public string GetSqlValue(OleDbDataReader reader, int column) {
-			object val = reader[column];
-			var s = string.Empty;
-			if (val != DBNull.Value) {
-				s = val.ToString().Trim().Replace("'", "''");
-			}
-			return "'" + s + "'";
+			return string.Format(pattern, importItemId, DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 3), DataUtility.GetSqlValue(reader, 4), DataUtility.GetSqlValue(reader, 5), DataUtility.GetSqlValue(reader, 6), DataUtility.GetSqlValue(reader, 7), DataUtility.GetSqlValue(reader, 8), DataUtility.GetSqlValue(reader, 9));
 		}
 
 		public string AssignOrgNo(int importId) {
@@ -457,7 +571,7 @@ namespace Importer
 		}
 
 		public XEnum.ImportState ChangeImportState(int importId, XEnum.ImportState toState) {
-			
+
 			var sql = new StringBuilder();
 			sql.AppendLine("UPDATE Import SET State = {1} WHERE Id = {0} AND State < {1}");
 			sql.AppendLine("SELECT State FROM Import WHERE Id = {0}");

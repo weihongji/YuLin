@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,12 +12,14 @@ using System.Windows.Forms;
 using Entities;
 using Importer;
 using Exporter;
+using Logging;
 
 namespace WinForm
 {
 	public partial class Main : Form
 	{
 		#region "Form level members"
+		private Logger logger = Logger.GetLogger("Main");
 
 		public Main() {
 			InitializeComponent();
@@ -93,7 +96,7 @@ namespace WinForm
 				}
 				catch (Exception ex) {
 					MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					throw;
+					logger.Error(ex);
 				}
 				finally {
 					this.Cursor = Cursors.Default;
@@ -127,13 +130,13 @@ namespace WinForm
 				return false;
 			}
 
-			if (this.lblImportLoan.Text == ""
-					&& this.lblImportPublic.Text == "" && this.lblImportPrivate.Text == ""
-					&& this.lblImportNonAccrual.Text == "" && this.lblImportOverdue.Text == ""
-				) {
-				MessageBox.Show("需要至少选择一个需要导入的源数据表", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-				return false;
-			}
+			//if (this.lblImportLoan.Text == ""
+			//		&& this.lblImportPublic.Text == "" && this.lblImportPrivate.Text == ""
+			//		&& this.lblImportNonAccrual.Text == "" && this.lblImportOverdue.Text == ""
+			//	) {
+			//	MessageBox.Show("需要至少选择一个需要导入的源数据表", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+			//	return false;
+			//}
 
 			return true;
 		}
@@ -243,14 +246,24 @@ namespace WinForm
 		}
 
 		private void btnExport_Click(object sender, EventArgs e) {
+			//var path = @"E:\Project\2015\YuLin\Git\Solution\WinForm\bin\Report\榆林分行9月末风险贷款情况表.xls";
+			//ExcelExporter.FormatReport4LoanRiskPerMonth_FYJ(path, 427, (decimal)10000.23, (decimal)100.45);
+
+			//ExcelExporter.TestInsertRow();
+			//return;
 			DateTime asOfDate;
 			if (IsValidToExport(out asOfDate)) {
 				var exporter = new ExcelExporter(asOfDate);
 				this.Cursor = Cursors.WaitCursor;
 				try {
+					var startTime = DateTime.Now;
 					var result = exporter.ExportData();
+					this.Cursor = Cursors.Default;
 					if (string.IsNullOrEmpty(result)) {
-						MessageBox.Show(asOfDate.ToString("yyyy-MM") + "月份报表已经导出到Excel文件", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
+						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
+						var msg = string.Format("{0}月份报表已经导出到Excel文件。{1}", asOfDate.ToString("yyyy-MM"), timeSpan);
+						MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 						InitImportPanel();
 					}
 					else {
@@ -267,5 +280,19 @@ namespace WinForm
 			}
 		}
 		#endregion
+
+		private void btnOpenReportFolder_Click(object sender, EventArgs e) {
+			var path = this.txtReportPath.Text;
+			if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path)) {
+				MessageBox.Show("此目录尚不存在，请您导出报表后再打开此目录", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				return;
+			}
+			Process process = new Process();
+			process.StartInfo.FileName = "explorer";
+			process.StartInfo.Arguments = path;
+			process.Start();
+			process.WaitForExit();
+			process.Close();
+		}
 	}
 }
