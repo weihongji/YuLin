@@ -11,6 +11,7 @@
 /Importer/bin
 /Importer/obj
 /WinForm/bin/Export
+/WinForm/bin/Logs
 /WinForm/bin/Import
 /WinForm/bin/Report
 /WinForm/bin/WinForm.vshost*
