@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,6 +12,7 @@ using Entities;
 using Importer;
 using Exporter;
 using Logging;
+using Helper;
 
 namespace WinForm
 {
@@ -45,11 +45,6 @@ namespace WinForm
 					break;
 			}
 		}
-
-		private DateTime GetLastDayInMonth(DateTime date) {
-			var dt = new DateTime(date.Year, date.Month, 1);
-			return dt.AddMonths(1).AddDays(-1);
-		}
 		#endregion
 
 		#region "Import Menu"
@@ -59,7 +54,7 @@ namespace WinForm
 		}
 
 		private void InitImportPanel() {
-			var asOfDate = GetLastDayInMonth(DateTime.Today).AddMonths(-1);
+			var asOfDate = DateHelper.GetLastDayInMonth(DateTime.Today).AddMonths(-1);
 			this.cmbYear.Text = asOfDate.Year.ToString();
 			this.cmbMonth.Text = asOfDate.Month.ToString();
 
@@ -78,20 +73,25 @@ namespace WinForm
 				}
 
 				string[] sourceFiles = {
-						this.lblImportLoan.Text, 
+						"dummy", // 1-based array is required
+						this.lblImportLoan.Text,
 						this.lblImportPublic.Text, this.lblImportPrivate.Text,
 						this.lblImportNonAccrual.Text, this.lblImportOverdue.Text
 					};
 				var importer = new ExcelImporter();
 				this.Cursor = Cursors.WaitCursor;
 				try {
+					var startTime = DateTime.Now;
 					var result = importer.CreateImport(asOfDate, sourceFiles);
+					this.Cursor = Cursors.Default;
 					if (string.IsNullOrEmpty(result)) {
-						MessageBox.Show(asOfDate.ToString("yyyy-MM") + "月份数据导入完毕", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						InitImportPanel();
+						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
+						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
+						var msg = string.Format("{0}月份数据导入完毕。{1}", asOfDate.ToString("yyyy-MM"), timeSpan);
+						MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					}
 					else {
-						MessageBox.Show("发生错误：" + result, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBox.Show(result, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 				}
 				catch (Exception ex) {
@@ -124,19 +124,12 @@ namespace WinForm
 				cmbYear.Focus();
 				return false;
 			}
-			else if (asOfDate.Year < 2000 || GetLastDayInMonth(asOfDate) > DateTime.Today) {
+			asOfDate = DateHelper.GetLastDayInMonth(asOfDate);
+			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
 				MessageBox.Show("年份或月份超出范围", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
 				cmbYear.Focus();
 				return false;
 			}
-
-			//if (this.lblImportLoan.Text == ""
-			//		&& this.lblImportPublic.Text == "" && this.lblImportPrivate.Text == ""
-			//		&& this.lblImportNonAccrual.Text == "" && this.lblImportOverdue.Text == ""
-			//	) {
-			//	MessageBox.Show("需要至少选择一个需要导入的源数据表", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-			//	return false;
-			//}
 
 			return true;
 		}
@@ -206,6 +199,13 @@ namespace WinForm
 					}
 					this.cmbReportMonth.Items.Add(value);
 				}
+
+				// Select the latest one by default
+				if (this.cmbReportMonth.Items.Count > 0) {
+					if (this.cmbReportMonth.SelectedIndex < 0) {
+						this.cmbReportMonth.SelectedIndex = 0;
+					}
+				}
 			}
 			this.txtReportPath.Text = ExcelExporter.GetReportFolder();
 		}
@@ -231,7 +231,8 @@ namespace WinForm
 				cmbReportMonth.Focus();
 				return false;
 			}
-			else if (asOfDate.Year < 2000 || asOfDate.Year > DateTime.Today.Year) {
+			asOfDate = DateHelper.GetLastDayInMonth(asOfDate);
+			if (asOfDate.Year < 2000 || asOfDate.Year > DateTime.Today.Year) {
 				MessageBox.Show("月份超出范围", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
 				cmbReportMonth.Focus();
 				return false;

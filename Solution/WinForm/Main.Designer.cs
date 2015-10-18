@@ -35,6 +35,8 @@
 			this.menu_Report_LoanRisk = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
 			this.panelReport = new System.Windows.Forms.Panel();
+			this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+			this.txtReportPath = new System.Windows.Forms.Label();
 			this.btnOpenReportFolder = new System.Windows.Forms.Button();
 			this.label12 = new System.Windows.Forms.Label();
 			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
@@ -68,16 +70,14 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.txtReportPath = new System.Windows.Forms.Label();
-			this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
 			this.panelReport.SuspendLayout();
+			this.flowLayoutPanel3.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
 			this.panelImport.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
-			this.flowLayoutPanel3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panelMenu
@@ -135,14 +135,14 @@
 			// menu_Report_LoanRisk
 			// 
 			this.menu_Report_LoanRisk.Name = "menu_Report_LoanRisk";
-			this.menu_Report_LoanRisk.Size = new System.Drawing.Size(160, 22);
-			this.menu_Report_LoanRisk.Text = "风险贷款情况表";
+			this.menu_Report_LoanRisk.Size = new System.Drawing.Size(244, 22);
+			this.menu_Report_LoanRisk.Text = "末风险贷款情况表（五级分类）";
 			this.menu_Report_LoanRisk.Click += new System.EventHandler(this.menu_Report_LoanRisk_Click);
 			// 
 			// panelContent
 			// 
-			this.panelContent.Controls.Add(this.panelReport);
 			this.panelContent.Controls.Add(this.panelImport);
+			this.panelContent.Controls.Add(this.panelReport);
 			this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panelContent.Location = new System.Drawing.Point(0, 35);
 			this.panelContent.Name = "panelContent";
@@ -163,6 +163,26 @@
 			this.panelReport.Name = "panelReport";
 			this.panelReport.Size = new System.Drawing.Size(695, 494);
 			this.panelReport.TabIndex = 1;
+			// 
+			// flowLayoutPanel3
+			// 
+			this.flowLayoutPanel3.Controls.Add(this.txtReportPath);
+			this.flowLayoutPanel3.Controls.Add(this.btnOpenReportFolder);
+			this.flowLayoutPanel3.Location = new System.Drawing.Point(196, 320);
+			this.flowLayoutPanel3.Name = "flowLayoutPanel3";
+			this.flowLayoutPanel3.Size = new System.Drawing.Size(455, 52);
+			this.flowLayoutPanel3.TabIndex = 19;
+			// 
+			// txtReportPath
+			// 
+			this.txtReportPath.AutoSize = true;
+			this.txtReportPath.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.txtReportPath.Location = new System.Drawing.Point(3, 8);
+			this.txtReportPath.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
+			this.txtReportPath.Name = "txtReportPath";
+			this.txtReportPath.Size = new System.Drawing.Size(63, 17);
+			this.txtReportPath.TabIndex = 18;
+			this.txtReportPath.Text = "E:\\Report";
 			// 
 			// btnOpenReportFolder
 			// 
@@ -244,9 +264,9 @@
 			this.label8.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.label8.Location = new System.Drawing.Point(161, 39);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(227, 21);
+			this.label8.Size = new System.Drawing.Size(218, 21);
 			this.label8.TabIndex = 6;
-			this.label8.Text = "榆林分行9月末风险贷款情况表";
+			this.label8.Text = "榆林分行月末风险贷款情况表";
 			// 
 			// panelImport
 			// 
@@ -344,10 +364,10 @@
 			// label7
 			// 
 			this.label7.AutoSize = true;
-			this.label7.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label7.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.label7.Location = new System.Drawing.Point(223, 24);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(106, 22);
+			this.label7.Size = new System.Drawing.Size(106, 21);
 			this.label7.TabIndex = 5;
 			this.label7.Text = "导入源数据表";
 			// 
@@ -516,26 +536,6 @@
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
 			// 
-			// txtReportPath
-			// 
-			this.txtReportPath.AutoSize = true;
-			this.txtReportPath.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.txtReportPath.Location = new System.Drawing.Point(3, 8);
-			this.txtReportPath.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
-			this.txtReportPath.Name = "txtReportPath";
-			this.txtReportPath.Size = new System.Drawing.Size(63, 17);
-			this.txtReportPath.TabIndex = 18;
-			this.txtReportPath.Text = "E:\\Report";
-			// 
-			// flowLayoutPanel3
-			// 
-			this.flowLayoutPanel3.Controls.Add(this.txtReportPath);
-			this.flowLayoutPanel3.Controls.Add(this.btnOpenReportFolder);
-			this.flowLayoutPanel3.Location = new System.Drawing.Point(196, 320);
-			this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-			this.flowLayoutPanel3.Size = new System.Drawing.Size(455, 52);
-			this.flowLayoutPanel3.TabIndex = 19;
-			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -555,14 +555,14 @@
 			this.panelContent.ResumeLayout(false);
 			this.panelReport.ResumeLayout(false);
 			this.panelReport.PerformLayout();
+			this.flowLayoutPanel3.ResumeLayout(false);
+			this.flowLayoutPanel3.PerformLayout();
 			this.flowLayoutPanel2.ResumeLayout(false);
 			this.flowLayoutPanel2.PerformLayout();
 			this.panelImport.ResumeLayout(false);
 			this.panelImport.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
-			this.flowLayoutPanel3.ResumeLayout(false);
-			this.flowLayoutPanel3.PerformLayout();
 			this.ResumeLayout(false);
 
 		}

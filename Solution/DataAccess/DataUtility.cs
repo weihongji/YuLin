@@ -21,10 +21,13 @@ namespace DataAccess
 		public static string GetSqlValue(DbDataReader reader, int column) {
 			object val = reader[column];
 			var s = string.Empty;
-			if (val != DBNull.Value) {
-				s = val.ToString().Trim().Replace("'", "''");
+			if (val == DBNull.Value) {
+				s = "NULL";
 			}
-			return "'" + s + "'";
+			else {
+				s = "'" + val.ToString().Trim().Replace("'", "''") + "'";
+			}
+			return s;
 		}
 	}
 }

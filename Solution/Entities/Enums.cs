@@ -9,16 +9,16 @@ namespace Entities
 	{
 		public enum ImportItemType
 		{
-			Loan = 0, // 贷款欠款查询
-			Public = 1, // 对公
-			Private = 2, // 个人
-			NonAccrual = 3, // 非应计贷款明细表
-			Overdue = 4 // 逾期贷款明细表
+			Loan = 1, // 贷款欠款查询
+			Public = 2, // 对公
+			Private = 3, // 个人
+			NonAccrual = 4, // 非应计贷款明细表
+			Overdue = 5 // 逾期贷款明细表
 		}
 
 		public enum ReportType
 		{
-			LoanRiskPerMonth = 0 // 榆林分行9月末风险贷款情况表（五级分类）
+			LoanRiskPerMonth = 1 // 榆林分行9月末风险贷款情况表（五级分类）
 		}
 
 		public enum ImportState

@@ -10,16 +10,18 @@ using System.IO;
 using DataAccess;
 using Entities;
 using Logging;
+using Helper;
 
 namespace Importer
 {
 	public class ExcelImporter
 	{
-		private string[] targetFileNames = { "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls" };
-		private Logger logger = Logger.GetLogger("Importer");
+		private string[] targetFileNames = { "dummy", "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls" };
+		private Logger logger = Logger.GetLogger("ExcelImporter");
 
 		#region Create import instance and backup imported files
 		public string CreateImport(DateTime asOfDate, string[] sourceFiles) {
+			logger.Debug("");
 			var result = string.Empty;
 			var dao = new SqlDbHelper();
 			var dateString = asOfDate.ToString("yyyyMMdd");
@@ -51,11 +53,11 @@ namespace Importer
 
 			// Create/update import items records
 			logger.DebugFormat("Copying source files to {0}", importFolder);
-			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Loan);
-			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Public);
-			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Private);
-			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.NonAccrual);
-			ImportItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Overdue);
+			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Loan);
+			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Public);
+			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Private);
+			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.NonAccrual);
+			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Overdue);
 			logger.DebugFormat("Source files copy done", importFolder);
 
 			if (IsAllCopied(importId)) {
@@ -64,38 +66,57 @@ namespace Importer
 
 				//Import data into database
 				result = ImportToDatabase(importId, importFolder);
+				PopulateReportLoanRiskPerMonthFYJ(importId);
 			}
 
-			logger.DebugFormat("Import #{0} created", importId);
+			logger.DebugFormat("Import #{0} done", importId);
 			return result;
 		}
 
-		private void ImportItem(int importId, string importFolder, string[] sourceFiles, XEnum.ImportItemType itemType) {
+		private void CopyItem(int importId, string importFolder, string[] sourceFiles, XEnum.ImportItemType itemType) {
 			int itemTypeId = (int)itemType;
 
 			string sourceFilePath = sourceFiles[itemTypeId];
 			string targetFileName = this.targetFileNames[itemTypeId];
 
 			if (sourceFilePath.Length > 0) {
-				var dao = new SqlDbHelper();
-				var sql = new StringBuilder();
 				int importItemId;
 
 				if (File.Exists(sourceFilePath)) {
-					File.Copy(sourceFilePath, importFolder + "\\" + targetFileName, true);
-					sql.Clear();
-					sql.AppendLine(string.Format("SELECT ISNULL(MAX(Id), 0) FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}", importId, itemTypeId));
+					//Original
+					var originalFolder = importFolder + @"\Original\";
+					if (!Directory.Exists(originalFolder)) {
+						Directory.CreateDirectory(originalFolder);
+					}
+					File.Copy(sourceFilePath, originalFolder + @"\" + targetFileName, true);
+
+					//Processed
+					var processedFolder = importFolder + @"\Processed\";
+					if (!Directory.Exists(processedFolder)) {
+						Directory.CreateDirectory(processedFolder);
+					}
+					File.Copy(sourceFilePath, processedFolder + @"\" + targetFileName, true);
+
+					logger.Debug("Process copied item for " + itemType.ToString());
+					ExcelHelper.ProcessCopiedItem(processedFolder + @"\" + targetFileName, itemType);
+
+					logger.Debug("Updating ImportItem table");
+					var dao = new SqlDbHelper();
+					var sql = new StringBuilder();
+					sql.AppendFormat("SELECT ISNULL(MAX(Id), 0) FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}", importId, itemTypeId);
 					importItemId = (int)dao.ExecuteScalar(sql.ToString());
 					if (importItemId == 0) {
 						sql.Clear();
 						sql.AppendLine(string.Format("INSERT INTO ImportItem (ImportId, ItemType, FilePath) VALUES ({0}, {1}, '{2}')", importId, itemTypeId, sourceFilePath));
 						sql.AppendLine("SELECT SCOPE_IDENTITY()");
 						importItemId = (int)((decimal)dao.ExecuteScalar(sql.ToString()));
+						logger.Debug("New record created. ImportItemId = " + importItemId.ToString());
 					}
 					else {
 						sql.Clear();
-						sql.AppendLine(string.Format("UPDATE ImportItem SET FilePath = '{0}', ModifyDate = getdate() WHERE Id = {1}", sourceFilePath, importItemId));
+						sql.AppendFormat("UPDATE ImportItem SET FilePath = '{0}', ModifyDate = getdate() WHERE Id = {1}", sourceFilePath, importItemId);
 						dao.ExecuteNonQuery(sql.ToString());
+						logger.Debug("Existing record updated. ImportItemId = " + importItemId.ToString());
 					}
 				}
 			}
@@ -104,6 +125,7 @@ namespace Importer
 
 		#region "Import excel data to database"
 		public string ImportToDatabase(int importId, string importFolder) {
+			importFolder += "\\Processed";
 			logger.Debug("Importing Loan to database");
 			var result = ImportLoan(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Loan]);
 			if (!String.IsNullOrEmpty(result)) {
@@ -220,7 +242,7 @@ namespace Importer
 
 		public string ImportPublic(int importId, string filePath) {
 			if (String.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath)) {
-				return string.Format("File {0} cannot be found", filePath ?? "<empty>");
+				return string.Format("没有找到文件 {0}", filePath ?? "<empty>");
 			}
 
 			var oleOpened = false;
@@ -518,7 +540,7 @@ namespace Importer
 		}
 
 		private string GetInsertSql4Loan(OleDbDataReader reader, int importItemId) {
-			var pattern = "INSERT INTO ImportLoan (ImportItemId, OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, CurrencyType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, ColumnM, DueBillNo, LoanStartDate, LoanEndDate, ZhiHuanZhuanRang, HeXiaoFlag, LoanState, LoanType, LoanTypeName, Direction, ZhuanLieYuQi, ZhuanLieFYJ, InterestEndDate, LiLvType, LiLvSymbol, LiLvJiaJianMa, LiLvYiJu, YuQiLiLvYiJu, YuQiLiLvType, YuQiLiLvSymbol, YuQiLiLvJiaJianMa, ContractInterestRatio, ContractOverdueInterestRate, ChargeAccount) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36})";
+			var pattern = "INSERT INTO ImportLoan (ImportItemId, OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, CurrencyType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, ColumnM, DueBillNo, LoanStartDate, LoanEndDate, ZhiHuanZhuanRang, HeXiaoFlag, LoanState, LoanType, LoanTypeName, Direction, ZhuanLieYuQi, ZhuanLieFYJ, InterestEndDate, LiLvType, LiLvSymbol, LiLvJiaJianMa, YuQiLiLvYiJu, YuQiLiLvType, YuQiLiLvSymbol, YuQiLiLvJiaJianMa, LiLvYiJu, ContractInterestRatio, ContractOverdueInterestRate, ChargeAccount) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36})";
 			return string.Format(pattern, importItemId, DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 3), DataUtility.GetSqlValue(reader, 4), DataUtility.GetSqlValue(reader, 5), DataUtility.GetSqlValue(reader, 6), DataUtility.GetSqlValue(reader, 7), DataUtility.GetSqlValue(reader, 8), DataUtility.GetSqlValue(reader, 9), DataUtility.GetSqlValue(reader, 10), DataUtility.GetSqlValue(reader, 11), DataUtility.GetSqlValue(reader, 12), DataUtility.GetSqlValue(reader, 13), DataUtility.GetSqlValue(reader, 14), DataUtility.GetSqlValue(reader, 15), DataUtility.GetSqlValue(reader, 16), DataUtility.GetSqlValue(reader, 17), DataUtility.GetSqlValue(reader, 18), DataUtility.GetSqlValue(reader, 19), DataUtility.GetSqlValue(reader, 20), DataUtility.GetSqlValue(reader, 21), DataUtility.GetSqlValue(reader, 22), DataUtility.GetSqlValue(reader, 23), DataUtility.GetSqlValue(reader, 24), DataUtility.GetSqlValue(reader, 25), DataUtility.GetSqlValue(reader, 26), DataUtility.GetSqlValue(reader, 27), DataUtility.GetSqlValue(reader, 28), DataUtility.GetSqlValue(reader, 29), DataUtility.GetSqlValue(reader, 30), DataUtility.GetSqlValue(reader, 31), DataUtility.GetSqlValue(reader, 32), DataUtility.GetSqlValue(reader, 33), DataUtility.GetSqlValue(reader, 34), DataUtility.GetSqlValue(reader, 35));
 		}
 
@@ -578,6 +600,13 @@ namespace Importer
 			var dao = new SqlDbHelper();
 			var state = (short)dao.ExecuteScalar(string.Format(sql.ToString(), importId, (int)toState));
 			return (XEnum.ImportState)state;
+		}
+
+		private void PopulateReportLoanRiskPerMonthFYJ(int importId) {
+			logger.Debug("Populating table ReportLoanRiskPerMonthFYJ");
+			var dao = new SqlDbHelper();
+			var rowCount = dao.ExecuteNonQuery(string.Format("EXEC spPopulateNoAccrual {0}", importId));
+			logger.DebugFormat("{0} rows inserted into ReportLoanRiskPerMonthFYJ for import #{1}", rowCount, importId);
 		}
 		#endregion
 	}

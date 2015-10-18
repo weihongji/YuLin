@@ -56,7 +56,6 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -76,6 +75,10 @@
     <ProjectReference Include="..\Entities\Entities.csproj">
       <Project>{96e9b730-079d-4e27-a9c0-d3ccc040e45e}</Project>
       <Name>Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Helper\Helper.csproj">
+      <Project>{22f7da42-534d-44ab-9b3c-06e596063f98}</Project>
+      <Name>Helper</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.csproj">
       <Project>{ac46281a-7423-4a16-8f4f-d27f9bb54519}</Project>
