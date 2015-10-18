@@ -4,6 +4,10 @@
 /Entities/obj
 /Exporter/bin
 /Exporter/obj
+/Helper/bin
+/Helper/obj
+/Logging/bin
+/Logging/obj
 /Importer/bin
 /Importer/obj
 /WinForm/bin/Export
