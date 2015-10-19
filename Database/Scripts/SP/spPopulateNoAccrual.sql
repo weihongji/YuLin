@@ -15,7 +15,9 @@ BEGIN
 	DELETE FROM ReportLoanRiskPerMonthFYJ WHERE ImportId = @importId
 
 	INSERT INTO ReportLoanRiskPerMonthFYJ(ImportId, LoanAccount, OrgName, CustomerName, LoanBalance, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, InterestOverdueDays, DanBaoFangShi, Industry, CustomerType, LoanType, IsNew, LoanState)
-	SELECT @importId AS ImportId, L.LoanAccount, O.Alias1, L.CustomerName, L.CapitalAmount, 'xxx' AS DangerLevel
+	SELECT @importId AS ImportId, L.LoanAccount
+		, OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
+		, L.CustomerName, L.CapitalAmount, L.DangerLevel
 		, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 		, L.LoanStartDate, L.LoanEndDate
 		, OverdueDays = CASE WHEN L.LoanEndDate < @asOfDate THEN DATEDIFF(day, L.LoanEndDate, @asOfDate) ELSE 0 END

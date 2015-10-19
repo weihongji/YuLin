@@ -163,6 +163,13 @@ namespace Importer
 				return result;
 			}
 
+			//Assigning Danger Level
+			logger.Debug("Assigning Danger Level to Loan");
+			result = AssignDangerLevel(importId);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+
 			ChangeImportState(importId, XEnum.ImportState.Imported);
 			logger.Debug("Import to database done");
 
@@ -590,6 +597,21 @@ namespace Importer
 			var dao = new SqlDbHelper();
 			var count = (int)dao.ExecuteScalar(string.Format("SELECT COUNT(*) FROM ImportItem WHERE ImportId = {0}", importId));
 			return count == 5;
+		}
+
+		public string AssignDangerLevel(int importId) {
+			try {
+				var dao = new SqlDbHelper();
+				var sql = new StringBuilder();
+				sql.AppendLine("UPDATE ImportLoan SET DangerLevel = dbo.sfGetDangerLevel({0}, LoanAccount)");
+				sql.AppendLine("WHERE LoanState != '结清'");
+				sql.AppendLine("	AND ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = {0} AND ItemType = {1})");
+				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId, (int)XEnum.ImportItemType.Loan));
+			}
+			catch (Exception ex) {
+				return ex.Message;;
+			}
+			return string.Empty;
 		}
 
 		public XEnum.ImportState ChangeImportState(int importId, XEnum.ImportState toState) {
