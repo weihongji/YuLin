@@ -26,7 +26,7 @@ BEGIN
 		, Industry = ISNULL(PV.Direction1, PB.Direction1)
 		, CustomerType = ISNULL(PV.ProductName, PB.MyBankIndTypeName)
 		, LoanType = L.LoanTypeName
-		, IsNew = '·ñ'
+		, IsNew = ''
 		, Comment = L.LoanState
 	FROM ImportLoan L
 		LEFT JOIN Org O ON L.OrgNo = O.Number

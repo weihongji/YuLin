@@ -76,7 +76,7 @@ namespace Exporter
 
 		public SqlDataReader GetReader() {
 			var sql = new StringBuilder();
-			sql.AppendLine("SELECT OrgName, CustomerName, LoanBalance, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, InterestOverdueDays, DanBaoFangShi, Industry, CustomerType, LoanType, IsNew, LoanState");
+			sql.AppendLine("SELECT OrgName, CustomerName, LoanBalance, DangerLevel, OweInterestAmount,  CONVERT(VARCHAR(8), LoanStartDate, 112), CONVERT(VARCHAR(8), LoanEndDate, 112), OverdueDays, InterestOverdueDays, DanBaoFangShi, Industry, CustomerType, LoanType, IsNew, LoanState");
 			sql.AppendLine("FROM ReportLoanRiskPerMonthFYJ");
 			sql.AppendLine("WHERE ImportId = (SELECT Id FROM Import WHERE ImportDate = '" + this.AsOfDate.ToString("yyyyMMdd") + "')");
 			var dao = new SqlDbHelper();

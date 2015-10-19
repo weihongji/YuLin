@@ -263,6 +263,7 @@ namespace Importer
 				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 				string sheetName;
 				int maxSheets = 3;
+				int importItemId = 0;
 				for (int sheetIndex = 0; sheetIndex < maxSheets; sheetIndex++) {
 					if (dt.Rows.Count < sheetIndex * 2 + 1) {
 						break;
@@ -272,16 +273,15 @@ namespace Importer
 
 					OleDbCommand ocmd = new OleDbCommand(string.Format("select * from [{0}]", sheetName), oconn);
 					OleDbDataReader reader = ocmd.ExecuteReader();
-					int skipRows = sheetIndex == 0 ? 1 : 0;
-					for (int i = 0; i < skipRows && reader.Read(); i++) {
-						// Loop until get to the header row
-					}
+
 					int dataRowIndex = 0;
 					var sql = new StringBuilder();
 					var dao = new SqlDbHelper();
-					var importItemIdObject = dao.ExecuteScalar(string.Format("SELECT Id FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}", importId, (int)XEnum.ImportItemType.Public));
-					int importItemId = importItemIdObject == DBNull.Value ? 0 : (int)importItemIdObject;
-					dao.ExecuteNonQuery("DELETE FROM ImportPublic WHERE ImportItemId = " + importItemId.ToString());
+					if (sheetIndex == 0) {
+						var importItemIdObject = dao.ExecuteScalar(string.Format("SELECT Id FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}", importId, (int)XEnum.ImportItemType.Public));
+						importItemId = importItemIdObject == DBNull.Value ? 0 : (int)importItemIdObject;
+						dao.ExecuteNonQuery("DELETE FROM ImportPublic WHERE ImportItemId = " + importItemId.ToString());
+					}
 					while (reader.Read()) {
 						if (string.IsNullOrWhiteSpace(DataUtility.GetValue(reader, 0))) { // Going to end
 							break;
@@ -347,10 +347,7 @@ namespace Importer
 
 				OleDbCommand ocmd = new OleDbCommand(string.Format("select * from [{0}]", sheet1), oconn);
 				OleDbDataReader reader = ocmd.ExecuteReader();
-				int skipRows = 2;
-				for (int i = 0; i < skipRows && reader.Read(); i++) {
-					// Loop until get to the header row
-				}
+
 				int dataRowIndex = 0;
 				var sql = new StringBuilder();
 				var dao = new SqlDbHelper();
