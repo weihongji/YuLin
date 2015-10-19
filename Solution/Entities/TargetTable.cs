@@ -10,7 +10,7 @@ namespace Entities
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string FileName { get; set; }
+		public string TemplateName { get; set; }
 
 		private List<TargetTableSheet> _sheets;
 
@@ -20,7 +20,7 @@ namespace Entities
 		public TargetTable(DataRow row) {
 			this.Id = (int)row["Id"];
 			this.Name = (string)row["Name"];
-			this.FileName = (string)row["FileName"];
+			this.TemplateName = (string)row["FileName"];
 		}
 
 		public List<TargetTableSheet> Sheets {

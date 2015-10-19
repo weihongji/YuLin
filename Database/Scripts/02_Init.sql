@@ -189,9 +189,11 @@ END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (1, 1, 1, '非应计', 2, 6, 6)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (2, 1, 2, '不良贷款', 2, 6, 6)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
+	/* 非应计 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (1, 1, '行名')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (1, 2, '客户名称')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (1, 3, '贷款余额')
@@ -207,4 +209,21 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (1, 13, '贷款类型')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (1, 14, '是否本月新增')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (1, 15, '备注')
+
+	/* 不良贷款 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 1, '行名')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 2, '企业（客户）名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 3, '贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 4, '七级分类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 5, '欠息金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 6, '发放日')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 7, '到期日')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 8, '逾期天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 9, '欠息天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 10, '担保方式')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 11, '行业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 12, '客户类型')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 13, '贷款类型')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 14, '是否本月新增')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 15, '备注')
 END

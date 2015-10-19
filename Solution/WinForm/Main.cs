@@ -41,7 +41,7 @@ namespace WinForm
 					// Show nothing in the content area
 					break;
 				default:
-					MessageBox.Show("Invalid panel name.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					ShowError("Invalid panel name.");
 					break;
 			}
 		}
@@ -87,15 +87,14 @@ namespace WinForm
 					if (string.IsNullOrEmpty(result)) {
 						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
 						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
-						var msg = string.Format("{0}月份数据导入完毕。{1}", asOfDate.ToString("yyyy-MM"), timeSpan);
-						MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+						ShowInfo(string.Format("{0}月份数据导入完毕。{1}", asOfDate.ToString("yyyy-MM"), timeSpan));
 					}
 					else {
-						MessageBox.Show(result, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						ShowError(result);
 					}
 				}
 				catch (Exception ex) {
-					MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					ShowError(ex.Message);
 					logger.Error(ex);
 				}
 				finally {
@@ -108,25 +107,25 @@ namespace WinForm
 			asOfDate = new DateTime(1900, 1, 1);
 
 			if (cmbYear.Text == "") {
-				MessageBox.Show("需要填写导入数据的年份", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowStop("需要填写导入数据的年份");
 				cmbYear.Focus();
 				return false;
 			}
 			if (cmbMonth.Text == "") {
-				MessageBox.Show("需要填写导入数据的月份", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowStop("需要填写导入数据的月份");
 				cmbMonth.Focus();
 				return false;
 			}
 
 			string dateString = string.Format("{0}/{1}/1", cmbYear.Text, cmbMonth.Text);
 			if (!DateTime.TryParse(dateString, out asOfDate)) {
-				MessageBox.Show("数据的年份或月份无效", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowStop("数据的年份或月份无效");
 				cmbYear.Focus();
 				return false;
 			}
 			asOfDate = DateHelper.GetLastDayInMonth(asOfDate);
 			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
-				MessageBox.Show("年份或月份超出范围", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowStop("年份或月份超出范围");
 				cmbYear.Focus();
 				return false;
 			}
@@ -207,19 +206,19 @@ namespace WinForm
 					}
 				}
 			}
-			this.txtReportPath.Text = ExcelExporter.GetReportFolder();
+			this.txtReportPath.Text = BaseReport.GetReportFolder();
 		}
 
 		private bool IsValidToExport(out DateTime asOfDate) {
 			asOfDate = new DateTime(1900, 1, 1);
 
 			if (this.cmbReportMonth.Text == "") {
-				MessageBox.Show("需要填写导入数据的月份", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowStop("需要填写导入数据的月份");
 				cmbReportMonth.Focus();
 				return false;
 			}
 			else if (this.cmbReportMonth.Text.IndexOf('*') >= 0) {
-				MessageBox.Show(this.cmbReportMonth.Text.Replace(" *", "") + "月份的数据的尚未全部导入系统", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowStop(this.cmbReportMonth.Text.Replace(" *", "") + "月份的数据的尚未全部导入系统");
 				cmbReportMonth.Focus();
 				return false;
 			}
@@ -227,13 +226,13 @@ namespace WinForm
 			var dateString = this.cmbReportMonth.Text.Replace("-", "/") + "/1";
 
 			if (!DateTime.TryParse(dateString, out asOfDate)) {
-				MessageBox.Show("数据月份无效", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowStop("数据月份无效");
 				cmbReportMonth.Focus();
 				return false;
 			}
 			asOfDate = DateHelper.GetLastDayInMonth(asOfDate);
 			if (asOfDate.Year < 2000 || asOfDate.Year > DateTime.Today.Year) {
-				MessageBox.Show("月份超出范围", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowStop("月份超出范围");
 				cmbReportMonth.Focus();
 				return false;
 			}
@@ -247,45 +246,38 @@ namespace WinForm
 		}
 
 		private void btnExport_Click(object sender, EventArgs e) {
-			//var path = @"E:\Project\2015\YuLin\Git\Solution\WinForm\bin\Report\榆林分行9月末风险贷款情况表.xls";
-			//ExcelExporter.FormatReport4LoanRiskPerMonth_FYJ(path, 427, (decimal)10000.23, (decimal)100.45);
-
-			//ExcelExporter.TestInsertRow();
-			//return;
 			DateTime asOfDate;
-			if (IsValidToExport(out asOfDate)) {
-				var exporter = new ExcelExporter(asOfDate);
-				this.Cursor = Cursors.WaitCursor;
-				try {
-					var startTime = DateTime.Now;
-					var result = exporter.ExportData();
-					this.Cursor = Cursors.Default;
-					if (string.IsNullOrEmpty(result)) {
-						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
-						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
-						var msg = string.Format("{0}月份报表已经导出到Excel文件。{1}", asOfDate.ToString("yyyy-MM"), timeSpan);
-						MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						InitImportPanel();
-					}
-					else {
-						MessageBox.Show("Error: " + result, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
+			if (!IsValidToExport(out asOfDate)) {
+				return;
+			}
+			this.Cursor = Cursors.WaitCursor;
+			try {
+				var reportTypes = new List<XEnum.ReportType> { XEnum.ReportType.LoanRiskPerMonth };
+				var exporter = new ExcelExporter();
+				var startTime = DateTime.Now; // Use to count time cost
+				var result = exporter.ExportData(reportTypes, asOfDate);
+				this.Cursor = Cursors.Default;
+				if (string.IsNullOrEmpty(result)) {
+					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
+					var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : ""; // Show time cost if longer than 3s
+					ShowInfo(string.Format("报表导出完毕。{0}", timeSpan));
 				}
-				catch (Exception ex) {
-					MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					throw;
-				}
-				finally {
-					this.Cursor = Cursors.Default;
+				else {
+					ShowError(result);
 				}
 			}
+			catch (Exception ex) {
+				logger.Error(ex.Message);
+			}
+			finally {
+				this.Cursor = Cursors.Default;
+			}
 		}
-		#endregion
 
 		private void btnOpenReportFolder_Click(object sender, EventArgs e) {
 			var path = this.txtReportPath.Text;
 			if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path)) {
-				MessageBox.Show("此目录尚不存在，请您导出报表后再打开此目录", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				ShowInfo("此目录尚不存在，请您导出报表后再打开此目录");
 				return;
 			}
 			Process process = new Process();
@@ -295,5 +287,20 @@ namespace WinForm
 			process.WaitForExit();
 			process.Close();
 		}
+		#endregion
+
+		#region Utility functions
+		private void ShowInfo(string msg) {
+			MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		private void ShowStop(string msg) {
+			MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+		}
+
+		private void ShowError(string msg) {
+			MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}
+		#endregion
 	}
 }

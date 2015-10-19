@@ -63,8 +63,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseReport.cs" />
     <Compile Include="ExcelExporter.cs" />
-    <Compile Include="IExporter.cs" />
+    <Compile Include="LoanRiskPerMonth.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

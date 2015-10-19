@@ -66,7 +66,7 @@ namespace Helper
 			}
 		}
 
-		public static void CreateDataSheet(string filePath, TargetTableSheet sheet) {
+		public static void InitSheet(string filePath, TargetTableSheet sheet) {
 			if (sheet.RowsBeforeHeader == 0) {
 				return;
 			}
@@ -113,10 +113,40 @@ namespace Helper
 			}
 		}
 
-		public static void FormatReport4LoanRiskPerMonth_FYJ(string filePath, TargetTableSheet sheet, int dataRowCount, DateTime asOfDate) {
-			if (dataRowCount == 0) {
-				return;
+		public static void ActivateSheet(string filePath, int sheetIndex = 1) {
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+
+				theSheet = (Worksheet)theExcelBook.Sheets[sheetIndex];
+				theSheet.Activate();
+				theExcelBook.Save();
 			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+		}
+
+		public static void FormatReport4LoanRiskPerMonth(string filePath, TargetTableSheet sheet, int dataRowCount, DateTime asOfDate) {
 			int sheetIndex = sheet.Index;
 			int rowsBeforeColumnHeader = sheet.RowsBeforeHeader;
 			int rowsBeforeData = rowsBeforeColumnHeader + 1;
@@ -179,8 +209,8 @@ namespace Helper
 				int totalRowIndex = rowsBeforeData + dataRowCount + 1;
 				((Range)theSheet.Cells[totalRowIndex, 1]).Value2 = "合计";
 				((Range)theSheet.Cells[totalRowIndex, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
-				((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 1, totalRowIndex - 1);
-				((Range)theSheet.Cells[totalRowIndex, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", sheet.RowsBeforeHeader + 1, totalRowIndex - 1);
+				((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+				((Range)theSheet.Cells[totalRowIndex, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
 
 				//绘制数据部分的表格线
 				int dataRowStartIndex = rowsBeforeData + 1;
