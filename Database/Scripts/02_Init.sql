@@ -190,6 +190,9 @@ END
 IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (1, 1, 1, '非应计', 2, 6, 6)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (2, 1, 2, '不良贷款', 2, 6, 6)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (3, 1, 3, '逾期', 2, 6, 6)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (4, 1, 4, '只欠息', 2, 6, 6)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (5, 1, 5, '关注贷款', 2, 6, 6)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -226,4 +229,56 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 13, '贷款类型')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 14, '是否本月新增')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (2, 15, '备注')
+
+	/* 逾期 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 1, '行名')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 2, '客户名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 3, '贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 4, '违约金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 5, '七级分类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 6, '欠息金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 7, '放款日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 8, '到期日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 9, '逾期天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 10, '欠息天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 11, '担保方式')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 12, '行业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 13, '客户类型')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 14, '贷款种类说明')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 15, '是否本月新增')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (3, 16, '备注')
+
+	/* 只欠息 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 1, '行名')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 2, '客户名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 3, '本金余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 4, '七级分类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 5, '欠息金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 6, '放款日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 7, '到期日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 8, '逾期天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 9, '欠息天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 10, '担保方式')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 11, '行业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 12, '客户类型')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 13, '贷款种类说明')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 14, '是否本月新增')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (4, 15, '备注')
+
+	/* 关注贷款 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 1, '行名')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 2, '客户名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 3, '贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 4, '七级分类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 5, '欠息金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 6, '放款日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 7, '到期日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 8, '逾期天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 9, '欠息天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 10, '担保方式')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 11, '行业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 12, '客户类型')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 13, '贷款类型')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 14, '是否本月新增')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 15, '备注')
 END

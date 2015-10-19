@@ -79,6 +79,15 @@ namespace Exporter
 				case 2:
 					suffix = "BLDK";
 					break;
+				case 3:
+					suffix = "YQ";
+					break;
+				case 4:
+					suffix = "ZQX";
+					break;
+				case 5:
+					suffix = "GZDK";
+					break;
 				default:
 					Logger.Error("Unknown sheet index: " + sheet.Index.ToString());
 					throw new Exception("Unknown sheet index: " + sheet.Index.ToString());

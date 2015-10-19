@@ -346,32 +346,3 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('TargetTableS
 
 	ALTER TABLE dbo.TargetTableSheetColumn CHECK CONSTRAINT FK_TargetTableSheetColumn_TargetTableSheet
 END
-
-IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ReportLoanRiskPerMonthFYJ')) BEGIN
-	CREATE TABLE dbo.ReportLoanRiskPerMonthFYJ(
-		Id int IDENTITY(1,1) NOT NULL,
-		ImportId int NOT NULL,
-		LoanAccount varchar(50) NULL,
-		OrgName nvarchar(100) NULL,
-		CustomerName nvarchar(100) NULL,
-		LoanBalance money NULL,
-		DangerLevel nvarchar(50) NULL,
-		OweInterestAmount money NULL,
-		LoanStartDate smalldatetime NULL,
-		LoanEndDate smalldatetime NULL,
-		OverdueDays smallint NULL,
-		InterestOverdueDays smallint NULL,
-		DanBaoFangShi nvarchar(100) NULL,
-		Industry nvarchar(100) NULL,
-		CustomerType nvarchar(50) NULL,
-		LoanType nvarchar(50) NULL,
-		IsNew nvarchar(50) NULL,
-		LoanState nvarchar(50) NULL
-		CONSTRAINT PK_ReportLoanRiskPerMonthFYJ PRIMARY KEY CLUSTERED
-		(
-			Id ASC
-		)
-	) ON [PRIMARY]
-
-	CREATE NONCLUSTERED INDEX IX_ReportLoanRiskPerMonthFYJ_ImportId ON dbo.ReportLoanRiskPerMonthFYJ(ImportId ASC) ON [PRIMARY]
-END
