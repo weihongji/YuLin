@@ -25,7 +25,6 @@ DROP TABLE SourceTableSheetColumn
 DROP TABLE TargetTable
 DROP TABLE TargetTableSheet
 DROP TABLE TargetTableSheetColumn
-DROP TABLE ReportLoanRiskPerMonthFYJ
 
 /*
 TRUNCATE TABLE Org

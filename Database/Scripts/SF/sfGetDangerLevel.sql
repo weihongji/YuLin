@@ -37,7 +37,7 @@ BEGIN
 	IF @customerType = '对公' BEGIN
 		SELECT @customerScale = (CASE WHEN P.MyBankIndTypeName IN ('微型企业', '小型企业') THEN '2' ELSE '1' END)
 			, @oweInterestDays = P.OweInterestDays
-		FROM ImportPublic P INNER JOIN ImportLoan L ON P.FContractNo = L.LoanAccount AND P.ImportItemId = @importItemIdPublic
+		FROM ImportPublic P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount AND P.ImportItemId = @importItemIdPublic
 		WHERE L.Id = @importLoanId
 	END
 	ELSE BEGIN
