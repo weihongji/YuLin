@@ -31,11 +31,11 @@ namespace ExcelTester
 				msg.AppendLine("Reading rows");
 				msg.AppendLine(new string('-', 20));
 				int i = 0;
-				while (reader.Read()) {
+				while (reader.Read() && i < 10) {
 					msg.AppendLine("Row " + (++i).ToString() + ":");
 					fname = reader[0].ToString();
-					lname = reader[0].ToString();
-					mobnum = reader[0].ToString();
+					lname = reader[1].ToString();
+					mobnum = reader[2].ToString();
 					msg.AppendLine(string.Format("{0}, {1}, {2}", fname, lname, mobnum));
 				}
 				msg.AppendLine(new string('-', 20));
