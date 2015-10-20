@@ -266,6 +266,17 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Org')) BEGIN
 	) ON [PRIMARY]
 END
 
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DanBaoFangShi')) BEGIN
+	CREATE TABLE dbo.DanBaoFangShi(
+		Name nvarchar(100) NOT NULL,
+		Category nvarchar(50) NULL
+		CONSTRAINT PK_DanBaoFangShi PRIMARY KEY CLUSTERED
+		(
+			Name ASC
+		)
+	) ON [PRIMARY]
+END
+
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('SourceTable')) BEGIN
 	CREATE TABLE dbo.SourceTable(
 		Id int NOT NULL,

@@ -11,6 +11,7 @@ ALTER TABLE dbo.TargetTableSheetColumn DROP CONSTRAINT FK_TargetTableSheetColumn
 GO
 
 DROP TABLE Org
+DROP TABLE DanBaoFangShi
 DROP TABLE Import
 DROP TABLE ImportItem
 DROP TABLE ImportLoan

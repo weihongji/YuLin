@@ -267,7 +267,8 @@ namespace WinForm
 				}
 			}
 			catch (Exception ex) {
-				logger.Error(ex.Message);
+				logger.Error(ex);
+				ShowError(ex.Message);
 			}
 			finally {
 				this.Cursor = Cursors.Default;

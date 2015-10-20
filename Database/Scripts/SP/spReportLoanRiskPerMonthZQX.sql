@@ -12,14 +12,14 @@ BEGIN
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
-	SELECT TOP 10 OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
+	SELECT OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
 		, L.CustomerName, L.CapitalAmount, L.DangerLevel
 		, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 		, LoanStartDate = CONVERT(VARCHAR(8), L.LoanStartDate, 112)
 		, LoanEndDate = CONVERT(VARCHAR(8), L.LoanEndDate, 112)
 		, OverdueDays = CASE WHEN L.LoanEndDate < @asOfDate THEN DATEDIFF(day, L.LoanEndDate, @asOfDate) ELSE 0 END
 		, OweInterestDays = CASE WHEN L.CustomerType = '对私' THEN PV.InterestOverdueDays ELSE PB.OweInterestDays END
-		, DanBaoFangShi = ISNULL(NA.DanBaoFangShi, OD.DanBaoFangShi)
+		, DanBaoFangShi = (SELECT Category FROM DanBaoFangShi WHERE Name = ISNULL(PV.DanBaoFangShi, PB.VOUCHTYPENAME))
 		, Industry = ISNULL(PV.Direction1, PB.Direction1)
 		, CustomerType = ISNULL(PV.ProductName, PB.MyBankIndTypeName)
 		, LoanType = L.LoanTypeName
@@ -36,6 +36,7 @@ BEGIN
 		LEFT JOIN ImportNonAccrual NA ON L.LoanAccount = NA.LoanAccount AND NA.ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 4)
 		LEFT JOIN ImportOverdue OD ON L.LoanAccount = OD.LoanAccount AND OD.ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 5)
 	WHERE L.ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 1)
-		AND LoanState = '正常'
+		AND L.LoanState = '正常'
+		AND (L.OweYingShouInterest + L.OweCuiShouInterest) != 0
 	ORDER BY L.Id
 END

@@ -283,14 +283,21 @@ namespace Helper
 				theExcelBook = theExcelApp.Workbooks.Open(@"E:\Project\2015\YuLin\Git\Solution\WinForm\bin\Report\a.xls");
 				excelOpened = true;
 
+				// Insert column
+				theSheet = (Worksheet)theExcelBook.Worksheets[1];
+				((Range)theSheet.Columns[3]).Insert();
+				for (int i = 1; i <= 2; i++) {
+					((Range)theSheet.Cells[i, 3]).Value2 = i.ToString();
+				}
+
 				//theSheet = (Worksheet)theExcelBook.Worksheets[1];
 				//theSheet.Delete();
 
-				theSheet = (Worksheet)theExcelBook.Worksheets[1];
-				theSheet.Activate();
-				var range = (Range)theSheet.get_Range("1:2");
-				range.Select();
-				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+				//theSheet = (Worksheet)theExcelBook.Worksheets[1];
+				//theSheet.Activate();
+				//var range = (Range)theSheet.get_Range("1:2");
+				//range.Select();
+				//range.Delete(XlDeleteShiftDirection.xlShiftUp);
 
 				//Range oRange;
 				//theSheet = (Worksheet)theExcelBook.Sheets[1];

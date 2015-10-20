@@ -66,7 +66,6 @@ namespace Importer
 
 				//Import data into database
 				result = ImportToDatabase(importId, importFolder);
-				PopulateReportLoanRiskPerMonthFYJ(importId);
 			}
 
 			logger.DebugFormat("Import #{0} done", importId);
@@ -488,7 +487,7 @@ namespace Importer
 				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 				string sheet1 = dt.Rows[0][2].ToString();
 
-				OleDbCommand ocmd = new OleDbCommand(string.Format("select * from [{0}A9:J9999]", sheet1), oconn);
+				OleDbCommand ocmd = new OleDbCommand(string.Format("select * from [{0}]", sheet1), oconn);
 				OleDbDataReader reader = ocmd.ExecuteReader();
 				int dataRowIndex = 0;
 				var sql = new StringBuilder();
@@ -544,7 +543,7 @@ namespace Importer
 		}
 
 		private string GetInsertSql4Loan(OleDbDataReader reader, int importItemId) {
-			var pattern = "INSERT INTO ImportLoan (ImportItemId, OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, CurrencyType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, ColumnM, DueBillNo, LoanStartDate, LoanEndDate, ZhiHuanZhuanRang, HeXiaoFlag, LoanState, LoanType, LoanTypeName, Direction, ZhuanLieYuQi, ZhuanLieFYJ, InterestEndDate, LiLvType, LiLvSymbol, LiLvJiaJianMa, YuQiLiLvYiJu, YuQiLiLvType, YuQiLiLvSymbol, YuQiLiLvJiaJianMa, LiLvYiJu, ContractInterestRatio, ContractOverdueInterestRate, ChargeAccount) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36})";
+			var pattern = "INSERT INTO ImportLoan (ImportItemId, OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, CurrencyType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, DueBillNo, LoanStartDate, LoanEndDate, ZhiHuanZhuanRang, HeXiaoFlag, LoanState, LoanType, LoanTypeName, Direction, ZhuanLieYuQi, ZhuanLieFYJ, InterestEndDate, LiLvType, LiLvSymbol, LiLvJiaJianMa, YuQiLiLvYiJu, YuQiLiLvType, YuQiLiLvSymbol, YuQiLiLvJiaJianMa, LiLvYiJu, ContractInterestRatio, ContractOverdueInterestRate, ChargeAccount) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36})";
 			return string.Format(pattern, importItemId, DataUtility.GetSqlValue(reader, 0), DataUtility.GetSqlValue(reader, 1), DataUtility.GetSqlValue(reader, 2), DataUtility.GetSqlValue(reader, 3), DataUtility.GetSqlValue(reader, 4), DataUtility.GetSqlValue(reader, 5), DataUtility.GetSqlValue(reader, 6), DataUtility.GetSqlValue(reader, 7), DataUtility.GetSqlValue(reader, 8), DataUtility.GetSqlValue(reader, 9), DataUtility.GetSqlValue(reader, 10), DataUtility.GetSqlValue(reader, 11), DataUtility.GetSqlValue(reader, 12), DataUtility.GetSqlValue(reader, 13), DataUtility.GetSqlValue(reader, 14), DataUtility.GetSqlValue(reader, 15), DataUtility.GetSqlValue(reader, 16), DataUtility.GetSqlValue(reader, 17), DataUtility.GetSqlValue(reader, 18), DataUtility.GetSqlValue(reader, 19), DataUtility.GetSqlValue(reader, 20), DataUtility.GetSqlValue(reader, 21), DataUtility.GetSqlValue(reader, 22), DataUtility.GetSqlValue(reader, 23), DataUtility.GetSqlValue(reader, 24), DataUtility.GetSqlValue(reader, 25), DataUtility.GetSqlValue(reader, 26), DataUtility.GetSqlValue(reader, 27), DataUtility.GetSqlValue(reader, 28), DataUtility.GetSqlValue(reader, 29), DataUtility.GetSqlValue(reader, 30), DataUtility.GetSqlValue(reader, 31), DataUtility.GetSqlValue(reader, 32), DataUtility.GetSqlValue(reader, 33), DataUtility.GetSqlValue(reader, 34), DataUtility.GetSqlValue(reader, 35));
 		}
 
@@ -619,13 +618,6 @@ namespace Importer
 			var dao = new SqlDbHelper();
 			var state = (short)dao.ExecuteScalar(string.Format(sql.ToString(), importId, (int)toState));
 			return (XEnum.ImportState)state;
-		}
-
-		private void PopulateReportLoanRiskPerMonthFYJ(int importId) {
-			logger.Debug("Populating table ReportLoanRiskPerMonthFYJ");
-			var dao = new SqlDbHelper();
-			var rowCount = dao.ExecuteNonQuery(string.Format("EXEC spPopulateNoAccrual {0}", importId));
-			logger.DebugFormat("{0} rows inserted into ReportLoanRiskPerMonthFYJ for import #{1}", rowCount, importId);
 		}
 		#endregion
 	}
