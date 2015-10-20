@@ -17,7 +17,11 @@ BEGIN
 		, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 		, LoanStartDate = CONVERT(VARCHAR(8), L.LoanStartDate, 112)
 		, LoanEndDate = CONVERT(VARCHAR(8), L.LoanEndDate, 112)
-		, OverdueDays = CASE WHEN L.LoanEndDate < @asOfDate THEN DATEDIFF(day, L.LoanEndDate, @asOfDate) ELSE 0 END
+		, OverdueDays = CASE
+				WHEN L.LoanEndDate < @asOfDate THEN DATEDIFF(day, L.LoanEndDate, @asOfDate)
+				WHEN ISNULL(PV.ProductName, PB.MyBankIndTypeName) LIKE '%住房%' THEN (CASE WHEN L.CustomerType = '对私' THEN PV.InterestOverdueDays ELSE PB.OweInterestDays END)
+				ELSE 0
+				END
 		, OweInterestDays = CASE WHEN L.CustomerType = '对私' THEN PV.InterestOverdueDays ELSE PB.OweInterestDays END
 		, DanBaoFangShi = (SELECT Category FROM DanBaoFangShi WHERE Name = ISNULL(PV.DanBaoFangShi, PB.VOUCHTYPENAME))
 		, Industry = ISNULL(PV.Direction1, PB.Direction1)
