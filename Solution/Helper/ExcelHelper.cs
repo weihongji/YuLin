@@ -39,8 +39,14 @@ namespace Helper
 					theSheet.Activate();
 					var range = (Range)theSheet.get_Range("1:" + sheetEntity.RowsBeforeHeader.ToString());
 					range.Select();
-					range.Delete(XlDeleteShiftDirection.xlShiftUp);
 					logger.DebugFormat("Removing {0} rows from sheet: {1}", sheetEntity.RowsBeforeHeader, theSheet.Name);
+					range.Delete(XlDeleteShiftDirection.xlShiftUp);
+
+					if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
+						logger.DebugFormat("Fixing column headers for {0}", theSheet.Name);
+						((Range)theSheet.Cells[1, 1]).Value2 = "科目代号";
+						((Range)theSheet.Cells[1, 2]).Value2 = "科目名称";
+					}
 				}
 
 				theExcelBook.Save();

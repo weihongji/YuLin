@@ -13,7 +13,9 @@ namespace Entities
 			Public = 2, // 对公
 			Private = 3, // 个人
 			NonAccrual = 4, // 非应计贷款明细表
-			Overdue = 5 // 逾期贷款明细表
+			Overdue = 5, // 逾期贷款明细表
+			YWNei = 6, // 业务状况表一级科目（表内）
+			YWWai = 7 // 业务状况表一级科目（表外）
 		}
 
 		public enum ReportType

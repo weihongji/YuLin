@@ -16,7 +16,7 @@ namespace Importer
 {
 	public class ExcelImporter
 	{
-		private string[] targetFileNames = { "dummy", "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls" };
+		private string[] targetFileNames = { "dummy", "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls", "YWNei.xls", "YWWai.xls" };
 		private Logger logger = Logger.GetLogger("ExcelImporter");
 
 		#region Create import instance and backup imported files
@@ -58,6 +58,8 @@ namespace Importer
 			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Private);
 			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.NonAccrual);
 			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Overdue);
+			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.YWNei);
+			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.YWWai);
 			logger.DebugFormat("Source files copy done", importFolder);
 
 			if (IsAllCopied(importId)) {
@@ -155,6 +157,18 @@ namespace Importer
 				return result;
 			}
 
+			logger.Debug("Importing YWNei to database");
+			result = ImportYWNei(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.YWNei]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+
+			logger.Debug("Importing YWWai to database");
+			result = ImportYWWai(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.YWWai]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+
 			logger.Debug("Assigning org number to Private");
 			result = AssignOrgNo(importId);
 			if (!String.IsNullOrEmpty(result)) {
@@ -218,12 +232,28 @@ namespace Importer
 			return ImportTable(importId, filePath, XEnum.ImportItemType.Overdue, excelColumns, dbColumns, 10);
 		}
 
+		public string ImportYWNei(int importId, string filePath) {
+			var excelColumns = "*";
+			var dbColumns = "SubjectCode, SubjectName, LastDebitBalance, LastCreditBalance, CurrentDebitChange, CurrentCreditChange, CurrentDebitBalance, CurrentCreditBalance";
+			return ImportTable(importId, filePath, XEnum.ImportItemType.YWNei, excelColumns, dbColumns, 8);
+		}
+
+		public string ImportYWWai(int importId, string filePath) {
+			var excelColumns = "*";
+			var dbColumns = "SubjectCode, SubjectName, LastDebitBalance, LastCreditBalance, CurrentDebitChange, CurrentCreditChange, CurrentDebitBalance, CurrentCreditBalance";
+			return ImportTable(importId, filePath, XEnum.ImportItemType.YWWai, excelColumns, dbColumns, 8);
+		}
+
 		public string ImportTable(int importId, string filePath, XEnum.ImportItemType itemType, string excelColumns, string dbColumns, int columnCount, int sheetIndex = 1) {
 			string suffix = GetTableSuffix(itemType);
 			logger.DebugFormat("Importing {0} to database", suffix);
 			if (String.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath)) {
 				return string.Format("File {0} cannot be found", filePath ?? "<empty>");
 			}
+			logger.Debug("Getting source table");
+			var sourceTable = SourceTable.GetById(itemType);
+			var dataRowEnding = sourceTable.Sheets[sheetIndex - 1].DataRowEndingFlag;
+			logger.DebugFormat("Ending is {0}", dataRowEnding == "" ? "empty string" : dataRowEnding);
 
 			var oleOpened = false;
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
@@ -245,6 +275,9 @@ namespace Importer
 				else if (itemType == XEnum.ImportItemType.Public) {
 					sql.Append(" WHERE [分行名称] = '长安银行榆林分行'");
 				}
+				else if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
+					sql.Append(" WHERE LEN([科目代号]) > 2");
+				}
 				OleDbCommand ocmd = new OleDbCommand(sql.ToString(), oconn);
 				OleDbDataReader reader = ocmd.ExecuteReader();
 
@@ -261,16 +294,8 @@ namespace Importer
 
 				sql.Clear();
 				while (reader.Read()) {
-					// Going to end
-					if (itemType == XEnum.ImportItemType.NonAccrual || itemType == XEnum.ImportItemType.Overdue) {
-						if (DataUtility.GetValue(reader, 0).Equals("本页小计")) {
-							break;
-						}
-					}
-					else {
-						if (string.IsNullOrWhiteSpace(DataUtility.GetValue(reader, 0))) {
-							break;
-						}
+					if (DataUtility.GetValue(reader, 0).Equals(dataRowEnding)) { // Going to end
+						break;
 					}
 					dataRowIndex++;
 					if (itemType == XEnum.ImportItemType.Public) {
@@ -377,7 +402,7 @@ namespace Importer
 		public bool IsAllCopied(int importId) {
 			var dao = new SqlDbHelper();
 			var count = (int)dao.ExecuteScalar(string.Format("SELECT COUNT(*) FROM ImportItem WHERE ImportId = {0}", importId));
-			return count == 5;
+			return count == 7;
 		}
 
 		public string AssignDangerLevel(int importId) {

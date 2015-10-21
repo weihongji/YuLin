@@ -63,6 +63,8 @@ namespace WinForm
 			this.lblImportPrivate.Text = "";
 			this.lblImportNonAccrual.Text = "";
 			this.lblImportOverdue.Text = "";
+			this.lblImportYWNei.Text = "";
+			this.lblImportYWWai.Text = "";
 		}
 
 		private void btnImportOK_Click(object sender, EventArgs e) {
@@ -76,7 +78,8 @@ namespace WinForm
 						"dummy", // 1-based array is required
 						this.lblImportLoan.Text,
 						this.lblImportPublic.Text, this.lblImportPrivate.Text,
-						this.lblImportNonAccrual.Text, this.lblImportOverdue.Text
+						this.lblImportNonAccrual.Text, this.lblImportOverdue.Text,
+						this.lblImportYWNei.Text, this.lblImportYWWai.Text
 					};
 				var importer = new ExcelImporter();
 				this.Cursor = Cursors.WaitCursor;
@@ -175,6 +178,24 @@ namespace WinForm
 			}
 			else {
 				this.lblImportOverdue.Text = "";
+			}
+		}
+
+		private void btnImportYWNei_Click(object sender, EventArgs e) {
+			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
+				this.lblImportYWNei.Text = this.openFileDialog1.FileName;
+			}
+			else {
+				this.lblImportYWNei.Text = "";
+			}
+		}
+
+		private void btnImportYWWai_Click(object sender, EventArgs e) {
+			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
+				this.lblImportYWWai.Text = this.openFileDialog1.FileName;
+			}
+			else {
+				this.lblImportYWWai.Text = "";
 			}
 		}
 		#endregion
@@ -303,5 +324,6 @@ namespace WinForm
 			MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		#endregion
+
 	}
 }

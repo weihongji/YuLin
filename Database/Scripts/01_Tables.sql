@@ -252,6 +252,58 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportOverdu
 	CREATE NONCLUSTERED INDEX IX_ImportOverdue_ImportItemId ON dbo.ImportOverdue(ImportItemId ASC) ON [PRIMARY]
 END
 
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWNei')) BEGIN
+	CREATE TABLE dbo.ImportYWNei(
+		Id int IDENTITY(1,1) NOT NULL,
+		ImportItemId int NOT NULL,
+		SubjectCode varchar(10) NOT NULL,
+		SubjectName nvarchar(100) NULL,
+		LastDebitBalance decimal(15,2) NULL,
+		LastCreditBalance decimal(15,2) NULL,
+		CurrentDebitChange decimal(15,2) NULL,
+		CurrentCreditChange decimal(15,2) NULL,
+		CurrentDebitBalance decimal(15,2) NULL,
+		CurrentCreditBalance decimal(15,2) NULL,
+		CONSTRAINT PK_ImportYWNei PRIMARY KEY CLUSTERED
+		(
+			Id ASC
+		)
+	) ON [PRIMARY]
+
+	ALTER TABLE dbo.ImportYWNei WITH CHECK
+	ADD CONSTRAINT FK_ImportYWNei_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ALTER TABLE dbo.ImportYWNei CHECK CONSTRAINT FK_ImportYWNei_ImportItem
+
+	CREATE NONCLUSTERED INDEX IX_ImportYWNei_SubjectCode ON dbo.ImportYWNei(SubjectCode ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportYWNei_ImportItemId ON dbo.ImportYWNei(ImportItemId ASC) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWWai')) BEGIN
+	CREATE TABLE dbo.ImportYWWai(
+		Id int IDENTITY(1,1) NOT NULL,
+		ImportItemId int NOT NULL,
+		SubjectCode varchar(10) NOT NULL,
+		SubjectName nvarchar(100) NULL,
+		LastDebitBalance decimal(15,2) NULL,
+		LastCreditBalance decimal(15,2) NULL,
+		CurrentDebitChange decimal(15,2) NULL,
+		CurrentCreditChange decimal(15,2) NULL,
+		CurrentDebitBalance decimal(15,2) NULL,
+		CurrentCreditBalance decimal(15,2) NULL,
+		CONSTRAINT PK_ImportYWWai PRIMARY KEY CLUSTERED
+		(
+			Id ASC
+		)
+	) ON [PRIMARY]
+
+	ALTER TABLE dbo.ImportYWWai WITH CHECK
+	ADD CONSTRAINT FK_ImportYWWai_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ALTER TABLE dbo.ImportYWWai CHECK CONSTRAINT FK_ImportYWWai_ImportItem
+
+	CREATE NONCLUSTERED INDEX IX_ImportYWWai_SubjectCode ON dbo.ImportYWWai(SubjectCode ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportYWWai_ImportItemId ON dbo.ImportYWWai(ImportItemId ASC) ON [PRIMARY]
+END
+
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Org')) BEGIN
 	CREATE TABLE dbo.Org(
 		Number varchar(50) NOT NULL,

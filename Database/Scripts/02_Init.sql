@@ -72,6 +72,8 @@ IF NOT EXISTS(SELECT * FROM SourceTable) BEGIN
 	INSERT INTO SourceTable(Id, Name) VALUES (3, '个人')
 	INSERT INTO SourceTable(Id, Name) VALUES (4, '非应计贷款明细表')
 	INSERT INTO SourceTable(Id, Name) VALUES (5, '逾期贷款明细表')
+	INSERT INTO SourceTable(Id, Name) VALUES (6, '业务状况表（表内）')
+	INSERT INTO SourceTable(Id, Name) VALUES (7, '业务状况表（表外）')
 END
 
 IF NOT EXISTS(SELECT * FROM SourceTableSheet) BEGIN
@@ -82,6 +84,8 @@ IF NOT EXISTS(SELECT * FROM SourceTableSheet) BEGIN
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (5, 5, 1, '逾期贷款明细表', 8, '本页小计')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (6, 2, 2, '表外', 0, '')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (7, 2, 3, '委贷', 0, '')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (8, 6, 1, '业务状况表（表内）', 8, '10')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (9, 7, 1, '业务状况表（表外）', 8, '09')
 END
 
 IF NOT EXISTS(SELECT * FROM SourceTableSheetColumn) BEGIN
@@ -218,6 +222,9 @@ IF NOT EXISTS(SELECT * FROM SourceTableSheetColumn) BEGIN
 	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (5, 8, '逾期本金余额')
 	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (5, 9, '利息余额')
 	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (5, 10, '担保情况')
+
+	/* YWNei */
+	/* YWWai */
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
