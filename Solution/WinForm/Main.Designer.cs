@@ -174,8 +174,8 @@
             this.menuReport_X_SZHZ,
             this.menuReport_X_DKZLFL});
 			this.menuReport_X.Name = "menuReport_X";
-			this.menuReport_X.Size = new System.Drawing.Size(86, 21);
-			this.menuReport_X.Text = "固定报表 (&F)";
+			this.menuReport_X.Size = new System.Drawing.Size(88, 21);
+			this.menuReport_X.Text = "固定报表 (&R)";
 			// 
 			// menuReport_X_WJFL
 			// 
@@ -233,8 +233,8 @@
             this.menuReport_F_Month,
             this.menuReport_F_Season});
 			this.menuReport_F.Name = "menuReport_F";
-			this.menuReport_F.Size = new System.Drawing.Size(84, 21);
-			this.menuReport_F.Text = "财务报表(&C)";
+			this.menuReport_F.Size = new System.Drawing.Size(82, 21);
+			this.menuReport_F.Text = "财务报表(&F)";
 			// 
 			// menuReport_F_HYB
 			// 
@@ -363,8 +363,8 @@
             this.menuReport_C_XZDKMX,
             this.menuReport_C_FXDKBH});
 			this.menuReport_C.Name = "menuReport_C";
-			this.menuReport_C.Size = new System.Drawing.Size(99, 21);
-			this.menuReport_C.Text = "自定义报表 (&Z)";
+			this.menuReport_C.Size = new System.Drawing.Size(100, 21);
+			this.menuReport_C.Text = "自定义报表 (&C)";
 			// 
 			// menuReport_C_XDSJXQ
 			// 
@@ -473,7 +473,7 @@
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(320, 17);
 			this.label11.TabIndex = 12;
-			this.label11.Text = "导出过程可能需要几分钟或更多，请您耐心等待导入完毕。";
+			this.label11.Text = "导出过程可能需要几分钟或更多，请您耐心等待导出完毕。";
 			// 
 			// cmbReportMonth
 			// 
