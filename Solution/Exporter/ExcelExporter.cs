@@ -5,10 +5,7 @@ using System.Text;
 using System.Data;
 using Microsoft.Office.Interop.Excel;
 
-using Entities;
-using Logging;
-
-namespace Exporter
+namespace Reporting
 {
 	public class ExcelExporter
 	{

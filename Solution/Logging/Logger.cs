@@ -8,7 +8,7 @@ using log4net.Config;
 using log4net.Layout;
 
 
-namespace Logging
+namespace Reporting
 {
     /// <summary>
     ///     日志操作管理类

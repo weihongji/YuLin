@@ -8,13 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using Entities;
-using Importer;
-using Exporter;
-using Logging;
-using Helper;
-
-namespace WinForm
+namespace Reporting
 {
 	public partial class Main : Form
 	{
@@ -81,7 +75,7 @@ namespace WinForm
 						this.lblImportNonAccrual.Text, this.lblImportOverdue.Text,
 						this.lblImportYWNei.Text, this.lblImportYWWai.Text
 					};
-				var importer = new ExcelImporter();
+				var importer = new Importer();
 				this.Cursor = Cursors.WaitCursor;
 				try {
 					var startTime = DateTime.Now;

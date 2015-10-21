@@ -228,7 +228,7 @@ IF NOT EXISTS(SELECT * FROM SourceTableSheetColumn) BEGIN
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
-	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (1, '末风险贷款情况表（五级分类）', '榆林分行月末风险贷款情况表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (1, '风险贷款情况表（五级分类）', '榆林分行风险贷款情况表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (2, '风险贷款通报', '风险贷款通报.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (3, '榆林地区不良贷款监测旬报', '榆林地区不良贷款监测旬报.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (4, '中小企业资金需求及银行业支持情况表', '中小企业资金需求及银行业支持情况表.xls')
@@ -236,7 +236,7 @@ IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (6, '风险贷款变化情况表', '风险贷款变化情况表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (7, '榆林分行三张表汇总表', '榆林分行三张表汇总表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (8, '贷款质量分类情况汇总表', '贷款质量分类情况汇总表.xls')
-	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (20, '风险贷款情况表-行业版', '风险贷款情况表-行业版.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (20, '风险贷款情况表-行业版', '榆林分行风险贷款情况表-行业版.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (21, 'GF0102-081', 'GF0102-081.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (22, 'GF0107-141', 'GF0107-141.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (23, 'SF6301-141', 'SF6301-141.xls')
@@ -263,6 +263,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (3, 1, 3, '逾期', 2, 6, 6)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (4, 1, 4, '只欠息', 2, 6, 6)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (5, 1, 5, '关注贷款', 2, 6, 6)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (6, 20, 1, '<yyyy-M>', 0, 4, 4)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -351,4 +352,23 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 13, '贷款类型')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 14, '是否本月新增')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 15, '备注')
+
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 1, '所在分行')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 2, '经办机构')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 3, '客户')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 4, '证件号码')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 5, '五级')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 6, '贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 7, '企业规模')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 8, '业务种类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 9, '本金逾期天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 10, '欠息天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 11, '最终天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 12, '天数范围')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 13, '贷款投向行业门类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 14, '贷款投向行业大类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 15, '贷款投向行业大类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 16, '贷款投向行业大类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 17, '担保方式')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 18, '是否中长期')
 END

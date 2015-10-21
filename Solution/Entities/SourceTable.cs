@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using DataAccess;
 
-namespace Entities
+namespace Reporting
 {
 	public class SourceTable : EntityBase
 	{

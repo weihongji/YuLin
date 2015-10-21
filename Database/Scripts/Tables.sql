@@ -98,6 +98,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPrivat
 		DangerLevel nvarchar(50) NULL,
 		RepaymentMethod nvarchar(100) NULL,
 		CustomerName nvarchar(20) NULL,
+		IdCardNo varchar(30) NULL,
 		CurrencyType nvarchar(100) NULL,
 		ContractStartDate smalldatetime NULL,
 		ContractEndDate smalldatetime NULL,

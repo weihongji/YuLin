@@ -1,4 +1,4 @@
-﻿namespace WinForm
+﻿namespace Reporting
 {
 	partial class Main
 	{
@@ -641,7 +641,7 @@
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(218, 21);
 			this.label8.TabIndex = 6;
-			this.label8.Text = "榆林分行月末风险贷款情况表";
+			this.label8.Text = "榆林分行风险贷款情况表";
 			// 
 			// openFileDialog1
 			// 

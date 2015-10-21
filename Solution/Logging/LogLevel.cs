@@ -1,4 +1,4 @@
-﻿namespace Logging
+﻿namespace Reporting
 {
     /// <summary>
     ///     表示日志级别的枚举

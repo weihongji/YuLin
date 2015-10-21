@@ -7,11 +7,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Office.Interop.Excel;
 
-using DataAccess;
-using Entities;
-using Helper;
-
-namespace Exporter
+namespace Reporting
 {
 	public class LoanRiskPerMonth : BaseReport
 	{
@@ -45,7 +41,7 @@ namespace Exporter
 			var oleConn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			Logger.Debug("Openning connction to " + filePath);
 			oleConn.Open();
-			var sql = string.Format("EXEC spReportLoanRiskPerMonth{0} '{1}'", GetSheetSuffix(sheet), this.AsOfDate.ToString("yyyyMMdd"));
+			var sql = string.Format("EXEC spReportLoanRiskPerMonth '{0}', '{1}'", GetSheetSuffix(sheet), this.AsOfDate.ToString("yyyyMMdd"));
 			var dao = new SqlDbHelper();
 			Logger.Debug("Running " + sql);
 			var reader = dao.ExecuteReader(sql);

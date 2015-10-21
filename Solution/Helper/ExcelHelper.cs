@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 
 using Microsoft.Office.Interop.Excel;
-using Entities;
-using Logging;
 
-namespace Helper
+namespace Reporting
 {
 	public class ExcelHelper
 	{
@@ -41,6 +39,20 @@ namespace Helper
 					range.Select();
 					logger.DebugFormat("Removing {0} rows from sheet: {1}", sheetEntity.RowsBeforeHeader, theSheet.Name);
 					range.Delete(XlDeleteShiftDirection.xlShiftUp);
+
+					if (itemType == XEnum.ImportItemType.Private) {
+						int direction = 0;
+						for (int i = 1; i < 100; i++) {
+							var cell = ((Range)theSheet.Cells[1, i]);
+							string val = cell.Value2;
+							if (string.IsNullOrEmpty(val)) {
+								break;
+							}
+							else if (val.Equals("贷款发放后投向")) {
+								cell.Value2 = val + (++direction).ToString();
+							}
+						}
+					}
 
 					if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
 						logger.DebugFormat("Fixing column headers for {0}", theSheet.Name);
@@ -215,8 +227,15 @@ namespace Helper
 				int totalRowIndex = rowsBeforeData + dataRowCount + 1;
 				((Range)theSheet.Cells[totalRowIndex, 1]).Value2 = "合计";
 				((Range)theSheet.Cells[totalRowIndex, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
-				((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
-				((Range)theSheet.Cells[totalRowIndex, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+				if (sheet.TableId == 1 && sheet.Name.Equals("逾期")) {
+					((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+					((Range)theSheet.Cells[totalRowIndex, 4]).Value2 = string.Format("=SUM(D{0}:D{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+					((Range)theSheet.Cells[totalRowIndex, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+				}
+				else {
+					((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+					((Range)theSheet.Cells[totalRowIndex, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+				}
 
 				//绘制数据部分的表格线
 				int dataRowStartIndex = rowsBeforeData + 1;

@@ -3,7 +3,7 @@ using System.Data;
 using System.Configuration;
 using System.Data.SqlClient;
 
-namespace DataAccess
+namespace Reporting
 {
 	/// <summary>
 	/// 针对SQL Server数据库操作的通用类

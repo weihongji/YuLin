@@ -6,9 +6,7 @@ using System.Text;
 using System.Configuration;
 using System.IO;
 
-using Logging;
-
-namespace Exporter
+namespace Reporting
 {
 	public abstract class BaseReport
 	{

@@ -7,7 +7,7 @@
     <ProjectGuid>{DBAA65E3-E0BF-4B5E-A2A8-73EBA8087B24}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Importer</RootNamespace>
+    <RootNamespace>Reporting</RootNamespace>
     <AssemblyName>Importer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

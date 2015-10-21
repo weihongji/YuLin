@@ -7,14 +7,9 @@ using System.Data.SqlClient;
 using System.Data.OleDb;
 using System.IO;
 
-using DataAccess;
-using Entities;
-using Logging;
-using Helper;
-
-namespace Importer
+namespace Reporting
 {
-	public class ExcelImporter
+	public class Importer
 	{
 		private string[] targetFileNames = { "dummy", "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls", "YWNei.xls", "YWWai.xls" };
 		private Logger logger = Logger.GetLogger("ExcelImporter");
@@ -195,8 +190,8 @@ namespace Importer
 		}
 
 		public string ImportPublic(int importId, string filePath) {
-			var excelColumns = "[支行名称], [客户姓名], [借款人企业性质], [组织机构代码], [合同编号], [借据开始日期], [借据结束日期], [发放后投向行业门类], [授信品种], [七级分类], [客户规模(行内）], [客户规模(行外）], [本金逾期天数], [欠息天数], [贷款余额], [主要担保方式], [正常余额], [逾期余额], [非应计余额], [贷款账号], [是否政府融资平台]";
-			var dbColumns = "OrgName2, CustomerName, OrgType, OrgCode, ContractNo, LoanStartDate, LoanEndDate, Direction1, BusinessType, ClassifyResult, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, VouchTypeName, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsINRZ";
+			var excelColumns = "[支行名称], [客户姓名], [借款人企业性质], [组织机构代码], [合同编号], [借据开始日期], [借据结束日期], [发放后投向行业门类], [发放后投向行业大类], [发放后投向行业中类], [发放后投向行业小类], [授信品种], [七级分类], [客户规模(行内）], [客户规模(行外）], [本金逾期天数], [欠息天数], [贷款余额], [主要担保方式], [正常余额], [逾期余额], [非应计余额], [贷款账号], [是否政府融资平台]";
+			var dbColumns = "OrgName2, CustomerName, OrgType, OrgCode, ContractNo, LoanStartDate, LoanEndDate, Direction1, Direction2, Direction3, Direction4, BusinessType, ClassifyResult, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, VouchTypeName, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsINRZ";
 
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			oconn.Open();
@@ -206,7 +201,7 @@ namespace Importer
 				if (dt.Rows.Count < sheetIndex * 2 + 1) {
 					break;
 				}
-				var result = ImportTable(importId, filePath, XEnum.ImportItemType.Public, excelColumns, dbColumns, 21, sheetIndex + 1);
+				var result = ImportTable(importId, filePath, XEnum.ImportItemType.Public, excelColumns, dbColumns, 24, sheetIndex + 1);
 				if (!String.IsNullOrEmpty(result)) {
 					return result;
 				}
@@ -215,9 +210,9 @@ namespace Importer
 		}
 
 		public string ImportPrivate(int importId, string filePath) {
-			var excelColumns = "[支行], [信贷产品名称], [产品核算项目], [客户名称], [合同开始日期], [合同到期日], [担保方式], [贷款余额], [贷款发放后投向], [本金最长逾期天数], [利息最长逾期天数], [拖欠利息], [逾期余额], [非应计余额]";
-			var dbColumns = "OrgName2, ProductName, ProductType, CustomerName, ContractStartDate, ContractEndDate, DanBaoFangShi, LoanBalance, Direction1, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance";
-			return ImportTable(importId, filePath, XEnum.ImportItemType.Private, excelColumns, dbColumns, 14);
+			var excelColumns = "[支行], [信贷产品名称], [产品核算项目], [客户名称], [证件号码], [合同开始日期], [合同到期日], [担保方式], [贷款余额], [贷款发放后投向1], [贷款发放后投向2], [贷款发放后投向3], [贷款发放后投向4], [本金最长逾期天数], [利息最长逾期天数], [拖欠利息], [逾期余额], [非应计余额]";
+			var dbColumns = "OrgName2, ProductName, ProductType, CustomerName, IdCardNo, ContractStartDate, ContractEndDate, DanBaoFangShi, LoanBalance, Direction1, Direction2, Direction3, Direction4, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance";
+			return ImportTable(importId, filePath, XEnum.ImportItemType.Private, excelColumns, dbColumns, 18);
 		}
 
 		public string ImportNonAccrual(int importId, string filePath) {
