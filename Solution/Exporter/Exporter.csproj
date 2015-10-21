@@ -66,6 +66,7 @@
     <Compile Include="BaseReport.cs" />
     <Compile Include="ExcelExporter.cs" />
     <Compile Include="LoanRiskPerMonth.cs" />
+    <Compile Include="LoanRiskPerMonthHYB.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

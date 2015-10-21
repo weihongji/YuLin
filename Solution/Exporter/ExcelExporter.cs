@@ -14,22 +14,19 @@ namespace Reporting
 		public ExcelExporter() {
 		}
 
-		public string ExportData(List<XEnum.ReportType> reportTypes, DateTime asOfDate) {
+		public string ExportData(XEnum.ReportType report, DateTime asOfDate) {
 			var result = string.Empty;
-			foreach (var type in reportTypes) {
-				switch (type) {
-					case XEnum.ReportType.LoanRiskPerMonth:
-						result = new LoanRiskPerMonth(asOfDate).GenerateReport();
-						break;
-					default:
-						result = "Unknown report type: " + type;
-						break;
-				}
-				if (result.Length > 0) {
+			switch (report) {
+				case XEnum.ReportType.X_WJFL:
+					result = new LoanRiskPerMonth(asOfDate).GenerateReport();
 					break;
-				}
-			}
-			return result;
+				case XEnum.ReportType.F_HYB:
+					result = new LoanRiskPerMonthHYB(asOfDate).GenerateReport();
+					break;
+				default:
+					result = "Unknown report type: " + report;
+					break;
+			} return result;
 		}
 	}
 }

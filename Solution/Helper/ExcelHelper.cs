@@ -85,7 +85,7 @@ namespace Reporting
 		}
 
 		public static void InitSheet(string filePath, TargetTableSheet sheet) {
-			if (sheet.RowsBeforeHeader == 0) {
+			if (sheet.RowsBeforeHeader == 0 && sheet.FooterStartRow == 0) {
 				return;
 			}
 			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
@@ -103,12 +103,16 @@ namespace Reporting
 				Range range = null;
 
 				// Remove footer
-				range = (Range)theSheet.get_Range(string.Format("{0}:{1}", sheet.FooterStartRow, sheet.FooterEndRow));
-				range.Delete();
+				if (sheet.FooterStartRow > 0) {
+					range = (Range)theSheet.get_Range(string.Format("{0}:{1}", sheet.FooterStartRow, sheet.FooterEndRow));
+					range.Delete();
+				}
 
 				// Make the column header row as the first row
-				range = (Range)theSheet.get_Range("1:" + sheet.RowsBeforeHeader.ToString());
-				range.Delete();
+				if (sheet.RowsBeforeHeader > 0) {
+					range = (Range)theSheet.get_Range("1:" + sheet.RowsBeforeHeader.ToString());
+					range.Delete();
+				}
 
 				theExcelBook.Save();
 			}
@@ -166,8 +170,7 @@ namespace Reporting
 
 		public static void FormatReport4LoanRiskPerMonth(string filePath, TargetTableSheet sheet, int dataRowCount, DateTime asOfDate) {
 			int sheetIndex = sheet.Index;
-			int rowsBeforeColumnHeader = sheet.RowsBeforeHeader;
-			int rowsBeforeData = rowsBeforeColumnHeader + 1;
+			int rowsBeforeData = sheet.RowsBeforeHeader + 1;
 
 			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
 			theExcelApp.DisplayAlerts = false; // Without this line, the template sheet cannot be deleted.
@@ -184,22 +187,24 @@ namespace Reporting
 
 				//Remove data rows left by template
 				Range oRange;
-				var sampleRows = sheet.FooterStartRow - sheet.RowsBeforeHeader - 1;
+				var sampleRows = (sheet.FooterStartRow - 1) - sheet.RowsBeforeHeader - 1; // (sheet.FooterStartRow - 1) is the last sample row if there is
 				if (sampleRows > 0) {
-					oRange = (Range)theSheet.get_Range("2:" + sampleRows.ToString());
+					oRange = (Range)theSheet.get_Range("2:" + (sampleRows + 1).ToString());
 					oRange.Delete();
 				}
 
 				//Header
-				theSheetTemplate.Activate();
-				oRange = (Range)theSheetTemplate.get_Range("1:" + rowsBeforeColumnHeader.ToString());
-				oRange.Select();
-				oRange.Copy();
+				if (sheet.RowsBeforeHeader > 0) {
+					theSheetTemplate.Activate();
+					oRange = (Range)theSheetTemplate.get_Range("1:" + sheet.RowsBeforeHeader.ToString());
+					oRange.Select();
+					oRange.Copy();
 
-				theSheet.Activate();
-				oRange = theSheet.get_Range("1:1");
-				oRange.Select();
-				oRange.Insert();
+					theSheet.Activate();
+					oRange = theSheet.get_Range("1:1");
+					oRange.Select();
+					oRange.Insert();
+				}
 
 				var columnCount = sheet.Columns.Count;
 				for (int i = 1; i <= sheet.RowsBeforeHeader; i++) {
@@ -225,16 +230,23 @@ namespace Reporting
 
 				//Totals
 				int totalRowIndex = rowsBeforeData + dataRowCount + 1;
-				((Range)theSheet.Cells[totalRowIndex, 1]).Value2 = "合计";
-				((Range)theSheet.Cells[totalRowIndex, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
-				if (sheet.TableId == 1 && sheet.Name.Equals("逾期")) {
-					((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
-					((Range)theSheet.Cells[totalRowIndex, 4]).Value2 = string.Format("=SUM(D{0}:D{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
-					((Range)theSheet.Cells[totalRowIndex, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+				if (sheet.TableId == (int)XEnum.ReportType.X_WJFL) {
+					((Range)theSheet.Cells[totalRowIndex, 1]).Value2 = "合计";
+					((Range)theSheet.Cells[totalRowIndex, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					if (sheet.Name.Equals("逾期")) {
+						((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+						((Range)theSheet.Cells[totalRowIndex, 4]).Value2 = string.Format("=SUM(D{0}:D{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+						((Range)theSheet.Cells[totalRowIndex, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+					}
+					else {
+						((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+						((Range)theSheet.Cells[totalRowIndex, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+					}
 				}
-				else {
-					((Range)theSheet.Cells[totalRowIndex, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
-					((Range)theSheet.Cells[totalRowIndex, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
+				else if (sheet.TableId == (int)XEnum.ReportType.F_HYB) {
+					((Range)theSheet.Cells[totalRowIndex, 1]).Value2 = "合计";
+					((Range)theSheet.Cells[totalRowIndex, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					((Range)theSheet.Cells[totalRowIndex, 6]).Value2 = string.Format("=SUM(E{0}:F{1})", sheet.RowsBeforeHeader + 2, totalRowIndex - 1);
 				}
 
 				//绘制数据部分的表格线

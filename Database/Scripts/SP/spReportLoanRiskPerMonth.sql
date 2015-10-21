@@ -71,6 +71,12 @@ BEGIN
 						AND PL.ImportItemId IN (SELECT Id FROM ImportItem WHERE ImportId IN (SELECT Id FROM Import WHERE ImportDate < @asOfDate))
 				) THEN '' ELSE '是' END
 		, Comment = L.LoanState
+		, IdCardNo = ISNULL(PV.IdCardNo, PB.OrgCode)
+		, Direction1 = ISNULL(PV.Direction1, PB.Direction1)
+		, Direction2 = ISNULL(PV.Direction2, PB.Direction2)
+		, Direction3 = ISNULL(PV.Direction3, PB.Direction3)
+		, Direction4 = ISNULL(PV.Direction4, PB.Direction4)
+		, FinalDays = 0
 	INTO #Result
 	FROM ImportLoan L
 		LEFT JOIN Org O ON L.OrgNo = O.Number
@@ -90,9 +96,7 @@ BEGIN
 			END
 
 	IF @type = 'YQ' BEGIN
-		SELECT OrgName, CustomerName, CapitalAmount, OweCapital, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, OweInterestDays
-			, DanBaoFangShi = (SELECT Category FROM DanBaoFangShi WHERE Name = DanBaoFangShi2)
-			, Industry, CustomerType, LoanType, IsNew, Comment
+		SELECT OrgName, CustomerName, CapitalAmount, OweCapital, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, OweInterestDays, DanBaoFangShi, Industry, CustomerType, LoanType, IsNew, Comment
 		FROM #Result
 		ORDER BY Id
 	END
@@ -100,6 +104,38 @@ BEGIN
 		SELECT OrgName, CustomerName, CapitalAmount, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, OweInterestDays
 			, DanBaoFangShi = (SELECT Category FROM DanBaoFangShi WHERE Name = DanBaoFangShi2)
 			, Industry, CustomerType, LoanType, IsNew, Comment
+		FROM #Result
+		ORDER BY Id
+	END
+	ELSE IF @type = 'F_HYB' BEGIN
+		UPDATE #Result SET FinalDays = CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END
+
+		SELECT '榆林分行' AS OrgName
+			, OrgName AS OrgName2
+			, CustomerName
+			, IdCardNo
+			, DangerLevel
+			, CapitalAmount
+			, CustomerType
+			, LoanType
+			, OverdueDays
+			, OweInterestDays
+			, FinalDays
+			, DaysLevel =
+					CASE
+						WHEN FinalDays <= 30  THEN '30天以内'
+						WHEN FinalDays <= 90  THEN '31到90天'
+						WHEN FinalDays <= 180 THEN '91天到180天'
+						WHEN FinalDays <= 270  THEN '181天到270天'
+						WHEN FinalDays <= 360  THEN '271天到360天'
+						ELSE '361天以上'
+					END
+			, Direction1
+			, Direction2
+			, Direction3
+			, Direction4
+			, DanBaoFangShi
+			, IsLongTerm = CASE WHEN LoanType LIKE '%短期%' THEN '否' WHEN LoanType LIKE '%中长期%' THEN '是' ELSE '' END
 		FROM #Result
 		ORDER BY Id
 	END

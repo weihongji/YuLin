@@ -367,8 +367,8 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 12, '天数范围')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 13, '贷款投向行业门类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 14, '贷款投向行业大类')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 15, '贷款投向行业大类')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 16, '贷款投向行业大类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 15, '贷款投向行业中类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 16, '贷款投向行业小类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 17, '担保方式')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 18, '是否中长期')
 END

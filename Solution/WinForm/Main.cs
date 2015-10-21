@@ -14,6 +14,17 @@ namespace Reporting
 	{
 		#region "Form level members"
 		private Logger logger = Logger.GetLogger("Main");
+		private XEnum.ReportType currentReport = XEnum.ReportType.None;
+		private List<TargetTable> _reports;
+
+		public List<TargetTable> Reports {
+			get {
+				if (_reports == null) {
+					_reports = TargetTable.GetList();
+				}
+				return _reports;
+			}
+		}
 
 		public Main() {
 			InitializeComponent();
@@ -202,6 +213,13 @@ namespace Reporting
 
 		#region "Report Menu"
 		private void InitReportPanel() {
+			var report = this.Reports.Single(x => x.Id == (int)currentReport);
+			if (report == null) {
+				ShowStop("Failed to get entity of current report.");
+				return;
+			}
+			this.lblReportTitle.Text = report.Name;
+
 			var dao = new SqlDbHelper();
 			var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import ORDER BY ImportDate DESC");
 			this.cmbReportMonth.Items.Clear();
@@ -255,7 +273,30 @@ namespace Reporting
 			return true;
 		}
 
-		private void menu_Report_LoanRisk_Click(object sender, EventArgs e) {
+		private void menu_Report_Item_Click(object sender, EventArgs e) {
+			if (!(sender is ToolStripMenuItem)) {
+				ShowStop("Un-expected sender.");
+				return;
+			}
+
+			// Get current report type
+			var reportMenuName = ((ToolStripMenuItem)sender).Name;
+			var position = reportMenuName.IndexOf('_');
+			if (position < 0) {
+				ShowStop(string.Format("Incorrect report menu name '{0}' not following naming convention.", reportMenuName));
+				return;
+			}
+			var nameCore = reportMenuName.Substring(position + 1);
+			var reportType = XEnum.ReportType.None;
+			if (Enum.TryParse<XEnum.ReportType>(nameCore, out reportType)) {
+				this.currentReport = reportType;
+			}
+			else {
+				ShowStop("Unknown report menu name: " + reportMenuName);
+				return;
+			}
+
+			// Show report UI
 			InitReportPanel();
 			SwitchToPanel("report");
 		}
@@ -267,10 +308,9 @@ namespace Reporting
 			}
 			this.Cursor = Cursors.WaitCursor;
 			try {
-				var reportTypes = new List<XEnum.ReportType> { XEnum.ReportType.LoanRiskPerMonth };
 				var exporter = new ExcelExporter();
 				var startTime = DateTime.Now; // Use to count time cost
-				var result = exporter.ExportData(reportTypes, asOfDate);
+				var result = exporter.ExportData(this.currentReport, asOfDate);
 				this.Cursor = Cursors.Default;
 				if (string.IsNullOrEmpty(result)) {
 					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);

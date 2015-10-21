@@ -8,9 +8,11 @@ using System.Data.SqlClient;
 
 namespace Reporting
 {
-	public class LoanRiskPerMonth : BaseReport
+	public class LoanRiskPerMonthHYB : BaseReport
 	{
-		public LoanRiskPerMonth(DateTime asOfDate):base(asOfDate) {
+
+		public LoanRiskPerMonthHYB(DateTime asOfDate)
+			: base(asOfDate) {
 		}
 
 		public override string GetClassName4Log() {
@@ -18,29 +20,27 @@ namespace Reporting
 		}
 
 		public override string GenerateReport() {
-			var fileName = string.Format("榆林分行{0}月末风险贷款情况表.xls", this.AsOfDate.Month);
+			var fileName = string.Format("榆林分行{0}月末风险贷款情况表-行业版.xls", this.AsOfDate.Month);
 			Logger.Debug("Generating " + fileName);
 
-			var report = TargetTable.GetById(XEnum.ReportType.X_WJFL);
+			var report = TargetTable.GetById(XEnum.ReportType.F_HYB);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
 			foreach (var sheet in report.Sheets) {
 				PopulateSheet(filePath, sheet);
 			}
 
-			ExcelHelper.ActivateSheet(filePath);
-
 			return string.Empty;
 		}
 
 		private void PopulateSheet(string filePath, TargetTableSheet sheet) {
-			Logger.Debug("Initializing sheet " + sheet.Name);
+			Logger.Debug("Initializing sheet " + sheet.EvaluateName(this.AsOfDate));
 			ExcelHelper.InitSheet(filePath, sheet);
 
 			var oleConn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			Logger.Debug("Openning connction to " + filePath);
 			oleConn.Open();
-			var sql = string.Format("EXEC spReportLoanRiskPerMonth '{0}', '{1}'", GetSheetSuffix(sheet), this.AsOfDate.ToString("yyyyMMdd"));
+			var sql = string.Format("EXEC spReportLoanRiskPerMonth 'F_HYB', '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
 			var dao = new SqlDbHelper();
 			Logger.Debug("Running " + sql);
 			var reader = dao.ExecuteReader(sql);
@@ -56,6 +56,7 @@ namespace Reporting
 				catch (Exception ex) {
 					Logger.ErrorFormat("Error while inserting row #{0}:\r\n{1}", rowCount, sql);
 					Logger.Error(ex);
+					oleConn.Close();
 					throw ex;
 				}
 			}
@@ -63,31 +64,6 @@ namespace Reporting
 			Logger.DebugFormat("{0} records exported.", rowCount);
 
 			ExcelHelper.FormatReport4LoanRiskPerMonth(filePath, sheet, rowCount, this.AsOfDate);
-		}
-
-		private string GetSheetSuffix(TargetTableSheet sheet) {
-			var suffix = "";
-			switch (sheet.Index) {
-				case 1:
-					suffix = "FYJ";
-					break;
-				case 2:
-					suffix = "BLDK";
-					break;
-				case 3:
-					suffix = "YQ";
-					break;
-				case 4:
-					suffix = "ZQX";
-					break;
-				case 5:
-					suffix = "GZDK";
-					break;
-				default:
-					Logger.Error("Unknown sheet index: " + sheet.Index.ToString());
-					throw new Exception("Unknown sheet index: " + sheet.Index.ToString());
-			}
-			return suffix;
 		}
 
 		private string GetInsertSql(SqlDataReader reader, TargetTableSheet sheet) {

@@ -39,6 +39,7 @@ namespace Reporting
 				return _columns;
 			}
 		}
+
 		public static List<TargetTableSheet> GetList() {
 			var list = new List<TargetTableSheet>();
 			var table = dao.ExecuteDataTable("SELECT * FROM TargetTableSheet");
@@ -64,6 +65,13 @@ namespace Reporting
 				list.Add(new TargetTableSheetColumn(row));
 			}
 			return list;
+		}
+
+		public string EvaluateName(DateTime asOfDate) {
+			if (this.Name.StartsWith("<") && this.Name.EndsWith(">")) {
+				this.Name = asOfDate.ToString(this.Name.Substring(1, this.Name.Length - 2));
+			}
+			return this.Name;
 		}
 	}
 }
