@@ -229,6 +229,32 @@ END
 
 IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (1, '末风险贷款情况表（五级分类）', '榆林分行月末风险贷款情况表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (2, '风险贷款通报', '风险贷款通报.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (3, '榆林地区不良贷款监测旬报', '榆林地区不良贷款监测旬报.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (4, '中小企业资金需求及银行业支持情况表', '中小企业资金需求及银行业支持情况表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (5, '城商行授信情况统计表', '城商行授信情况统计表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (6, '风险贷款变化情况表', '风险贷款变化情况表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (7, '榆林分行三张表汇总表', '榆林分行三张表汇总表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (8, '贷款质量分类情况汇总表', '贷款质量分类情况汇总表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (20, '风险贷款情况表-行业版', '风险贷款情况表-行业版.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (21, 'GF0102-081', 'GF0102-081.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (22, 'GF0107-141', 'GF0107-141.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (23, 'SF6301-141', 'SF6301-141.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (24, 'SF6401-141', 'SF6401-141.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (31, 'GF1101-121', 'GF1101-121.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (32, 'GF1301-081', 'GF1301-081.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (33, 'GF1302-081', 'GF1302-081.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (34, 'GF1303-081', 'GF1303-081.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (35, 'GF1304-081', 'GF1304-081.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (36, 'GF1403-111', 'GF1403-111.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (37, 'SF6302-131', 'SF6302-131.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (38, 'SF6402-131', 'SF6402-131.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (39, 'GF1103-121', 'GF1103-121.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (40, 'GF1200-101', 'GF1200-101.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (61, '信贷数据需求', '信贷数据需求.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (62, '结清贷款明细表', '结清贷款明细表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (63, '新增贷款明细表', '新增贷款明细表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (64, '风险贷款变化情况表', '风险贷款变化情况表.xls')
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
