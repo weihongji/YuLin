@@ -7,11 +7,11 @@ using Microsoft.Office.Interop.Excel;
 
 namespace Reporting
 {
-	public class ExcelExporter
+	public class Exporter
 	{
 		private Logger logger = Logger.GetLogger("Exporter.ExcelExporter");
 
-		public ExcelExporter() {
+		public Exporter() {
 		}
 
 		public string ExportData(XEnum.ReportType report, DateTime asOfDate) {
@@ -22,6 +22,9 @@ namespace Reporting
 					break;
 				case XEnum.ReportType.F_HYB:
 					result = new LoanRiskPerMonthHYB(asOfDate).GenerateReport();
+					break;
+				case XEnum.ReportType.FM_GF0102_081:
+					result = new GF0102_081(asOfDate).GenerateReport();
 					break;
 				default:
 					result = "Unknown report type: " + report;

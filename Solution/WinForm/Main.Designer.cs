@@ -257,8 +257,9 @@
 			// menuReport_FM_GF0102_081
 			// 
 			this.menuReport_FM_GF0102_081.Name = "menuReport_FM_GF0102_081";
-			this.menuReport_FM_GF0102_081.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FM_GF0102_081.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FM_GF0102_081.Text = "GF0102-081";
+			this.menuReport_FM_GF0102_081.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FM_GF0107_141
 			// 
@@ -483,7 +484,7 @@
             "2015-09",
             "2015-08",
             "2015-07"});
-			this.cmbReportMonth.Location = new System.Drawing.Point(166, 114);
+			this.cmbReportMonth.Location = new System.Drawing.Point(176, 114);
 			this.cmbReportMonth.Name = "cmbReportMonth";
 			this.cmbReportMonth.Size = new System.Drawing.Size(116, 25);
 			this.cmbReportMonth.TabIndex = 0;
@@ -503,9 +504,9 @@
 			this.btnExport.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.btnExport.Location = new System.Drawing.Point(328, 109);
 			this.btnExport.Name = "btnExport";
-			this.btnExport.Size = new System.Drawing.Size(152, 34);
+			this.btnExport.Size = new System.Drawing.Size(137, 34);
 			this.btnExport.TabIndex = 1;
-			this.btnExport.Text = "导出 Excel";
+			this.btnExport.Text = "导     出";
 			this.btnExport.UseVisualStyleBackColor = true;
 			this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
 			// 

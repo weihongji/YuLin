@@ -115,7 +115,7 @@ BEGIN
 			, CustomerName
 			, IdCardNo
 			, DangerLevel
-			, CapitalAmount
+			, CapitalAmount = CAST(ROUND(CapitalAmount/10000, 2) AS decimal(10, 2))
 			, CustomerType
 			, LoanType
 			, OverdueDays
@@ -145,4 +145,5 @@ BEGIN
 	END
 
 	DROP TABLE #LoanId
+	DROP TABLE #Result
 END

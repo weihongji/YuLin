@@ -308,7 +308,7 @@ namespace Reporting
 			}
 			this.Cursor = Cursors.WaitCursor;
 			try {
-				var exporter = new ExcelExporter();
+				var exporter = new Exporter();
 				var startTime = DateTime.Now; // Use to count time cost
 				var result = exporter.ExportData(this.currentReport, asOfDate);
 				this.Cursor = Cursors.Default;

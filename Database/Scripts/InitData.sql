@@ -264,6 +264,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (4, 1, 4, '只欠息', 2, 6, 6)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (5, 1, 5, '关注贷款', 2, 6, 6)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (6, 20, 1, '<yyyy-M>', 0, 4, 4)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (7, 21, 1, 'GF0102', 4, 12, 14)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -353,6 +354,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 14, '是否本月新增')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 15, '备注')
 
+	/* 风险贷款情况表-行业版 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 1, '所在分行')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 2, '经办机构')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 3, '客户')
@@ -371,4 +373,11 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 16, '贷款投向行业小类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 17, '担保方式')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 18, '是否中长期')
+
+	/* GF0102-081 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (7, 1, '序号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (7, 2, '项目')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (7, 3, '人民币')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (7, 4, '外币折人民币')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (7, 5, '本外币合计')
 END

@@ -282,6 +282,77 @@ namespace Reporting
 			}
 		}
 
+		public static bool SubstituteReportHeader(Worksheet theSheet, TargetTableSheet sheet, DateTime asOfDate) {
+			var changed = false;
+			var columnCount = sheet.Columns.Count;
+			for (int i = 1; i <= sheet.RowsBeforeHeader; i++) {
+				for (int j = 1; j <= columnCount; j++) {
+					var cell = ((Range)theSheet.Cells[i, j]);
+					string val = cell.Value2;
+					if (!string.IsNullOrWhiteSpace(val)) {
+						if (val.IndexOf("year") >= 0) {
+							val = val.Replace("year", asOfDate.Year.ToString());
+						}
+						if (val.IndexOf("month") >= 0) {
+							val = val.Replace("month", asOfDate.Month.ToString());
+						}
+						if (val.IndexOf("day") >= 0) {
+							val = val.Replace("day", asOfDate.Day.ToString());
+						}
+						if (!val.Equals((string)cell.Value2)) {
+							cell.Value2 = val;
+							changed = true;
+						}
+					}
+				}
+			}
+			return changed;
+		}
+
+		public static string PopulateGF0102_081(string filePath, TargetTableSheet sheet, DateTime asOfDate, decimal total, decimal guanZhu, decimal ciJi, decimal keYi, decimal sunShi) {
+			logger.Debug("Populating GF0102_081");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+				((Range)theSheet.Cells[6, 3]).Value2 = total;
+				((Range)theSheet.Cells[8, 3]).Value2 = guanZhu;
+				((Range)theSheet.Cells[9, 3]).Value2 = ciJi;
+				((Range)theSheet.Cells[10, 3]).Value2 = keYi;
+				((Range)theSheet.Cells[11, 3]).Value2 = sunShi;
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		#region tests
 		public static void TestInsertRow2() {
 			Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
