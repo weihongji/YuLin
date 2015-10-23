@@ -12,9 +12,7 @@ BEGIN
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
-	DECLARE @total as decimal(15, 2)
-
-	SELECT Id, Name, CAST(ROUND(ISNULL(Balance, 0), 2) AS decimal(10, 2)) AS Balance
+	SELECT Id, Name AS Direction, CAST(ROUND(ISNULL(Balance, 0), 2) AS decimal(10, 2)) AS Balance
 	FROM (
 		SELECT D.Id, D.Name, B.Balance FROM Direction D
 			LEFT JOIN (

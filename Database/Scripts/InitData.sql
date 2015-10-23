@@ -291,6 +291,8 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (6, 20, 1, '<yyyy-M>', 0, 4, 4)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (7, 21, 1, 'GF0102', 4, 12, 14)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (8, 22, 1, 'GF0107', 3, 40, 42)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (9, 23, 1, 'SF6301', 3, 33, 36)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (10, 24, 1, 'SF6401', 3, 33, 36)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -411,4 +413,28 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 1, '序号')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 2, '行业名称')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 3, '各项贷款')
+
+	/* SF6301-141 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 1, '序号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 2, '项目')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 3, '大型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 4, '中型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 5, '小型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 6, '微型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 7, '单户授信总额500万元以下的小微型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 8, '个人经营性贷款')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 9, '其中：个体工商户贷款')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 10, '其中：小微企业主贷款')
+
+	/* SF6401-141 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 1, '序号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 2, '项目')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 3, '大型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 4, '中型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 5, '小型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 6, '微型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 7, '单户授信总额500万元以下的小微型企业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 8, '个人经营性贷款')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 9, '其中：个体工商户贷款')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 10, '其中：小微企业主贷款')
 END

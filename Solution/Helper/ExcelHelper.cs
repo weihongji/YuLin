@@ -405,6 +405,65 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateSF6401_141(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable, System.Data.DataTable dataTable2) {
+			logger.Debug("Populating SF6401_141");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				// 1.1 - 1.20
+				int rowStartAt = 7;
+				for (int i = 0; i < 20; i++) {
+					for (int j = 1; j <= 6; j++) {
+						((Range)theSheet.Cells[rowStartAt + i, 2 + j]).Value2 = dataTable.Rows[i]["Balance" + j.ToString()];
+					}
+					((Range)theSheet.Cells[rowStartAt + i, 9]).Value2 = dataTable.Rows[i]["Balance6"];
+				}
+				// 2. 贷款当年累计发放额
+				for (int j = 1; j <= 6; j++) {
+					((Range)theSheet.Cells[29, 2 + j]).Value2 = dataTable.Rows[20]["Balance" + j.ToString()];
+				}
+
+				// 3. 贷款当年累计发放户数
+				// 4. 贷款当年累计申请户数
+				for (int j = 1; j <= 6; j++) {
+					((Range)theSheet.Cells[30, 2 + j]).Value2 = dataTable2.Rows[0]["Count" + j.ToString()];
+					((Range)theSheet.Cells[31, 2 + j]).Value2 = dataTable2.Rows[0]["Count" + j.ToString()];
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		#region tests
 		public static void TestInsertRow2() {
 			Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
