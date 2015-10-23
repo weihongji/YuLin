@@ -66,6 +66,31 @@ IF NOT EXISTS(SELECT * FROM DanBaoFangShi) BEGIN
 	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('大型企业', '保证')
 END
 
+IF NOT EXISTS(SELECT * FROM Direction) BEGIN
+	INSERT INTO Direction(Id, Name) VALUES (1, '农、林、牧、渔业')
+	INSERT INTO Direction(Id, Name) VALUES (2, '采矿业')
+	INSERT INTO Direction(Id, Name) VALUES (3, '制造业')
+	INSERT INTO Direction(Id, Name) VALUES (4, '电力、热力、燃气及水生产和供应业')
+	INSERT INTO Direction(Id, Name) VALUES (5, '建筑业')
+	INSERT INTO Direction(Id, Name) VALUES (6, '批发和零售业')
+	INSERT INTO Direction(Id, Name) VALUES (7, '交通运输、仓储和邮政业')
+	INSERT INTO Direction(Id, Name) VALUES (8, '住宿和餐饮业')
+	INSERT INTO Direction(Id, Name) VALUES (9, '信息传输、软件和信息技术服务业')
+	INSERT INTO Direction(Id, Name) VALUES (10, '金融业')
+	INSERT INTO Direction(Id, Name) VALUES (11, '房地产业')
+	INSERT INTO Direction(Id, Name) VALUES (12, '租赁和商务服务业')
+	INSERT INTO Direction(Id, Name) VALUES (13, '科学研究和技术服务业')
+	INSERT INTO Direction(Id, Name) VALUES (14, '水利、环境和公共设施管理业')
+	INSERT INTO Direction(Id, Name) VALUES (15, '居民服务、修理和其他服务业')
+	INSERT INTO Direction(Id, Name) VALUES (16, '教育')
+	INSERT INTO Direction(Id, Name) VALUES (17, '卫生和社会工作')
+	INSERT INTO Direction(Id, Name) VALUES (18, '文化、体育和娱乐业')
+	INSERT INTO Direction(Id, Name) VALUES (19, '公共管理、社会保障和社会组织')
+	INSERT INTO Direction(Id, Name) VALUES (20, '国际组织')
+	INSERT INTO Direction(Id, Name) VALUES (21, '个人贷款(不含个人经营性贷款)')
+	INSERT INTO Direction(Id, Name) VALUES (22, '买断式转贴现')
+END
+
 IF NOT EXISTS(SELECT * FROM SourceTable) BEGIN
 	INSERT INTO SourceTable(Id, Name) VALUES (1, '贷款欠款查询')
 	INSERT INTO SourceTable(Id, Name) VALUES (2, '对公')
@@ -265,6 +290,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (5, 1, 5, '关注贷款', 2, 6, 6)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (6, 20, 1, '<yyyy-M>', 0, 4, 4)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (7, 21, 1, 'GF0102', 4, 12, 14)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (8, 22, 1, 'GF0107', 3, 40, 42)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -380,4 +406,9 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (7, 3, '人民币')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (7, 4, '外币折人民币')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (7, 5, '本外币合计')
+
+	/* GF0107-141 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 1, '序号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 2, '行业名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 3, '各项贷款')
 END

@@ -329,6 +329,17 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DanBaoFangSh
 	) ON [PRIMARY]
 END
 
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction')) BEGIN
+	CREATE TABLE dbo.Direction(
+		Id int NOT NULL,
+		Name nvarchar(100) NOT NULL
+		CONSTRAINT PK_Direction PRIMARY KEY CLUSTERED
+		(
+			Id ASC
+		)
+	) ON [PRIMARY]
+END
+
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('SourceTable')) BEGIN
 	CREATE TABLE dbo.SourceTable(
 		Id int NOT NULL,

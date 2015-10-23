@@ -26,6 +26,9 @@ namespace Reporting
 				case XEnum.ReportType.FM_GF0102_081:
 					result = new GF0102_081(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.FM_GF0107_141:
+					result = new GF0107_141(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;

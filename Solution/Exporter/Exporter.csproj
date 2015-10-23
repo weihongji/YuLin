@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseReport.cs" />
+    <Compile Include="GF0107_141.cs" />
     <Compile Include="GF0102_081.cs" />
     <Compile Include="Exporter.cs" />
     <Compile Include="LoanRiskPerMonth.cs" />

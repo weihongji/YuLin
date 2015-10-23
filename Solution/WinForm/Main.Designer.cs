@@ -151,14 +151,14 @@
 			// menu_Mgmt_Import
 			// 
 			this.menu_Mgmt_Import.Name = "menu_Mgmt_Import";
-			this.menu_Mgmt_Import.Size = new System.Drawing.Size(144, 22);
+			this.menu_Mgmt_Import.Size = new System.Drawing.Size(152, 22);
 			this.menu_Mgmt_Import.Text = "导入数据 (&I)";
 			this.menu_Mgmt_Import.Click += new System.EventHandler(this.menu_Mgmt_Import_Click);
 			// 
 			// menu_Mgmt_Exit
 			// 
 			this.menu_Mgmt_Exit.Name = "menu_Mgmt_Exit";
-			this.menu_Mgmt_Exit.Size = new System.Drawing.Size(144, 22);
+			this.menu_Mgmt_Exit.Size = new System.Drawing.Size(152, 22);
 			this.menu_Mgmt_Exit.Text = "退出系统 (&X)";
 			this.menu_Mgmt_Exit.Click += new System.EventHandler(this.menu_Mgmt_Exit_Click);
 			// 
@@ -189,42 +189,49 @@
 			this.menuReport_X_FXDKTB.Name = "menuReport_X_FXDKTB";
 			this.menuReport_X_FXDKTB.Size = new System.Drawing.Size(280, 22);
 			this.menuReport_X_FXDKTB.Text = "风险贷款通报";
+			this.menuReport_X_FXDKTB.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_BLDKJCXB
 			// 
 			this.menuReport_X_BLDKJCXB.Name = "menuReport_X_BLDKJCXB";
 			this.menuReport_X_BLDKJCXB.Size = new System.Drawing.Size(280, 22);
 			this.menuReport_X_BLDKJCXB.Text = "榆林地区不良贷款监测旬报";
+			this.menuReport_X_BLDKJCXB.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_ZXQYZJXQ
 			// 
 			this.menuReport_X_ZXQYZJXQ.Name = "menuReport_X_ZXQYZJXQ";
 			this.menuReport_X_ZXQYZJXQ.Size = new System.Drawing.Size(280, 22);
 			this.menuReport_X_ZXQYZJXQ.Text = "中小企业资金需求及银行业支持情况表";
+			this.menuReport_X_ZXQYZJXQ.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_CSHSX
 			// 
 			this.menuReport_X_CSHSX.Name = "menuReport_X_CSHSX";
 			this.menuReport_X_CSHSX.Size = new System.Drawing.Size(280, 22);
 			this.menuReport_X_CSHSX.Text = "城商行授信情况统计表";
+			this.menuReport_X_CSHSX.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_FXDKBH
 			// 
 			this.menuReport_X_FXDKBH.Name = "menuReport_X_FXDKBH";
 			this.menuReport_X_FXDKBH.Size = new System.Drawing.Size(280, 22);
 			this.menuReport_X_FXDKBH.Text = "风险贷款变化情况表";
+			this.menuReport_X_FXDKBH.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_SZHZ
 			// 
 			this.menuReport_X_SZHZ.Name = "menuReport_X_SZHZ";
 			this.menuReport_X_SZHZ.Size = new System.Drawing.Size(280, 22);
 			this.menuReport_X_SZHZ.Text = "榆林分行三张表汇总表";
+			this.menuReport_X_SZHZ.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_DKZLFL
 			// 
 			this.menuReport_X_DKZLFL.Name = "menuReport_X_DKZLFL";
 			this.menuReport_X_DKZLFL.Size = new System.Drawing.Size(280, 22);
 			this.menuReport_X_DKZLFL.Text = "贷款质量分类情况汇总表";
+			this.menuReport_X_DKZLFL.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F
 			// 
@@ -264,20 +271,23 @@
 			// menuReport_FM_GF0107_141
 			// 
 			this.menuReport_FM_GF0107_141.Name = "menuReport_FM_GF0107_141";
-			this.menuReport_FM_GF0107_141.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FM_GF0107_141.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FM_GF0107_141.Text = "GF0107-141";
+			this.menuReport_FM_GF0107_141.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FM_SF6301_141
 			// 
 			this.menuReport_FM_SF6301_141.Name = "menuReport_FM_SF6301_141";
-			this.menuReport_FM_SF6301_141.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FM_SF6301_141.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FM_SF6301_141.Text = "SF6301-141";
+			this.menuReport_FM_SF6301_141.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FM_SF6401_141
 			// 
 			this.menuReport_FM_SF6401_141.Name = "menuReport_FM_SF6401_141";
-			this.menuReport_FM_SF6401_141.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FM_SF6401_141.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FM_SF6401_141.Text = "SF6401-141";
+			this.menuReport_FM_SF6401_141.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_Season
 			// 
@@ -299,62 +309,72 @@
 			// menuReport_FS_GF1101_121
 			// 
 			this.menuReport_FS_GF1101_121.Name = "menuReport_FS_GF1101_121";
-			this.menuReport_FS_GF1101_121.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_GF1101_121.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_GF1101_121.Text = "GF1101-121";
+			this.menuReport_FS_GF1101_121.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_GF1301_081
 			// 
 			this.menuReport_FS_GF1301_081.Name = "menuReport_FS_GF1301_081";
-			this.menuReport_FS_GF1301_081.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_GF1301_081.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_GF1301_081.Text = "GF1301-081";
+			this.menuReport_FS_GF1301_081.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_GF1302_081
 			// 
 			this.menuReport_FS_GF1302_081.Name = "menuReport_FS_GF1302_081";
-			this.menuReport_FS_GF1302_081.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_GF1302_081.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_GF1302_081.Text = "GF1302-081";
+			this.menuReport_FS_GF1302_081.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_GF1303_081
 			// 
 			this.menuReport_FS_GF1303_081.Name = "menuReport_FS_GF1303_081";
-			this.menuReport_FS_GF1303_081.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_GF1303_081.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_GF1303_081.Text = "GF1303-081";
+			this.menuReport_FS_GF1303_081.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_GF1304_081
 			// 
 			this.menuReport_FS_GF1304_081.Name = "menuReport_FS_GF1304_081";
-			this.menuReport_FS_GF1304_081.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_GF1304_081.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_GF1304_081.Text = "GF1304-081";
+			this.menuReport_FS_GF1304_081.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_GF1403_111
 			// 
 			this.menuReport_FS_GF1403_111.Name = "menuReport_FS_GF1403_111";
-			this.menuReport_FS_GF1403_111.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_GF1403_111.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_GF1403_111.Text = "GF1403-111";
+			this.menuReport_FS_GF1403_111.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_SF6302_131
 			// 
 			this.menuReport_FS_SF6302_131.Name = "menuReport_FS_SF6302_131";
-			this.menuReport_FS_SF6302_131.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_SF6302_131.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_SF6302_131.Text = "SF6302-131";
+			this.menuReport_FS_SF6302_131.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_SF6402_131
 			// 
 			this.menuReport_FS_SF6402_131.Name = "menuReport_FS_SF6402_131";
-			this.menuReport_FS_SF6402_131.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_SF6402_131.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_SF6402_131.Text = "SF6402-131";
+			this.menuReport_FS_SF6402_131.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_GF1103_121
 			// 
 			this.menuReport_FS_GF1103_121.Name = "menuReport_FS_GF1103_121";
-			this.menuReport_FS_GF1103_121.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_GF1103_121.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_GF1103_121.Text = "GF1103-121";
+			this.menuReport_FS_GF1103_121.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_FS_GF1200_101
 			// 
 			this.menuReport_FS_GF1200_101.Name = "menuReport_FS_GF1200_101";
-			this.menuReport_FS_GF1200_101.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_FS_GF1200_101.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_FS_GF1200_101.Text = "GF1200-101";
+			this.menuReport_FS_GF1200_101.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C
 			// 
@@ -372,24 +392,28 @@
 			this.menuReport_C_XDSJXQ.Name = "menuReport_C_XDSJXQ";
 			this.menuReport_C_XDSJXQ.Size = new System.Drawing.Size(184, 22);
 			this.menuReport_C_XDSJXQ.Text = "信贷数据需求";
+			this.menuReport_C_XDSJXQ.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C_JQDKMX
 			// 
 			this.menuReport_C_JQDKMX.Name = "menuReport_C_JQDKMX";
 			this.menuReport_C_JQDKMX.Size = new System.Drawing.Size(184, 22);
 			this.menuReport_C_JQDKMX.Text = "结清贷款明细表";
+			this.menuReport_C_JQDKMX.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C_XZDKMX
 			// 
 			this.menuReport_C_XZDKMX.Name = "menuReport_C_XZDKMX";
 			this.menuReport_C_XZDKMX.Size = new System.Drawing.Size(184, 22);
 			this.menuReport_C_XZDKMX.Text = "新增贷款明细表";
+			this.menuReport_C_XZDKMX.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C_FXDKBH
 			// 
 			this.menuReport_C_FXDKBH.Name = "menuReport_C_FXDKBH";
 			this.menuReport_C_FXDKBH.Size = new System.Drawing.Size(184, 22);
 			this.menuReport_C_FXDKBH.Text = "风险贷款变化情况表";
+			this.menuReport_C_FXDKBH.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// panelContent
 			// 
