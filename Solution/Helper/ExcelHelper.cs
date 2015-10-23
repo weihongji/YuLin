@@ -376,6 +376,8 @@ namespace Reporting
 				for (int i = 0; i < 4; i++) {
 					((Range)theSheet.Cells[rowStartAt + i, 3]).Value2 = dataTable.Rows[i + 20]["Balance"];
 				}
+				// 4. 个人经营性贷款
+				((Range)theSheet.Cells[38, 3]).Value2 = dataTable.Rows[24]["Balance"];
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate);
 

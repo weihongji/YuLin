@@ -50,6 +50,10 @@ BEGIN
 			AND ProductName NOT LIKE '%公务卡%'
 			AND ProductName NOT LIKE '%汽车%'
 			AND ProductName NOT LIKE '%住房%'
+		UNION ALL
+		SELECT 105 AS Id, '个人经营性贷款' AS Name, SUM(LoanBalance) AS Balance FROM ImportPrivate
+		WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 3)
+			AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 		) AS Final
 	ORDER BY Id
 END
