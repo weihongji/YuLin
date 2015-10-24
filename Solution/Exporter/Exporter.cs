@@ -34,7 +34,10 @@ namespace Reporting
 					break;
 				case XEnum.ReportType.FM_SF6401_141:
 					result = new SF6401_141(asOfDate).GenerateReport();
-					break;
+                    break;
+                case XEnum.ReportType.X_FXDKTB:
+                    result = new X_FXDKTB(asOfDate).GenerateReport();
+                    break;
 				default:
 					result = "Unknown report type: " + report;
 					break;
