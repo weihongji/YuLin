@@ -25,13 +25,13 @@ BEGIN
 				, Count5 = CASE WHEN MAX(ScopeName) IN ('小型企业', '微型企业') AND MAX(Balance1)<=5000000 THEN 1 ELSE 0 END
 				, Count6 = 0
 			FROM ImportPublic
-			WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 2)
+			WHERE ImportId = @importId
 				AND LoanStartDate BETWEEN @yearStart AND @yearEnd
 			GROUP BY CustomerName
 			UNION ALL
 			SELECT Count1 = 0, Count2 = 0, Count3 = 0, Count4 = 0, Count5 = 0, 1 AS Count6
 			FROM ImportPrivate
-			WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 3)
+			WHERE ImportId = @importId
 				AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 				AND ContractStartDate BETWEEN @yearStart AND @yearEnd
 			GROUP BY CustomerName, IdCardNo

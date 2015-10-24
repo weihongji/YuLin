@@ -31,6 +31,11 @@ namespace Reporting
 			SwitchToPanel("none");
 		}
 
+		private void Main_Load(object sender, EventArgs e) {
+			this.calendar.Left = 206;
+			this.calendar.Visible = false;
+		}
+
 		private void SwitchToPanel(string panel) {
 			panelImport.Visible = false;
 			panelReport.Visible = false;
@@ -59,10 +64,6 @@ namespace Reporting
 		}
 
 		private void InitImportPanel() {
-			var asOfDate = DateHelper.GetLastDayInMonth(DateTime.Today).AddMonths(-1);
-			this.cmbYear.Text = asOfDate.Year.ToString();
-			this.cmbMonth.Text = asOfDate.Month.ToString();
-
 			this.lblImportLoan.Text = "";
 			this.lblImportPublic.Text = "";
 			this.lblImportPrivate.Text = "";
@@ -71,11 +72,16 @@ namespace Reporting
 			this.lblImportYWNei.Text = "";
 			this.lblImportYWWai.Text = "";
 		}
+		
+		private void btnCalendar_Click(object sender, EventArgs e) {
+			this.calendar.Show();
+			this.calendar.Focus();
+		}
 
 		private void btnImportOK_Click(object sender, EventArgs e) {
 			DateTime asOfDate;
 			if (IsValidToImport(out asOfDate)) {
-				if (MessageBox.Show(string.Format("确定您导入的数据是{0}的吗？", asOfDate.ToString("yyyy年M月")), this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+				if (MessageBox.Show(string.Format("确定您导入的数据是{0}的吗？", asOfDate.ToString("yyyy-M-d")), this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
 					return;
 				}
 
@@ -114,27 +120,21 @@ namespace Reporting
 		private bool IsValidToImport(out DateTime asOfDate) {
 			asOfDate = new DateTime(1900, 1, 1);
 
-			if (cmbYear.Text == "") {
-				ShowStop("需要填写导入数据的年份");
-				cmbYear.Focus();
-				return false;
-			}
-			if (cmbMonth.Text == "") {
-				ShowStop("需要填写导入数据的月份");
-				cmbMonth.Focus();
+			if (this.txtAsOfDate.Text == "") {
+				ShowStop("需要填写数据日期");
+				this.btnCalendar.Focus();
 				return false;
 			}
 
-			string dateString = string.Format("{0}/{1}/1", cmbYear.Text, cmbMonth.Text);
+			string dateString = this.txtAsOfDate.Text;
 			if (!DateTime.TryParse(dateString, out asOfDate)) {
-				ShowStop("数据的年份或月份无效");
-				cmbYear.Focus();
+				ShowStop("数据的日期无效");
+				this.btnCalendar.Focus();
 				return false;
 			}
-			asOfDate = DateHelper.GetLastDayInMonth(asOfDate);
 			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
-				ShowStop("年份或月份超出范围");
-				cmbYear.Focus();
+				ShowStop("数据的日期超出范围");
+				this.btnCalendar.Focus();
 				return false;
 			}
 
@@ -221,7 +221,7 @@ namespace Reporting
 			this.lblReportTitle.Text = report.Name;
 
 			var dao = new SqlDbHelper();
-			var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import ORDER BY ImportDate DESC");
+			var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
 			this.cmbReportMonth.Items.Clear();
 			if (table != null) {
 				foreach (DataRow row in table.Rows) {
@@ -359,5 +359,25 @@ namespace Reporting
 		}
 		#endregion
 
+		#region Calendar
+		private void calendar_DateSelected(object sender, DateRangeEventArgs e) {
+			this.txtAsOfDate.Text = this.calendar.SelectionStart.ToString("yyyy-M-d");
+			this.calendar.Hide();
+		}
+
+		private void calendar_Leave(object sender, EventArgs e) {
+			this.calendar.Hide();
+		}
+
+		private void panelImport_Click(object sender, EventArgs e) {
+			this.calendar.Hide();
+		}
+
+		private void calendar_KeyDown(object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Escape) {
+				this.calendar.Hide();
+			}
+		}
+		#endregion
 	}
 }

@@ -15,12 +15,12 @@ BEGIN
 	DECLARE @total as decimal(15, 2)
 
 	SELECT @total = CAST(ROUND(SUM(CurrentDebitBalance)/10000, 2) AS decimal(10, 2)) FROM ImportYWNei
-	WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 6)
+	WHERE ImportId = @importId
 		AND SubjectCode BETWEEN '1301' AND '1382'
 
 	
 	SELECT DangerLevel, CAST(ROUND(SUM(CapitalAmount)/10000, 2) AS decimal(10, 2)) as Amount INTO #Result FROM ImportLoan
-	WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 1)
+	WHERE ImportId = @importId
 	GROUP BY DangerLevel
 
 	SELECT Total = @total

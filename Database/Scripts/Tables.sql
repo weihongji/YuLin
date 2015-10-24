@@ -30,7 +30,7 @@ END
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportLoan')) BEGIN
 	CREATE TABLE dbo.ImportLoan(
 		Id int IDENTITY(1,1) NOT NULL,
-		ImportItemId int NOT NULL,
+		ImportId int NOT NULL,
 		DangerLevel nvarchar(20) NULL,
 		OrgNo varchar(50) NOT NULL,
 		LoanCatalog nvarchar(100) NULL,
@@ -74,11 +74,11 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportLoan')
 	) ON [PRIMARY]
 
 	ALTER TABLE dbo.ImportLoan WITH CHECK
-	ADD CONSTRAINT FK_ImportLoan_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ADD CONSTRAINT FK_ImportLoan_ImportItem FOREIGN KEY(ImportId) REFERENCES dbo.Import (Id)
 
 	ALTER TABLE dbo.ImportLoan CHECK CONSTRAINT FK_ImportLoan_ImportItem
 		
-	CREATE NONCLUSTERED INDEX IX_ImportLoan_ImportItemId ON dbo.ImportLoan(ImportItemId ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportLoan_ImportId ON dbo.ImportLoan(ImportId ASC) ON [PRIMARY]
 	CREATE NONCLUSTERED INDEX IX_ImportLoan_LoanState ON dbo.ImportLoan(LoanState ASC) ON [PRIMARY]
 	CREATE NONCLUSTERED INDEX IX_ImportLoan_CustomerName ON dbo.ImportLoan(CustomerName ASC) ON [PRIMARY]
 	CREATE NONCLUSTERED INDEX IX_ImportLoan_LoanAccount ON dbo.ImportLoan(LoanAccount ASC) ON [PRIMARY]
@@ -87,7 +87,7 @@ END
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPrivate')) BEGIN
 	CREATE TABLE dbo.ImportPrivate(
 		Id int IDENTITY(1,1) NOT NULL,
-		ImportItemId int NOT NULL,
+		ImportId int NOT NULL,
 		OrgNo varchar(50) NULL,
 		OrgName nvarchar(100) NULL,
 		OrgName2 nvarchar(100) NULL,
@@ -121,17 +121,17 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPrivat
 	) ON [PRIMARY]
 
 	ALTER TABLE dbo.ImportPrivate WITH CHECK
-	ADD CONSTRAINT FK_ImportPrivate_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ADD CONSTRAINT FK_ImportPrivate_ImportItem FOREIGN KEY(ImportId) REFERENCES dbo.Import (Id)
 
 	ALTER TABLE dbo.ImportPrivate CHECK CONSTRAINT FK_ImportPrivate_ImportItem
 
-	CREATE NONCLUSTERED INDEX IX_ImportPrivate_ImportItemId ON dbo.ImportPrivate(ImportItemId ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportPrivate_ImportId ON dbo.ImportPrivate(ImportId ASC) ON [PRIMARY]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPublic')) BEGIN
 	CREATE TABLE dbo.ImportPublic(
 		Id int IDENTITY(1,1) NOT NULL,
-		ImportItemId int NOT NULL,
+		ImportId int NOT NULL,
 		PublicType int NOT NULL,
 		OrgName nvarchar(100) NULL,
 		OrgName2 nvarchar(100) NULL,
@@ -183,18 +183,18 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPublic
 	) ON [PRIMARY]
 
 	ALTER TABLE dbo.ImportPublic WITH CHECK
-	ADD CONSTRAINT FK_ImportPublic_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ADD CONSTRAINT FK_ImportPublic_ImportItem FOREIGN KEY(ImportId) REFERENCES dbo.Import (Id)
 
 	ALTER TABLE dbo.ImportPublic CHECK CONSTRAINT FK_ImportPublic_ImportItem
 	CREATE NONCLUSTERED INDEX IX_ImportPublic_LoanAccount ON dbo.ImportPublic(LoanAccount ASC) ON [PRIMARY]
 		
-	CREATE NONCLUSTERED INDEX IX_ImportPublic_ImportItemId ON dbo.ImportPublic(ImportItemId ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportPublic_ImportId ON dbo.ImportPublic(ImportId ASC) ON [PRIMARY]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportNonAccrual')) BEGIN
 	CREATE TABLE dbo.ImportNonAccrual(
 		Id int IDENTITY(1,1) NOT NULL,
-		ImportItemId int NOT NULL,
+		ImportId int NOT NULL,
 		OrgName nvarchar(100) NULL,
 		CustomerName nvarchar(100) NULL,
 		LoanBalance decimal(15, 6) NULL,
@@ -218,17 +218,17 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportNonAcc
 	) ON [PRIMARY]
 
 	ALTER TABLE dbo.ImportNonAccrual WITH CHECK
-	ADD CONSTRAINT FK_ImportNonAccrual_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ADD CONSTRAINT FK_ImportNonAccrual_ImportItem FOREIGN KEY(ImportId) REFERENCES dbo.Import (Id)
 	ALTER TABLE dbo.ImportNonAccrual CHECK CONSTRAINT FK_ImportNonAccrual_ImportItem
 
 	CREATE NONCLUSTERED INDEX IX_ImportNonAccrual_LoanAccount ON dbo.ImportNonAccrual(LoanAccount ASC) ON [PRIMARY]
-	CREATE NONCLUSTERED INDEX IX_ImportNonAccrual_ImportItemId ON dbo.ImportNonAccrual(ImportItemId ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportNonAccrual_ImportId ON dbo.ImportNonAccrual(ImportId ASC) ON [PRIMARY]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportOverdue')) BEGIN
 	CREATE TABLE dbo.ImportOverdue(
 		Id int IDENTITY(1,1) NOT NULL,
-		ImportItemId int NOT NULL,
+		ImportId int NOT NULL,
 		OrgName nvarchar(100) NULL,
 		CustomerName nvarchar(100) NULL,
 		LoanAccount varchar(50) NULL,
@@ -246,17 +246,17 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportOverdu
 	) ON [PRIMARY]
 
 	ALTER TABLE dbo.ImportOverdue WITH CHECK
-	ADD CONSTRAINT FK_ImportOverdue_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ADD CONSTRAINT FK_ImportOverdue_ImportItem FOREIGN KEY(ImportId) REFERENCES dbo.Import (Id)
 	ALTER TABLE dbo.ImportOverdue CHECK CONSTRAINT FK_ImportOverdue_ImportItem
 
 	CREATE NONCLUSTERED INDEX IX_ImportOverdue_LoanAccount ON dbo.ImportOverdue(LoanAccount ASC) ON [PRIMARY]
-	CREATE NONCLUSTERED INDEX IX_ImportOverdue_ImportItemId ON dbo.ImportOverdue(ImportItemId ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportOverdue_ImportId ON dbo.ImportOverdue(ImportId ASC) ON [PRIMARY]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWNei')) BEGIN
 	CREATE TABLE dbo.ImportYWNei(
 		Id int IDENTITY(1,1) NOT NULL,
-		ImportItemId int NOT NULL,
+		ImportId int NOT NULL,
 		SubjectCode varchar(10) NOT NULL,
 		SubjectName nvarchar(100) NULL,
 		LastDebitBalance decimal(15,2) NULL,
@@ -272,17 +272,17 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWNei'
 	) ON [PRIMARY]
 
 	ALTER TABLE dbo.ImportYWNei WITH CHECK
-	ADD CONSTRAINT FK_ImportYWNei_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ADD CONSTRAINT FK_ImportYWNei_ImportItem FOREIGN KEY(ImportId) REFERENCES dbo.Import (Id)
 	ALTER TABLE dbo.ImportYWNei CHECK CONSTRAINT FK_ImportYWNei_ImportItem
 
 	CREATE NONCLUSTERED INDEX IX_ImportYWNei_SubjectCode ON dbo.ImportYWNei(SubjectCode ASC) ON [PRIMARY]
-	CREATE NONCLUSTERED INDEX IX_ImportYWNei_ImportItemId ON dbo.ImportYWNei(ImportItemId ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportYWNei_ImportId ON dbo.ImportYWNei(ImportId ASC) ON [PRIMARY]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWWai')) BEGIN
 	CREATE TABLE dbo.ImportYWWai(
 		Id int IDENTITY(1,1) NOT NULL,
-		ImportItemId int NOT NULL,
+		ImportId int NOT NULL,
 		SubjectCode varchar(10) NOT NULL,
 		SubjectName nvarchar(100) NULL,
 		LastDebitBalance decimal(15,2) NULL,
@@ -298,11 +298,11 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWWai'
 	) ON [PRIMARY]
 
 	ALTER TABLE dbo.ImportYWWai WITH CHECK
-	ADD CONSTRAINT FK_ImportYWWai_ImportItem FOREIGN KEY(ImportItemId) REFERENCES dbo.ImportItem (Id)
+	ADD CONSTRAINT FK_ImportYWWai_ImportItem FOREIGN KEY(ImportId) REFERENCES dbo.Import (Id)
 	ALTER TABLE dbo.ImportYWWai CHECK CONSTRAINT FK_ImportYWWai_ImportItem
 
 	CREATE NONCLUSTERED INDEX IX_ImportYWWai_SubjectCode ON dbo.ImportYWWai(SubjectCode ASC) ON [PRIMARY]
-	CREATE NONCLUSTERED INDEX IX_ImportYWWai_ImportItemId ON dbo.ImportYWWai(ImportItemId ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportYWWai_ImportId ON dbo.ImportYWWai(ImportId ASC) ON [PRIMARY]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Org')) BEGIN

@@ -63,8 +63,7 @@ namespace Reporting
 		public enum ImportState
 		{
 			Initial = 0,
-			AllCopied = 1,
-			Imported = 2
+			Imported = 1
 		}
 	}
 }

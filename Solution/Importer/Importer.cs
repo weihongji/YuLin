@@ -48,152 +48,121 @@ namespace Reporting
 
 			// Create/update import items records
 			logger.DebugFormat("Copying source files to {0}", importFolder);
-			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Loan);
-			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Public);
-			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Private);
-			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.NonAccrual);
-			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.Overdue);
-			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.YWNei);
-			CopyItem(importId, importFolder, sourceFiles, XEnum.ImportItemType.YWWai);
+			result = ImportLoan(importId, importFolder, sourceFiles[(int)XEnum.ImportItemType.Loan]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+			result = ImportPublic(importId, importFolder, sourceFiles[(int)XEnum.ImportItemType.Public]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+			result = ImportPrivate(importId, importFolder, sourceFiles[(int)XEnum.ImportItemType.Private]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+			result = ImportNonAccrual(importId, importFolder, sourceFiles[(int)XEnum.ImportItemType.NonAccrual]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+			result = ImportOverdue(importId, importFolder, sourceFiles[(int)XEnum.ImportItemType.Overdue]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+			result = ImportYWNei(importId, importFolder, sourceFiles[(int)XEnum.ImportItemType.YWNei]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+			result = ImportYWWai(importId, importFolder, sourceFiles[(int)XEnum.ImportItemType.YWWai]);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
 			logger.DebugFormat("Source files copy done", importFolder);
 
 			if (IsAllCopied(importId)) {
 				logger.Debug("All copied");
-				ChangeImportState(importId, XEnum.ImportState.AllCopied);
-
-				//Import data into database
-				result = ImportToDatabase(importId, importFolder);
+				result = CompleteImport(importId, importFolder);
 			}
 
 			logger.DebugFormat("Import #{0} done", importId);
 			return result;
 		}
 
-		private void CopyItem(int importId, string importFolder, string[] sourceFiles, XEnum.ImportItemType itemType) {
+		private bool CopyItem(int importId, string importFolder, string sourceFilePath, XEnum.ImportItemType itemType) {
 			int itemTypeId = (int)itemType;
 
-			string sourceFilePath = sourceFiles[itemTypeId];
-			string targetFileName = this.targetFileNames[itemTypeId];
-
-			if (sourceFilePath.Length > 0) {
-				int importItemId;
-
-				if (File.Exists(sourceFilePath)) {
-					//Original
-					var originalFolder = importFolder + @"\Original\";
-					if (!Directory.Exists(originalFolder)) {
-						Directory.CreateDirectory(originalFolder);
-					}
-					File.Copy(sourceFilePath, originalFolder + @"\" + targetFileName, true);
-
-					//Processed
-					var processedFolder = importFolder + @"\Processed\";
-					if (!Directory.Exists(processedFolder)) {
-						Directory.CreateDirectory(processedFolder);
-					}
-					File.Copy(sourceFilePath, processedFolder + @"\" + targetFileName, true);
-
-					logger.Debug("Process copied item for " + itemType.ToString());
-					ExcelHelper.ProcessCopiedItem(processedFolder + @"\" + targetFileName, itemType);
-
-					logger.Debug("Updating ImportItem table");
-					var dao = new SqlDbHelper();
-					var sql = new StringBuilder();
-					sql.AppendFormat("SELECT ISNULL(MAX(Id), 0) FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}", importId, itemTypeId);
-					importItemId = (int)dao.ExecuteScalar(sql.ToString());
-					if (importItemId == 0) {
-						sql.Clear();
-						sql.AppendLine(string.Format("INSERT INTO ImportItem (ImportId, ItemType, FilePath) VALUES ({0}, {1}, '{2}')", importId, itemTypeId, sourceFilePath));
-						sql.AppendLine("SELECT SCOPE_IDENTITY()");
-						importItemId = (int)((decimal)dao.ExecuteScalar(sql.ToString()));
-						logger.Debug("New record created. ImportItemId = " + importItemId.ToString());
-					}
-					else {
-						sql.Clear();
-						sql.AppendFormat("UPDATE ImportItem SET FilePath = '{0}', ModifyDate = getdate() WHERE Id = {1}", sourceFilePath, importItemId);
-						dao.ExecuteNonQuery(sql.ToString());
-						logger.Debug("Existing record updated. ImportItemId = " + importItemId.ToString());
-					}
-				}
+			if (sourceFilePath.Length == 0 || !File.Exists(sourceFilePath)) {
+				return false;
 			}
+
+			//Original
+			var originalFolder = importFolder + @"\Original\";
+			if (!Directory.Exists(originalFolder)) {
+				Directory.CreateDirectory(originalFolder);
+			}
+			string targetFileName = this.targetFileNames[itemTypeId];
+			File.Copy(sourceFilePath, originalFolder + @"\" + targetFileName, true);
+
+			//Processed
+			var processedFolder = importFolder + @"\Processed\";
+			if (!Directory.Exists(processedFolder)) {
+				Directory.CreateDirectory(processedFolder);
+			}
+			File.Copy(sourceFilePath, processedFolder + @"\" + targetFileName, true);
+
+			logger.Debug("Process copied item for " + itemType.ToString());
+			ExcelHelper.ProcessCopiedItem(processedFolder + @"\" + targetFileName, itemType);
+
+			logger.Debug("Updating ImportItem table");
+			var dao = new SqlDbHelper();
+			var sql = new StringBuilder();
+			sql.AppendFormat("SELECT ISNULL(MAX(Id), 0) FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}", importId, itemTypeId);
+			var importItemId = (int)dao.ExecuteScalar(sql.ToString());
+			if (importItemId == 0) {
+				sql.Clear();
+				sql.AppendLine(string.Format("INSERT INTO ImportItem (ImportId, ItemType, FilePath) VALUES ({0}, {1}, '{2}')", importId, itemTypeId, sourceFilePath));
+				sql.AppendLine("SELECT SCOPE_IDENTITY()");
+				importItemId = (int)((decimal)dao.ExecuteScalar(sql.ToString()));
+				logger.Debug("New record created. ImportItemId = " + importItemId.ToString());
+			}
+			else {
+				sql.Clear();
+				sql.AppendFormat("UPDATE ImportItem SET FilePath = '{0}', ModifyDate = getdate() WHERE Id = {1}", sourceFilePath, importItemId);
+				dao.ExecuteNonQuery(sql.ToString());
+				logger.Debug("Existing record updated. ImportItemId = " + importItemId.ToString());
+			}
+			return true;
 		}
 		#endregion
 
 		#region "Import excel data to database"
-		public string ImportToDatabase(int importId, string importFolder) {
-			importFolder += "\\Processed";
-			logger.Debug("Importing Loan to database");
-			var result = ImportLoan(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Loan]);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
+		private string ImportLoan(int importId, string importFolder, string sourceFilePath) {
+			logger.Debug("Importing Loan data");
+			var done = CopyItem(importId, importFolder, sourceFilePath, XEnum.ImportItemType.Loan);
+			if (!done) {
+				logger.Debug("Source file not provided");
+				return ""; // Do nothing if user hasn't select a file for this table
 			}
 
-			logger.Debug("Importing Public to database");
-			result = ImportPublic(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Public]);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
-			}
-
-			logger.Debug("Importing Private to database");
-			result = ImportPrivate(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Private]);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
-			}
-
-			logger.Debug("Importing NonAccrual to database");
-			result = ImportNonAccrual(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.NonAccrual]);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
-			}
-
-			logger.Debug("Importing Overdue to database");
-			result = ImportOverdue(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.Overdue]);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
-			}
-
-			logger.Debug("Importing YWNei to database");
-			result = ImportYWNei(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.YWNei]);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
-			}
-
-			logger.Debug("Importing YWWai to database");
-			result = ImportYWWai(importId, importFolder + "\\" + targetFileNames[(int)XEnum.ImportItemType.YWWai]);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
-			}
-
-			logger.Debug("Assigning org number to Private");
-			result = AssignOrgNo(importId);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
-			}
-
-			logger.Debug("Assigning Danger Level to Loan");
-			result = AssignDangerLevel(importId);
-			if (!String.IsNullOrEmpty(result)) {
-				return result;
-			}
-
-			logger.Debug("Changing import state to Imported (completed)");
-			ChangeImportState(importId, XEnum.ImportState.Imported);
-			logger.Debug("Import to database done");
-
-			return string.Empty;
-		}
-
-		public string ImportLoan(int importId, string filePath) {
+			// Import to database
+			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Loan];
 			var excelColumns = "[机构号码], [贷款科目], [贷款帐号], [客户名称], [客户编号], [客户类型], [贷款总额], [本金余额], [拖欠本金], [拖欠应收利息], [拖欠催收利息], [放款日期], [到期日期], [贷款状态], [贷款种类说明], [贷款用途]";
 			var dbColumns = "OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, LoanStartDate, LoanEndDate, LoanState, LoanTypeName, Direction";
-			return ImportTable(importId, filePath, XEnum.ImportItemType.Loan, excelColumns, dbColumns, 16);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Loan, excelColumns, dbColumns, 16);
 		}
 
-		public string ImportPublic(int importId, string filePath) {
+		private string ImportPublic(int importId, string importFolder, string sourceFilePath) {
+			logger.Debug("Importing Public data");
+			var done = CopyItem(importId, importFolder, sourceFilePath, XEnum.ImportItemType.Public);
+			if (!done) {
+				logger.Debug("Source file not provided");
+				return ""; // Do nothing if user hasn't select a file for this table
+			}
+
+			// Import to database
+			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Public];
 			var excelColumns = "[支行名称], [客户姓名], [借款人企业性质], [组织机构代码], [合同编号], [借据开始日期], [借据结束日期], [发放后投向行业门类], [发放后投向行业大类], [发放后投向行业中类], [发放后投向行业小类], [授信品种], [七级分类], [客户规模(行内）], [客户规模(行外）], [本金逾期天数], [欠息天数], [贷款余额], [主要担保方式], [正常余额], [逾期余额], [非应计余额], [贷款账号], [是否政府融资平台]";
 			var dbColumns = "OrgName2, CustomerName, OrgType, OrgCode, ContractNo, LoanStartDate, LoanEndDate, Direction1, Direction2, Direction3, Direction4, BusinessType, ClassifyResult, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, VouchTypeName, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsINRZ";
-
-			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
+			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + targetFilePath + ";Extended Properties=Excel 8.0");
 			oconn.Open();
 			DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 			int maxSheets = 3;
@@ -201,7 +170,7 @@ namespace Reporting
 				if (dt.Rows.Count < sheetIndex * 2 + 1) {
 					break;
 				}
-				var result = ImportTable(importId, filePath, XEnum.ImportItemType.Public, excelColumns, dbColumns, 24, sheetIndex + 1);
+				var result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.Public, excelColumns, dbColumns, 24, sheetIndex + 1);
 				if (!String.IsNullOrEmpty(result)) {
 					return result;
 				}
@@ -209,37 +178,82 @@ namespace Reporting
 			return string.Empty;
 		}
 
-		public string ImportPrivate(int importId, string filePath) {
+		private string ImportPrivate(int importId, string importFolder, string sourceFilePath) {
+			logger.Debug("Importing Private data");
+			var done = CopyItem(importId, importFolder, sourceFilePath, XEnum.ImportItemType.Private);
+			if (!done) {
+				logger.Debug("Source file not provided");
+				return ""; // Do nothing if user hasn't select a file for this table
+			}
+
+			// Import to database
+			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Private];
 			var excelColumns = "[支行], [信贷产品名称], [产品核算项目], [客户名称], [证件号码], [合同开始日期], [合同到期日], [担保方式], [贷款余额], [贷款发放后投向1], [贷款发放后投向2], [贷款发放后投向3], [贷款发放后投向4], [本金最长逾期天数], [利息最长逾期天数], [拖欠利息], [逾期余额], [非应计余额]";
 			var dbColumns = "OrgName2, ProductName, ProductType, CustomerName, IdCardNo, ContractStartDate, ContractEndDate, DanBaoFangShi, LoanBalance, Direction1, Direction2, Direction3, Direction4, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance";
-			return ImportTable(importId, filePath, XEnum.ImportItemType.Private, excelColumns, dbColumns, 18);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Private, excelColumns, dbColumns, 18);
 		}
 
-		public string ImportNonAccrual(int importId, string filePath) {
+		private string ImportNonAccrual(int importId, string importFolder, string sourceFilePath) {
+			logger.Debug("Importing NonAccrual data");
+			var done = CopyItem(importId, importFolder, sourceFilePath, XEnum.ImportItemType.NonAccrual);
+			if (!done) {
+				logger.Debug("Source file not provided");
+				return ""; // Do nothing if user hasn't select a file for this table
+			}
+
+			// Import to database
+			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.NonAccrual];
 			var excelColumns = "[机构名称], [客户名称], [贷款帐号], [担保情况]";
 			var dbColumns = "OrgName, CustomerName, LoanAccount, DanBaoFangShi";
-			return ImportTable(importId, filePath, XEnum.ImportItemType.NonAccrual, excelColumns, dbColumns, 4);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.NonAccrual, excelColumns, dbColumns, 4);
 		}
 
-		public string ImportOverdue(int importId, string filePath) {
+		private string ImportOverdue(int importId, string importFolder, string sourceFilePath) {
+			logger.Debug("Importing Overdue data");
+			var done = CopyItem(importId, importFolder, sourceFilePath, XEnum.ImportItemType.Overdue);
+			if (!done) {
+				logger.Debug("Source file not provided");
+				return ""; // Do nothing if user hasn't select a file for this table
+			}
+
+			// Import to database
+			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Overdue];
 			var excelColumns = "[机构名称], [客户名称], [贷款帐号], [客户编号], [贷款种类], [贷款发放日], [贷款到期日], [逾期本金余额], [利息余额], [担保情况]";
 			var dbColumns = "OrgName, CustomerName, LoanAccount, CustomerNo, LoanType, LoanStartDate, LoanEndDate, CapitalOverdueBalance, InterestBalance, DanBaoFangShi";
-			return ImportTable(importId, filePath, XEnum.ImportItemType.Overdue, excelColumns, dbColumns, 10);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Overdue, excelColumns, dbColumns, 10);
 		}
 
-		public string ImportYWNei(int importId, string filePath) {
+		private string ImportYWNei(int importId, string importFolder, string sourceFilePath) {
+			logger.Debug("Importing YWNei data");
+			var done = CopyItem(importId, importFolder, sourceFilePath, XEnum.ImportItemType.YWNei);
+			if (!done) {
+				logger.Debug("Source file not provided");
+				return ""; // Do nothing if user hasn't select a file for this table
+			}
+
+			// Import to database
+			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.YWNei];
 			var excelColumns = "*";
 			var dbColumns = "SubjectCode, SubjectName, LastDebitBalance, LastCreditBalance, CurrentDebitChange, CurrentCreditChange, CurrentDebitBalance, CurrentCreditBalance";
-			return ImportTable(importId, filePath, XEnum.ImportItemType.YWNei, excelColumns, dbColumns, 8);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.YWNei, excelColumns, dbColumns, 8);
 		}
 
-		public string ImportYWWai(int importId, string filePath) {
+		private string ImportYWWai(int importId, string importFolder, string sourceFilePath) {
+			logger.Debug("Importing YWWai data");
+			var done = CopyItem(importId, importFolder, sourceFilePath, XEnum.ImportItemType.YWWai);
+			if (!done) {
+				logger.Debug("Source file not provided");
+				return ""; // Do nothing if user hasn't select a file for this table
+			}
+
+			// Import to database
+			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.YWWai];
 			var excelColumns = "*";
 			var dbColumns = "SubjectCode, SubjectName, LastDebitBalance, LastCreditBalance, CurrentDebitChange, CurrentCreditChange, CurrentDebitBalance, CurrentCreditBalance";
-			return ImportTable(importId, filePath, XEnum.ImportItemType.YWWai, excelColumns, dbColumns, 8);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.YWWai, excelColumns, dbColumns, 8);
 		}
 
-		public string ImportTable(int importId, string filePath, XEnum.ImportItemType itemType, string excelColumns, string dbColumns, int columnCount, int sheetIndex = 1) {
+		private string ImportTable(int importId, string filePath, XEnum.ImportItemType itemType, string excelColumns, string dbColumns, int columnCount, int sheetIndex = 1) {
 			string suffix = GetTableSuffix(itemType);
 			logger.DebugFormat("Importing {0} to database", suffix);
 			if (String.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath)) {
@@ -278,13 +292,11 @@ namespace Reporting
 
 				int dataRowIndex = 0;
 				var dao = new SqlDbHelper();
-				var importItemIdObject = dao.ExecuteScalar(string.Format("SELECT Id FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}", importId, (int)itemType));
-				int importItemId = importItemIdObject == DBNull.Value ? 0 : (int)importItemIdObject;
 				if (itemType == XEnum.ImportItemType.Public && sheetIndex > 1) {
 					// Don't delete existing records when importing sheet2 or later
 				}
 				else {
-					dao.ExecuteNonQuery(string.Format("DELETE FROM Import{0} WHERE ImportItemId = {1}", suffix, importItemId));
+					dao.ExecuteNonQuery(string.Format("DELETE FROM Import{0} WHERE ImportId = {1}", suffix, importId));
 				}
 
 				sql.Clear();
@@ -294,10 +306,10 @@ namespace Reporting
 					}
 					dataRowIndex++;
 					if (itemType == XEnum.ImportItemType.Public) {
-						sql.AppendLine(GetInsertSql4Public(reader, importItemId, suffix, columnCount, dbColumns, sheetIndex));
+						sql.AppendLine(GetInsertSql4Public(reader, importId, suffix, columnCount, dbColumns, sheetIndex));
 					}
 					else {
-						sql.AppendLine(GetInsertSql(reader, importItemId, suffix, columnCount, dbColumns));
+						sql.AppendLine(GetInsertSql(reader, importId, suffix, columnCount, dbColumns));
 					}
 					// Top 1 trial for exception track
 					if (dataRowIndex == 1) {
@@ -330,7 +342,7 @@ namespace Reporting
 
 				if (itemType == XEnum.ImportItemType.Loan) {
 					// Cleanup zero-records since the oledb query cannot filter them out
-					var query = string.Format("DELETE FROM ImportLoan WHERE ImportItemId = {0} AND ISNULL(CapitalAmount + OweCapital + OweYingShouInterest + OweCuiShouInterest, 0) = 0", importItemId);
+					var query = string.Format("DELETE FROM ImportLoan WHERE ImportId = {0} AND ISNULL(CapitalAmount + OweCapital + OweYingShouInterest + OweCuiShouInterest, 0) = 0", importId);
 					var cleaned = dao.ExecuteNonQuery(query);
 					logger.DebugFormat("{0} records have been cleaned because of 4-zeros.", cleaned);
 				}
@@ -354,27 +366,54 @@ namespace Reporting
 			return suffix;
 		}
 
-		private string GetInsertSql(OleDbDataReader reader, int importItemId, string suffix, int columnCount, string columns) {
+		private string GetInsertSql(OleDbDataReader reader, int importId, string suffix, int columnCount, string columns) {
 			var values = new StringBuilder();
 			values.Append(DataUtility.GetSqlValue(reader, 0));
 			for (int i = 1; i < columnCount; i++) {
 				values.Append(", " + DataUtility.GetSqlValue(reader, i));
 			}
-			var sql = string.Format("INSERT INTO Import{0} (ImportItemId, {1}) VALUES ({2}, {3})", suffix, columns, importItemId, values);
+			var sql = string.Format("INSERT INTO Import{0} (ImportId, {1}) VALUES ({2}, {3})", suffix, columns, importId, values);
 			return sql;
 		}
 
-		private string GetInsertSql4Public(OleDbDataReader reader, int importItemId, string suffix, int columnCount, string columns, int type) {
+		private string GetInsertSql4Public(OleDbDataReader reader, int importId, string suffix, int columnCount, string columns, int type) {
 			var values = new StringBuilder();
 			values.Append(DataUtility.GetSqlValue(reader, 0));
 			for (int i = 1; i < columnCount; i++) {
 				values.Append(", " + DataUtility.GetSqlValue(reader, i));
 			}
-			var sql = string.Format("INSERT INTO Import{0} (ImportItemId, PublicType, {1}) VALUES ({2}, {3}, {4})", suffix, columns, importItemId, type, values);
+			var sql = string.Format("INSERT INTO Import{0} (ImportId, PublicType, {1}) VALUES ({2}, {3}, {4})", suffix, columns, importId, type, values);
 			return sql;
 		}
 
-		public string AssignOrgNo(int importId) {
+		private bool IsAllCopied(int importId) {
+			var dao = new SqlDbHelper();
+			var count = (int)dao.ExecuteScalar(string.Format("SELECT COUNT(*) FROM ImportItem WHERE ImportId = {0}", importId));
+			return count == 7;
+		}
+
+		public string CompleteImport(int importId, string importFolder) {
+
+			logger.Debug("Assigning org number to Private");
+			var result = AssignOrgNo(importId);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+
+			logger.Debug("Assigning Danger Level to Loan");
+			result = AssignDangerLevel(importId);
+			if (!String.IsNullOrEmpty(result)) {
+				return result;
+			}
+
+			logger.Debug("Changing import state to Imported (completed)");
+			ChangeImportState(importId, XEnum.ImportState.Imported);
+			logger.Debug("Import to database done");
+
+			return string.Empty;
+		}
+
+		private string AssignOrgNo(int importId) {
 			try {
 				//Assign OrgNo column
 				var sql = new StringBuilder();
@@ -384,30 +423,24 @@ namespace Reporting
 				sql.AppendLine("	WHERE ImportPrivate.OrgName2 IN (O.Name, O.Alias1, O.Alias2)");
 				sql.AppendLine("		OR REPLACE(ImportPrivate.OrgName2, '榆林分行', '') IN (O.Name, O.Alias1, O.Alias2)");
 				sql.AppendLine(")");
-				sql.AppendLine("WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}) AND OrgNo IS NULL");
+				sql.AppendLine("WHERE ImportId = {0} AND OrgNo IS NULL");
 				var dao = new SqlDbHelper();
-				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId, (int)XEnum.ImportItemType.Private));
+				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
 			}
 			catch (Exception ex) {
 				return ex.Message;
 			}
 			return string.Empty;
 		}
-
-		public bool IsAllCopied(int importId) {
-			var dao = new SqlDbHelper();
-			var count = (int)dao.ExecuteScalar(string.Format("SELECT COUNT(*) FROM ImportItem WHERE ImportId = {0}", importId));
-			return count == 7;
-		}
-
-		public string AssignDangerLevel(int importId) {
+		
+		private string AssignDangerLevel(int importId) {
 			try {
 				var dao = new SqlDbHelper();
 				var sql = new StringBuilder();
 				sql.AppendLine("UPDATE ImportLoan SET DangerLevel = dbo.sfGetDangerLevel({0}, LoanAccount)");
 				sql.AppendLine("WHERE LoanState != '结清'");
-				sql.AppendLine("	AND ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = {0} AND ItemType = {1})");
-				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId, (int)XEnum.ImportItemType.Loan));
+				sql.AppendLine("	AND ImportId = {0}");
+				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
 			}
 			catch (Exception ex) {
 				return ex.Message; ;
@@ -415,7 +448,7 @@ namespace Reporting
 			return string.Empty;
 		}
 
-		public XEnum.ImportState ChangeImportState(int importId, XEnum.ImportState toState) {
+		private XEnum.ImportState ChangeImportState(int importId, XEnum.ImportState toState) {
 
 			var sql = new StringBuilder();
 			sql.AppendLine("UPDATE Import SET State = {1} WHERE Id = {0} AND State < {1}");

@@ -1,6 +1,7 @@
 
 SELECT * FROM Org
 SELECT * FROM DanBaoFangShi
+SELECT * FROM Direction
 SELECT * FROM Import
 SELECT * FROM ImportItem
 SELECT * FROM ImportLoan

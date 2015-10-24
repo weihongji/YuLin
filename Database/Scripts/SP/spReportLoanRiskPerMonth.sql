@@ -18,38 +18,38 @@ BEGIN
 	IF @type = 'FYJ' BEGIN
 		INSERT INTO #LoanId(Id)
 		SELECT Id FROM ImportLoan
-		WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 1)
+		WHERE ImportId = @importId
 			AND LoanState = '非应计'
 	END
 	ELSE IF @type = 'BLDK' BEGIN
 		INSERT INTO #LoanId(Id)
 		SELECT Id FROM ImportLoan
-		WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 1)
+		WHERE ImportId=@importId
 			AND DangerLevel IN ('次级', '可疑', '损失')
 	END
 	ELSE IF @type = 'YQ' BEGIN
 		INSERT INTO #LoanId(Id)
 		SELECT Id FROM ImportLoan
-		WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 1)
+		WHERE ImportId=@importId
 			AND LoanState IN ('逾期', '部分逾期')
 	END
 	ELSE IF @type = 'ZQX' BEGIN
 		INSERT INTO #LoanId(Id)
 		SELECT Id FROM ImportLoan
-		WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 1)
+		WHERE ImportId=@importId
 			AND LoanState = '正常'
 			AND OweYingShouInterest + OweCuiShouInterest != 0
 	END
 	ELSE IF @type = 'GZDK' BEGIN
 		INSERT INTO #LoanId(Id)
 		SELECT Id FROM ImportLoan
-		WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 1)
+		WHERE ImportId=@importId
 			AND DangerLevel LIKE '关%'
 	END
 	ELSE IF @type = 'F_HYB' BEGIN
 		INSERT INTO #LoanId(Id)
 		SELECT Id FROM ImportLoan
-		WHERE ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 1)
+		WHERE ImportId=@importId
 			AND (DangerLevel IN ('次级', '可疑', '损失') OR DangerLevel LIKE '关%')
 	END
 
@@ -68,7 +68,7 @@ BEGIN
 		, IsNew = CASE WHEN EXISTS(
 					SELECT * FROM ImportLoan PL
 					WHERE PL.LoanAccount = L.LoanAccount
-						AND PL.ImportItemId IN (SELECT Id FROM ImportItem WHERE ImportId IN (SELECT Id FROM Import WHERE ImportDate < @asOfDate))
+						AND PL.ImportId IN (SELECT Id FROM Import WHERE ImportDate < @asOfDate)
 				) THEN '' ELSE '是' END
 		, Comment = L.LoanState
 		, IdCardNo = ISNULL(PV.IdCardNo, PB.OrgCode)
@@ -80,10 +80,10 @@ BEGIN
 	INTO #Result
 	FROM ImportLoan L
 		LEFT JOIN Org O ON L.OrgNo = O.Number
-		LEFT JOIN ImportPrivate PV ON PV.CustomerName = L.CustomerName AND PV.ContractStartDate = L.LoanStartDate AND PV.ContractEndDate = L.LoanEndDate AND PV.OrgNo = L.OrgNo AND PV.ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 3)
-		LEFT JOIN ImportPublic PB ON PB.LoanAccount = L.LoanAccount AND PB.ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 2)
-		LEFT JOIN ImportNonAccrual NA ON L.LoanAccount = NA.LoanAccount AND NA.ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 4)
-		LEFT JOIN ImportOverdue OD ON L.LoanAccount = OD.LoanAccount AND OD.ImportItemId = (SELECT Id FROM ImportItem WHERE ImportId = @importId AND ItemType = 5)
+		LEFT JOIN ImportPrivate PV ON PV.CustomerName = L.CustomerName AND PV.ContractStartDate = L.LoanStartDate AND PV.ContractEndDate = L.LoanEndDate AND PV.OrgNo = L.OrgNo AND PV.ImportId = @importId
+		LEFT JOIN ImportPublic PB ON PB.LoanAccount = L.LoanAccount AND PB.ImportId = @importId
+		LEFT JOIN ImportNonAccrual NA ON L.LoanAccount = NA.LoanAccount AND NA.ImportId = @importId
+		LEFT JOIN ImportOverdue OD ON L.LoanAccount = OD.LoanAccount AND OD.ImportId = @importId
 	WHERE L.Id IN (SELECT Id FROM #LoanId)
 	
 	UPDATE #Result SET OverdueDays = OweInterestDays WHERE OverdueDays = 0 AND OweInterestDays > 0 AND CustomerType LIKE '%房%'
