@@ -464,6 +464,60 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateSF6301_141(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating SF6301_141");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				int rowStartAt = 6;
+				for (int i = 0; i < 26; i++) {
+					if ((int)dataTable.Rows[i][1] == 0) {
+						continue;
+					}
+					for (int j = 1; j <= 7; j++) {
+						if (dataTable.Rows[i][j + 1] == DBNull.Value) {
+							((Range)theSheet.Cells[rowStartAt + i, 2 + j]).Value2 = "0.00";
+						}
+						else {
+							((Range)theSheet.Cells[rowStartAt + i, 2 + j]).Value2 = dataTable.Rows[i][j + 1];
+						}
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		#region tests
 		public static void TestInsertRow2() {
 			Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
