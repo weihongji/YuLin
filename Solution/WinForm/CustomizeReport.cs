@@ -54,8 +54,14 @@ namespace Reporting
 				return;
 			}
 			var selIndex = src.SelectedIndex - 1;
-			dest.Items.Add(src.SelectedItem);
-			src.Items.Remove(src.SelectedItem);
+			var seletedItems = new List<object>();
+			foreach (var item in src.SelectedItems) {
+				seletedItems.Add(item);
+			}
+			dest.Items.AddRange(seletedItems.ToArray());
+			foreach (var item in seletedItems) {
+				src.Items.Remove(item);
+			}
 			if (src.Items.Count > 0) {
 				src.SelectedIndex = selIndex < 0 ? 0 : selIndex;
 			}

@@ -316,6 +316,7 @@ namespace Reporting
 					dataRange.Interior.Color = System.Drawing.Color.FromArgb(204, 204, 255);
 					dataRange = theSheet.Range[theSheet.Cells[headerStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
+					dataRange.Font.Size = 10;
 
 					for (int i = 0; i < columnCount; i++) {
 						sheet.Columns.Add(new TargetTableSheetColumn());
