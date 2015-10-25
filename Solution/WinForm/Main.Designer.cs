@@ -26,10 +26,12 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.panelMenu = new System.Windows.Forms.Panel();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.menuMgmt = new System.Windows.Forms.ToolStripMenuItem();
 			this.menu_Mgmt_Import = new System.Windows.Forms.ToolStripMenuItem();
+			this.menu_Mgmt_About = new System.Windows.Forms.ToolStripMenuItem();
 			this.menu_Mgmt_Exit = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_X = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_X_WJFL_M = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,6 +113,10 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.panelAbout = new System.Windows.Forms.Panel();
+			this.label16 = new System.Windows.Forms.Label();
+			this.label14 = new System.Windows.Forms.Label();
+			this.label8 = new System.Windows.Forms.Label();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
@@ -120,6 +126,7 @@
 			this.flowLayoutPanel2.SuspendLayout();
 			this.panelImport.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
+			this.panelAbout.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panelMenu
@@ -148,6 +155,7 @@
 			// 
 			this.menuMgmt.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menu_Mgmt_Import,
+            this.menu_Mgmt_About,
             this.menu_Mgmt_Exit});
 			this.menuMgmt.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.menuMgmt.Name = "menuMgmt";
@@ -160,6 +168,13 @@
 			this.menu_Mgmt_Import.Size = new System.Drawing.Size(144, 22);
 			this.menu_Mgmt_Import.Text = "导入数据 (&I)";
 			this.menu_Mgmt_Import.Click += new System.EventHandler(this.menu_Mgmt_Import_Click);
+			// 
+			// menu_Mgmt_About
+			// 
+			this.menu_Mgmt_About.Name = "menu_Mgmt_About";
+			this.menu_Mgmt_About.Size = new System.Drawing.Size(144, 22);
+			this.menu_Mgmt_About.Text = "版本信息 (&A)";
+			this.menu_Mgmt_About.Click += new System.EventHandler(this.menu_Mgmt_About_Click);
 			// 
 			// menu_Mgmt_Exit
 			// 
@@ -919,14 +934,57 @@
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
 			// 
+			// panelAbout
+			// 
+			this.panelAbout.Controls.Add(this.label16);
+			this.panelAbout.Controls.Add(this.label14);
+			this.panelAbout.Controls.Add(this.label8);
+			this.panelAbout.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panelAbout.Location = new System.Drawing.Point(0, 35);
+			this.panelAbout.Name = "panelAbout";
+			this.panelAbout.Size = new System.Drawing.Size(695, 551);
+			this.panelAbout.TabIndex = 3;
+			// 
+			// label16
+			// 
+			this.label16.AutoSize = true;
+			this.label16.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label16.Location = new System.Drawing.Point(219, 323);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(176, 21);
+			this.label16.TabIndex = 1;
+			this.label16.Text = "发布日期：2015年10月";
+			// 
+			// label14
+			// 
+			this.label14.AutoSize = true;
+			this.label14.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label14.Location = new System.Drawing.Point(219, 289);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(112, 21);
+			this.label14.TabIndex = 1;
+			this.label14.Text = "系统版本：1.0";
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Font = new System.Drawing.Font("Microsoft YaHei", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label8.Location = new System.Drawing.Point(148, 85);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(398, 31);
+			this.label8.TabIndex = 0;
+			this.label8.Text = "欢迎使用长安银行榆林分行报表系统";
+			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(695, 586);
+			this.Controls.Add(this.panelAbout);
 			this.Controls.Add(this.panelContent);
 			this.Controls.Add(this.panelMenu);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "Main";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -949,6 +1007,8 @@
 			this.panelImport.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
+			this.panelAbout.ResumeLayout(false);
+			this.panelAbout.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -1040,6 +1100,11 @@
 		private System.Windows.Forms.Button btnCalendarExport;
 		private System.Windows.Forms.TextBox txtExportDate;
 		private System.Windows.Forms.MonthCalendar calendarExport;
+		private System.Windows.Forms.Panel panelAbout;
+		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.Label label8;
+		private System.Windows.Forms.ToolStripMenuItem menu_Mgmt_About;
 
 
 	}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -28,7 +29,6 @@ namespace Reporting
 
 		public Main() {
 			InitializeComponent();
-			SwitchToPanel("none");
 		}
 
 		private void Main_Load(object sender, EventArgs e) {
@@ -38,13 +38,32 @@ namespace Reporting
 			this.calendarImport.Visible = false;
 			this.calendarExport.Visible = false;
 			this.pnlExportDate.Visible = false;
+
+			var defaultPanel = ConfigurationManager.AppSettings["defaultScreen"] ?? "about";
+			if (defaultPanel.Equals("import")) {
+				menu_Mgmt_Import_Click(null, null);
+			}
+			else if (defaultPanel.Equals("report")) {
+				ShowReport(XEnum.ReportType.X_FXDKTB_D);
+			}
+			else {
+				menu_Mgmt_About_Click(null, null);
+			}
+		}
+
+		private void menu_Mgmt_About_Click(object sender, EventArgs e) {
+			SwitchToPanel("about");
 		}
 
 		private void SwitchToPanel(string panel) {
+			panelAbout.Visible = false;
 			panelImport.Visible = false;
 			panelReport.Visible = false;
 
 			switch (panel) {
+				case "about":
+					panelAbout.Visible = true;
+					break;
 				case "import":
 					panelImport.Visible = true;
 					break;
@@ -227,12 +246,16 @@ namespace Reporting
 			var nameCore = reportMenuName.Substring(position + 1);
 			var reportType = XEnum.ReportType.None;
 			if (Enum.TryParse<XEnum.ReportType>(nameCore, out reportType)) {
-				this.currentReport = reportType;
+				ShowReport(reportType);
 			}
 			else {
 				ShowStop("Unknown report menu name: " + reportMenuName);
 				return;
 			}
+		}
+
+		private void ShowReport(XEnum.ReportType reportType) {
+			this.currentReport = reportType;
 
 			// Show report UI
 			InitReportPanel();
@@ -436,7 +459,5 @@ namespace Reporting
 			}
 		}
 		#endregion
-
-
 	}
 }
