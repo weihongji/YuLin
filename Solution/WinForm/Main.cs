@@ -34,24 +34,24 @@ namespace Reporting
 		private void Main_Load(object sender, EventArgs e) {
 			this.calendarImport.Left = 206;
 			this.calendarExport.Left = 206;
-			this.pnlExportDate.Top = 81;
+			this.pnlExportDate.Top = 112;
 			this.calendarImport.Visible = false;
 			this.calendarExport.Visible = false;
 			this.pnlExportDate.Visible = false;
 
 			var defaultPanel = ConfigurationManager.AppSettings["defaultScreen"] ?? "about";
 			if (defaultPanel.Equals("import")) {
-				menu_Mgmt_Import_Click(null, null);
+				menuImport_Source_Click(null, null);
 			}
 			else if (defaultPanel.Equals("report")) {
 				ShowReport(XEnum.ReportType.X_FXDKTB_D);
 			}
 			else {
-				menu_Mgmt_About_Click(null, null);
+				menuSystem_About_Click(null, null);
 			}
 		}
 
-		private void menu_Mgmt_About_Click(object sender, EventArgs e) {
+		private void menuSystem_About_Click(object sender, EventArgs e) {
 			SwitchToPanel("about");
 		}
 
@@ -59,6 +59,7 @@ namespace Reporting
 			panelAbout.Visible = false;
 			panelImport.Visible = false;
 			panelReport.Visible = false;
+			panelImportWJFL.Visible = false;
 
 			switch (panel) {
 				case "about":
@@ -69,6 +70,9 @@ namespace Reporting
 					break;
 				case "report":
 					panelReport.Visible = true;
+					break;
+				case "import_WJFL":
+					panelImportWJFL.Visible = true;
 					break;
 				case "none":
 					// Show nothing in the content area
@@ -81,7 +85,7 @@ namespace Reporting
 		#endregion
 
 		#region "Import Menu"
-		private void menu_Mgmt_Import_Click(object sender, EventArgs e) {
+		private void menuImport_Source_Click(object sender, EventArgs e) {
 			InitImportPanel();
 			SwitchToPanel("import");
 		}
@@ -119,7 +123,7 @@ namespace Reporting
 					if (string.IsNullOrEmpty(result)) {
 						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
 						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
-						ShowInfo(string.Format("{0}月份数据导入完毕。{1}", asOfDate.ToString("yyyy-MM"), timeSpan));
+						ShowInfo(string.Format("{0}的数据导入完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 					}
 					else {
 						ShowError(result);
@@ -221,10 +225,84 @@ namespace Reporting
 				this.lblImportYWWai.Text = "";
 			}
 		}
+
+		private void menuImport_WJFL_Import_Click(object sender, EventArgs e) {
+			InitImportWJFLPanel();
+			SwitchToPanel("import_WJFL");
+		}
+
+		private void btnImportLoanWJFL_Click(object sender, EventArgs e) {
+			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
+				this.lblImportLoanWJFL.Text = this.openFileDialog1.FileName;
+			}
+			else {
+				this.lblImportLoanWJFL.Text = "";
+			}
+		}
+
+		private void btnImportWJFL_Click(object sender, EventArgs e) {
+			DateTime asOfDate;
+			if (IsValidToImportWJFL(out asOfDate)) {
+				var importer = new Importer();
+				this.Cursor = Cursors.WaitCursor;
+				try {
+					var startTime = DateTime.Now;
+					var result = importer.UpdateWJFL(asOfDate, this.lblImportLoanWJFL.Text);
+					this.Cursor = Cursors.Default;
+					if (string.IsNullOrEmpty(result)) {
+						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
+						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
+						ShowInfo(string.Format("{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
+					}
+					else {
+						ShowError(result);
+					}
+				}
+				catch (Exception ex) {
+					ShowError(ex.Message);
+					logger.Error(ex);
+				}
+				finally {
+					this.Cursor = Cursors.Default;
+				}
+			}
+		}
+
+		private bool IsValidToImportWJFL(out DateTime asOfDate) {
+			asOfDate = new DateTime(1900, 1, 1);
+
+			if (this.lblImportLoanWJFL.Text == "") {
+				ShowStop("未选择五级分类修订结果");
+				this.btnImportLoanWJFL.Focus();
+				return false;
+			}
+
+			var filePath = this.lblImportLoanWJFL.Text;
+			var period = filePath.LastIndexOf('.');
+			string dateString = filePath.Substring(0, period);
+			dateString = dateString.Substring(dateString.Length - 8);
+			dateString = string.Format("{0}/{1}/{2}", dateString.Substring(0, 4), dateString.Substring(4, 2), dateString.Substring(6, 2));
+			if (!DateTime.TryParse(dateString, out asOfDate)) {
+				ShowStop("数据的日期无效");
+				this.btnCalendarImport.Focus();
+				return false;
+			}
+			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
+				ShowStop("数据的日期超出范围");
+				this.btnCalendarImport.Focus();
+				return false;
+			}
+
+			return true;
+		}
+
+		private void InitImportWJFLPanel() {
+			this.lblImportLoanWJFL.Text = "";
+		}
 		#endregion
 
 		#region "Exit Menu"
-		private void menu_Mgmt_Exit_Click(object sender, EventArgs e) {
+		private void menuSystem_Exit_Click(object sender, EventArgs e) {
 			Application.Exit();
 		}
 		#endregion
@@ -459,5 +537,6 @@ namespace Reporting
 			}
 		}
 		#endregion
+
 	}
 }

@@ -47,6 +47,9 @@ namespace Reporting
 				case XEnum.ReportType.X_FXDKTB_D:
 					result = new X_FXDKTB(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.R_DKQKCX_D:
+					result = new R_DKQKCX_D(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;

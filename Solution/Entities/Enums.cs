@@ -54,10 +54,13 @@ namespace Reporting
 			F_GF1200_101_S = 40,		// GF1200-101
 
 			// Customize
-			C_DQDJQK_M = 61,			// 信贷数据需求
+			C_DQDJQK_M = 61,			// 到期贷款情况
 			C_JQDKMX_M = 62,			// 结清贷款明细表
 			C_XZDKMX_M = 63,			// 新增贷款明细表
 			C_FXDKBH_D = 64,			// 风险贷款变化情况表
+
+			// Reserved
+			R_DKQKCX_D = 71,			// 贷款欠款查询
 		}
 
 		public enum ImportState

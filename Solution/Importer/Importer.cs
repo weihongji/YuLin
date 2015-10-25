@@ -89,6 +89,98 @@ namespace Reporting
 			return result;
 		}
 
+		public string UpdateWJFL(DateTime asOfDate, string sourceFilePath) {
+			var result = string.Empty;
+			var dao = new SqlDbHelper();
+			var dateString = asOfDate.ToString("yyyyMMdd");
+			logger.DebugFormat("Getting existing import id for {0}", dateString);
+			var importId = (int)dao.ExecuteScalar(string.Format("SELECT ISNULL(MAX(Id), 0) FROM Import WHERE ImportDate = '{0}'", dateString));
+			if (importId == 0) {
+				result = "Import instance cannot be found for date " + asOfDate.ToString("yyyy-M-d");
+				logger.Debug(result);
+				return result;
+			}
+			var importFolder = System.Environment.CurrentDirectory + "\\Import\\" + importId.ToString();
+			var targetFilePath = string.Format("{0}\\Processed\\LoanWJFL.xls", importFolder);
+			if (!File.Exists(sourceFilePath)) {
+				result = "五级分类修订文件在这个路径下没找到：\r\n" + sourceFilePath;
+				logger.Debug(result);
+				return result;
+			}
+			logger.DebugFormat("Copying WJFL update file into {0}", targetFilePath);
+			File.Copy(sourceFilePath, targetFilePath, true);
+
+			logger.Debug("Updating in database");
+			if (String.IsNullOrWhiteSpace(sourceFilePath) || !File.Exists(sourceFilePath)) {
+				result = string.Format("File {0} cannot be found", sourceFilePath ?? "<empty>");
+				logger.Debug(result);
+				return result;
+			}
+			var oleOpened = false;
+			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + targetFilePath + ";Extended Properties=Excel 8.0");
+			try {
+				logger.Debug("Opening connection to " + targetFilePath);
+				oconn.Open();
+				oleOpened = true;
+				logger.Debug("Opened");
+
+				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+				string sheet1 = dt.Rows[0][2].ToString();
+
+				OleDbCommand ocmd = new OleDbCommand(string.Format("SELECT [数据库编号], [七级分类] FROM [{0}]", sheet1), oconn);
+				OleDbDataReader reader = ocmd.ExecuteReader();
+				int dataRowIndex = 0;
+				var sql = new StringBuilder();
+				while (reader.Read()) {
+					if (string.IsNullOrEmpty(DataUtility.GetValue(reader, 0))) { // Going to end
+						break;
+					}
+					if (string.IsNullOrEmpty(DataUtility.GetValue(reader, 1))) { // Danger leve not set
+						continue;
+					}
+					dataRowIndex++;
+					sql.AppendLine(string.Format("UPDATE ImportLoan SET DangerLevel = '{1}' WHERE Id = {0} AND (DangerLevel IS NULL OR DangerLevel != '{1}')", reader[0], reader[1]));
+					// Top 1 trial for exception track
+					if (dataRowIndex == 1) {
+						try {
+							dao.ExecuteNonQuery(sql.ToString());
+							sql.Clear();
+						}
+						catch (Exception ex) {
+							logger.Error("Running: " + sql.ToString(), ex);
+							throw ex;
+						}
+					}
+					// Batch inserts
+					if (dataRowIndex > 1 && dataRowIndex % 1000 == 0) {
+						dao.ExecuteNonQuery(sql.ToString());
+						sql.Clear();
+					}
+				}
+				if (sql.Length > 0) {
+					try {
+						dao.ExecuteNonQuery(sql.ToString());
+						sql.Clear();
+					}
+					catch (Exception ex) {
+						logger.Error("Running: " + sql.ToString(), ex);
+						throw ex;
+					}
+				}
+				logger.DebugFormat("{0} records tried to be updated.", dataRowIndex);
+			}
+			catch (Exception ex) {
+				logger.Error("Outest catch", ex);
+				return ex.Message;
+			}
+			finally {
+				if (oleOpened) {
+					oconn.Close();
+				}
+			}
+			return result;
+		}
+
 		private bool CopyItem(int importId, string importFolder, string sourceFilePath, XEnum.ImportItemType itemType) {
 			int itemTypeId = (int)itemType;
 
@@ -147,9 +239,9 @@ namespace Reporting
 
 			// Import to database
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Loan];
-			var excelColumns = "[机构号码], [贷款科目], [贷款帐号], [客户名称], [客户编号], [客户类型], [贷款总额], [本金余额], [拖欠本金], [拖欠应收利息], [拖欠催收利息], [放款日期], [到期日期], [贷款状态], [贷款种类说明], [贷款用途]";
-			var dbColumns = "OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, LoanStartDate, LoanEndDate, LoanState, LoanTypeName, Direction";
-			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Loan, excelColumns, dbColumns, 16);
+			var excelColumns = "[机构号码], [贷款科目], [贷款帐号], [客户名称], [客户编号], [客户类型], [贷款总额], [本金余额], [拖欠本金], [拖欠应收利息], [拖欠催收利息], [借据编号], [放款日期], [到期日期], [贷款状态], [贷款种类说明], [贷款用途], [利息计至日]";
+			var dbColumns = "OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, DueBillNo, LoanStartDate, LoanEndDate, LoanState, LoanTypeName, Direction, InterestEndDate";
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Loan, excelColumns, dbColumns, 18);
 		}
 
 		private string ImportPublic(int importId, string importFolder, string sourceFilePath) {
@@ -440,7 +532,7 @@ namespace Reporting
 				var dao = new SqlDbHelper();
 				var sql = new StringBuilder();
 				sql.AppendLine("UPDATE ImportLoan SET DangerLevel = dbo.sfGetDangerLevel({0}, LoanAccount)");
-				sql.AppendLine("WHERE LoanState != '结清'");
+				sql.AppendLine("WHERE LoanState != '结清' AND DangerLevel IS NULL");
 				sql.AppendLine("	AND ImportId = {0}");
 				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
 			}

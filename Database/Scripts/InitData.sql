@@ -280,6 +280,7 @@ IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (62, '结清贷款明细表', '结清贷款明细表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (63, '新增贷款明细表', '新增贷款明细表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (64, '风险贷款变化情况表', '风险贷款变化情况表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (71, '贷款欠款查询', '贷款欠款查询.xls')
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
@@ -294,6 +295,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (9, 23, 1, 'SF6301', 3, 33, 36)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (10, 24, 1, 'SF6401', 3, 33, 36)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (11, 2, 1, 'Sheet1', 4, 7, 7)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (12, 71, 1, '贷款欠款查询', 0, 3, 3)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -455,4 +457,26 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 13, '笔数4')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 14, '余额4')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 15, '占比4')
+	
+	/* 贷款欠款查询 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 1, '数据库编号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 2, '机构号码')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 3, '贷款科目')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 4, '贷款帐号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 5, '客户名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 6, '客户编号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 7, '客户类型')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 8, '七级分类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 9, '贷款总额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 10, '本金余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 11, '拖欠本金')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 12, '拖欠应收利息')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 13, '拖欠催收利息')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 14, '借据编号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 15, '放款日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 16, '到期日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 17, '贷款状态')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 18, '贷款种类说明')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 19, '贷款用途')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 20, '利息计至日')
 END
