@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="SourceTableSheet.cs" />
     <Compile Include="EntityBase.cs" />
+    <Compile Include="TableMapping.cs" />
     <Compile Include="TargetTableSheetColumn.cs" />
     <Compile Include="TargetTable.cs" />
     <Compile Include="TargetTableSheet.cs" />

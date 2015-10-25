@@ -83,8 +83,10 @@ namespace Reporting
 				GC.Collect();
 			}
 		}
-
 		public static void InitSheet(string filePath, TargetTableSheet sheet) {
+			InitSheet(filePath, sheet, 0,null);
+		}
+		public static void InitSheet(string filePath, TargetTableSheet sheet,int startCol,List<string> withCol) {
 			if (sheet.RowsBeforeHeader == 0 && sheet.FooterStartRow == 0) {
 				return;
 			}
@@ -113,7 +115,13 @@ namespace Reporting
 					range = (Range)theSheet.get_Range("1:" + sheet.RowsBeforeHeader.ToString());
 					range.Delete();
 				}
-
+				if (withCol != null) {
+					//for (int index = 0; index < withCol.Count(); index++) { 
+						for (int i = 1; i <= withCol.Count; i++) {
+							theSheet.Cells[1, i + startCol] = withCol[i - 1];
+						}
+					//}
+				}
 				theExcelBook.Save();
 			}
 			finally {
@@ -291,6 +299,28 @@ namespace Reporting
 					int dataRowStartIndex = sheet.RowsBeforeHeader + 1 + 1;
 					Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.RowHeight = 24;
+				}
+				else if (sheet.TableId == (int)XEnum.ReportType.C_DQDJQK_M) {
+					columnCount = 2;
+					while (true) {
+						if (string.IsNullOrEmpty(((Range)theSheet.Cells[sheet.RowsBeforeHeader + 1, columnCount]).Value2)) {
+							break;
+						}
+						else {
+							columnCount++;
+						}
+					}
+					columnCount--;
+					int headerStartIndex = sheet.RowsBeforeHeader + 1;
+					Range dataRange = theSheet.Range[theSheet.Cells[headerStartIndex, 1], theSheet.Cells[headerStartIndex, columnCount]];
+					dataRange.Interior.Color = System.Drawing.Color.FromArgb(204, 204, 255);
+					dataRange = theSheet.Range[theSheet.Cells[headerStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
+					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
+
+					for (int i = 0; i < columnCount; i++) {
+						sheet.Columns.Add(new TargetTableSheetColumn());
+					}
+
 				}
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate);

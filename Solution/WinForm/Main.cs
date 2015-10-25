@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Reporting
 {
-	public partial class Main : Form
+	public partial class frmMain : Form
 	{
 		#region "Form level members"
 		private Logger logger = Logger.GetLogger("Main");
@@ -27,7 +27,7 @@ namespace Reporting
 			}
 		}
 
-		public Main() {
+		public frmMain() {
 			InitializeComponent();
 		}
 
@@ -432,6 +432,14 @@ namespace Reporting
 		private void btnExport_Click(object sender, EventArgs e) {
 			DateTime asOfDate;
 			if (!IsValidToExport(out asOfDate)) {
+				return;
+			}
+			// Customize report
+			if (this.currentReport == XEnum.ReportType.C_DQDJQK_M) {
+				var form = new frmCustomizeReport(asOfDate);
+				form.Left = this.Left + 20;
+				form.Top = this.Top + 20;
+				form.Show(this);
 				return;
 			}
 			this.Cursor = Cursors.WaitCursor;

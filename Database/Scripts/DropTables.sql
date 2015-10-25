@@ -81,3 +81,7 @@ END
 IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Import')) BEGIN
 	DROP TABLE Import
 END
+
+IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('TableMapping')) BEGIN
+	DROP TABLE TableMapping
+END

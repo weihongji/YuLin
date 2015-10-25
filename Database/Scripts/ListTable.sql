@@ -17,3 +17,4 @@ SELECT * FROM SourceTableSheetColumn
 SELECT * FROM TargetTable
 SELECT * FROM TargetTableSheet
 SELECT * FROM TargetTableSheetColumn
+SELECT * FROM TableMapping

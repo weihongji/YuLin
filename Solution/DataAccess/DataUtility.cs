@@ -25,7 +25,12 @@ namespace Reporting
 				s = "NULL";
 			}
 			else {
-				s = "'" + val.ToString().Trim().Replace("'", "''") + "'";
+				if (val is DateTime) {
+					s = "#" + val.ToString() + "#";
+				}
+				else {
+					s = "'" + val.ToString().Trim().Replace("'", "''") + "'";
+				}
 			}
 			return s;
 		}

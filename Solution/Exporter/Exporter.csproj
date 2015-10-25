@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="BaseReport.cs" />
     <Compile Include="R_DKQKCX_D.cs" />
+    <Compile Include="C_DQDJQK_M.cs" />
     <Compile Include="X_FXDKTB.cs" />
     <Compile Include="SF6301_141.cs" />
     <Compile Include="SF6401_141.cs" />

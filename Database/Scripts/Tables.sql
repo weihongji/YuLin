@@ -420,3 +420,14 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('TargetTableS
 
 	ALTER TABLE dbo.TargetTableSheetColumn CHECK CONSTRAINT FK_TargetTableSheetColumn_TargetTableSheet
 END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('TableMapping')) BEGIN
+	CREATE TABLE dbo.TableMapping(
+		Id int IDENTITY(1,1) NOT NULL,
+		TableId varchar(20) NOT NULL,
+		ColName varchar(50) NOT NULL,
+		MappingName nvarchar(50) NOT NULL,
+		MappingMode int NOT NULL,
+		CONSTRAINT PK_TableMapping PRIMARY KEY CLUSTERED (Id ASC)
+	) ON [PRIMARY]
+END
