@@ -293,6 +293,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (8, 22, 1, 'GF0107', 3, 40, 42)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (9, 23, 1, 'SF6301', 3, 33, 36)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (10, 24, 1, 'SF6401', 3, 33, 36)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (11, 2, 1, 'Sheet1', 4, 7, 7)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -437,4 +438,21 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 8, '个人经营性贷款')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 9, '其中：个体工商户贷款')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (10, 10, '其中：小微企业主贷款')
+
+	/* 风险贷款通报 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 1, '机构名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 2, '贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 3, '笔数1')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 4, '余额1')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 5, '占比1')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 6, '笔数2')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 7, '余额2')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 8, '占比2')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 9, '笔数3')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 10, '余额3')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 11, '占比3')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 12, '欠息金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 13, '笔数4')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 14, '余额4')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (11, 15, '占比4')
 END

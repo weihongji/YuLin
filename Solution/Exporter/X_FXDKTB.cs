@@ -20,10 +20,10 @@ namespace Reporting
 		}
 
 		public override string GenerateReport() {
-            var fileName = string.Format("{0}风险贷款通报（日报）.xls", this.AsOfDate.ToString("M.dd"));
+			var fileName = string.Format("{0}风险贷款通报（日报）.xls", this.AsOfDate.ToString("M.dd"));
 			Logger.Debug("Generating " + fileName);
 
-			var report = TargetTable.GetById(XEnum.ReportType.X_FXDKTB);
+			var report = TargetTable.GetById(XEnum.ReportType.X_FXDKTB_D);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
 			foreach (var sheet in report.Sheets) {
@@ -40,7 +40,7 @@ namespace Reporting
 			var oleConn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			Logger.Debug("Openning connction to " + filePath);
 			oleConn.Open();
-            var sql = string.Format("EXEC spX_FXDKTB '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
+			var sql = string.Format("EXEC spX_FXDKTB '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
 			var dao = new SqlDbHelper();
 			Logger.Debug("Running " + sql);
 			var reader = dao.ExecuteReader(sql);

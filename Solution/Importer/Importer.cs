@@ -80,6 +80,8 @@ namespace Reporting
 
 			if (IsAllCopied(importId)) {
 				logger.Debug("All copied");
+				ChangeImportState(importId, XEnum.ImportState.Imported);
+
 				result = CompleteImport(importId, importFolder);
 			}
 
@@ -406,8 +408,8 @@ namespace Reporting
 				return result;
 			}
 
-			logger.Debug("Changing import state to Imported (completed)");
-			ChangeImportState(importId, XEnum.ImportState.Imported);
+			logger.Debug("Changing import state to Complete");
+			ChangeImportState(importId, XEnum.ImportState.Complete);
 			logger.Debug("Import to database done");
 
 			return string.Empty;

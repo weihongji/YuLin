@@ -23,7 +23,7 @@ namespace Reporting
 			var result = "";
 			var fileName = "SF6401-141-境内汇总数据-月-人民币.xls";
 			Logger.Debug("Generating " + fileName);
-			var report = TargetTable.GetById(XEnum.ReportType.FM_SF6401_141);
+			var report = TargetTable.GetById(XEnum.ReportType.F_SF6401_141_M);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
 			var dao = new SqlDbHelper();

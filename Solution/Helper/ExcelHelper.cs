@@ -186,7 +186,7 @@ namespace Reporting
 
 				bool dummyHeader = false;
 				int dummyHeaderRows = 0;
-				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB) {
+				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D) {
 					dummyHeader = true;
 					dummyHeaderRows = 1;
 				}
@@ -240,7 +240,7 @@ namespace Reporting
 				int dataRowFrom = sheet.RowsBeforeHeader + 2 - dummyHeaderRows;
 				int footerRowFrom = dataRowFrom + dataRowCount;
 
-				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB) {
+				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D) {
 					// Copy the footer back
 					if (sheet.FooterStartRow > 0) {
 						theSheetTemplate.Activate();
@@ -255,7 +255,7 @@ namespace Reporting
 					}
 				}
 
-				if (sheet.TableId == (int)XEnum.ReportType.X_WJFL) {
+				if (sheet.TableId == (int)XEnum.ReportType.X_WJFL_M) {
 					((Range)theSheet.Cells[footerRowFrom, 1]).Value2 = "合计";
 					((Range)theSheet.Cells[footerRowFrom, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
 					if (sheet.Name.Equals("逾期")) {
@@ -268,30 +268,32 @@ namespace Reporting
 						((Range)theSheet.Cells[footerRowFrom, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", dataRowFrom, footerRowFrom - 1);
 					}
 				}
-				else if (sheet.TableId == (int)XEnum.ReportType.F_HYB) {
+				else if (sheet.TableId == (int)XEnum.ReportType.F_HYB_M) {
 					((Range)theSheet.Cells[footerRowFrom, 1]).Value2 = "合计";
 					((Range)theSheet.Cells[footerRowFrom, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
 					((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
 				}
-				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB) {
+				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D) {
 					for (int i = 2; i <= 15; i++) {
 						((Range)theSheet.Cells[footerRowFrom, i]).Value2 = string.Format("=SUM({0}{1}:{0}{2})", (char)(64 + i), dataRowFrom, footerRowFrom - 1);
 					}
 
 				}
 
-				if (sheet.TableId == (int)XEnum.ReportType.X_WJFL || sheet.TableId == (int)XEnum.ReportType.F_HYB) {
+				if (sheet.TableId == (int)XEnum.ReportType.X_WJFL_M || sheet.TableId == (int)XEnum.ReportType.F_HYB_M) {
 					//绘制数据部分的表格线
 					int dataRowStartIndex = sheet.RowsBeforeHeader + 1 + 1;
 					Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
 					dataRange.Font.Size = 10;
 				}
-				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB) {
+				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D) {
 					int dataRowStartIndex = sheet.RowsBeforeHeader + 1 + 1;
 					Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.RowHeight = 24;
 				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
 
 				theSheetTemplate.Delete();
 

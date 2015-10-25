@@ -21,7 +21,7 @@ namespace Reporting
 			var fileName = string.Format("榆林分行{0}月末风险贷款情况表.xls", this.AsOfDate.Month);
 			Logger.Debug("Generating " + fileName);
 
-			var report = TargetTable.GetById(XEnum.ReportType.X_WJFL);
+			var report = TargetTable.GetById(XEnum.ReportType.X_WJFL_M);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
 			foreach (var sheet in report.Sheets) {

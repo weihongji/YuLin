@@ -22,7 +22,7 @@ namespace Reporting
 		public override string GenerateReport() {
 			var fileName = "SF6301-141-境内汇总数据-月-人民币.xls";
 			Logger.Debug("Generating " + fileName);
-			var report = TargetTable.GetById(XEnum.ReportType.FM_SF6301_141);
+			var report = TargetTable.GetById(XEnum.ReportType.F_SF6301_141_M);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
 			var sql = string.Format("EXEC spSF6301_141 '{0}'", this.AsOfDate.ToString("yyyyMMdd"));

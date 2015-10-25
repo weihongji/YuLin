@@ -32,8 +32,12 @@ namespace Reporting
 		}
 
 		private void Main_Load(object sender, EventArgs e) {
-			this.calendar.Left = 206;
-			this.calendar.Visible = false;
+			this.calendarImport.Left = 206;
+			this.calendarExport.Left = 206;
+			this.pnlExportDate.Top = 81;
+			this.calendarImport.Visible = false;
+			this.calendarExport.Visible = false;
+			this.pnlExportDate.Visible = false;
 		}
 
 		private void SwitchToPanel(string panel) {
@@ -71,11 +75,6 @@ namespace Reporting
 			this.lblImportOverdue.Text = "";
 			this.lblImportYWNei.Text = "";
 			this.lblImportYWWai.Text = "";
-		}
-		
-		private void btnCalendar_Click(object sender, EventArgs e) {
-			this.calendar.Show();
-			this.calendar.Focus();
 		}
 
 		private void btnImportOK_Click(object sender, EventArgs e) {
@@ -120,21 +119,21 @@ namespace Reporting
 		private bool IsValidToImport(out DateTime asOfDate) {
 			asOfDate = new DateTime(1900, 1, 1);
 
-			if (this.txtAsOfDate.Text == "") {
+			if (this.txtImportDate.Text == "") {
 				ShowStop("需要填写数据日期");
-				this.btnCalendar.Focus();
+				this.btnCalendarImport.Focus();
 				return false;
 			}
 
-			string dateString = this.txtAsOfDate.Text;
+			string dateString = this.txtImportDate.Text;
 			if (!DateTime.TryParse(dateString, out asOfDate)) {
 				ShowStop("数据的日期无效");
-				this.btnCalendar.Focus();
+				this.btnCalendarImport.Focus();
 				return false;
 			}
 			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
 				ShowStop("数据的日期超出范围");
-				this.btnCalendar.Focus();
+				this.btnCalendarImport.Focus();
 				return false;
 			}
 
@@ -212,67 +211,6 @@ namespace Reporting
 		#endregion
 
 		#region "Report Menu"
-		private void InitReportPanel() {
-			var report = this.Reports.Single(x => x.Id == (int)currentReport);
-			if (report == null) {
-				ShowStop("Failed to get entity of current report.");
-				return;
-			}
-			this.lblReportTitle.Text = report.Name;
-
-			var dao = new SqlDbHelper();
-			var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
-			this.cmbReportMonth.Items.Clear();
-			if (table != null) {
-				foreach (DataRow row in table.Rows) {
-					var value = ((DateTime)row[0]).ToString("yyyy-MM");
-					if ((short)row[1] != (short)XEnum.ImportState.Imported) {
-						value += " *";
-					}
-					this.cmbReportMonth.Items.Add(value);
-				}
-
-				// Select the latest one by default
-				if (this.cmbReportMonth.Items.Count > 0) {
-					if (this.cmbReportMonth.SelectedIndex < 0) {
-						this.cmbReportMonth.SelectedIndex = 0;
-					}
-				}
-			}
-			this.txtReportPath.Text = BaseReport.GetReportFolder();
-		}
-
-		private bool IsValidToExport(out DateTime asOfDate) {
-			asOfDate = new DateTime(1900, 1, 1);
-
-			if (this.cmbReportMonth.Text == "") {
-				ShowStop("需要填写导入数据的月份");
-				cmbReportMonth.Focus();
-				return false;
-			}
-			else if (this.cmbReportMonth.Text.IndexOf('*') >= 0) {
-				ShowStop(this.cmbReportMonth.Text.Replace(" *", "") + "月份的数据的尚未全部导入系统");
-				cmbReportMonth.Focus();
-				return false;
-			}
-
-			var dateString = this.cmbReportMonth.Text.Replace("-", "/") + "/1";
-
-			if (!DateTime.TryParse(dateString, out asOfDate)) {
-				ShowStop("数据月份无效");
-				cmbReportMonth.Focus();
-				return false;
-			}
-			asOfDate = DateHelper.GetLastDayInMonth(asOfDate);
-			if (asOfDate.Year < 2000 || asOfDate.Year > DateTime.Today.Year) {
-				ShowStop("月份超出范围");
-				cmbReportMonth.Focus();
-				return false;
-			}
-
-			return true;
-		}
-
 		private void menu_Report_Item_Click(object sender, EventArgs e) {
 			if (!(sender is ToolStripMenuItem)) {
 				ShowStop("Un-expected sender.");
@@ -299,6 +237,95 @@ namespace Reporting
 			// Show report UI
 			InitReportPanel();
 			SwitchToPanel("report");
+		}
+
+		private void InitReportPanel() {
+			var report = this.Reports.Single(x => x.Id == (int)currentReport);
+			if (report == null) {
+				ShowStop("Failed to get entity of current report.");
+				return;
+			}
+
+			this.lblReportTitle.Text = report.Name;
+
+			var dao = new SqlDbHelper();
+			if (currentReport.ToString().EndsWith("_D") || currentReport.ToString().EndsWith("_X")) {
+				this.cmbReportMonth.Hide();
+				this.pnlExportDate.Show();
+			}
+			else {
+				this.cmbReportMonth.Show();
+				this.pnlExportDate.Hide();
+
+				var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
+				this.cmbReportMonth.Items.Clear();
+				if (table != null) {
+					foreach (DataRow row in table.Rows) {
+						var value = ((DateTime)row[0]).ToString("yyyy-MM");
+						if ((short)row[1] != (short)XEnum.ImportState.Complete) {
+							value += " *";
+						}
+						this.cmbReportMonth.Items.Add(value);
+					}
+
+					// Select the latest one by default
+					if (this.cmbReportMonth.Items.Count > 0) {
+						if (this.cmbReportMonth.SelectedIndex < 0) {
+							this.cmbReportMonth.SelectedIndex = 0;
+						}
+					}
+				}
+			}
+
+			this.txtReportPath.Text = BaseReport.GetReportFolder();
+		}
+
+		private bool IsValidToExport(out DateTime asOfDate) {
+			asOfDate = new DateTime(1900, 1, 1);
+
+			var monthly = this.cmbReportMonth.Visible;
+			var dateText = monthly ? this.cmbReportMonth.Text : this.txtExportDate.Text;
+
+			if (dateText == "") {
+				ShowStop("需要填写导出数据的月份");
+				if (monthly) {
+					cmbReportMonth.Focus();
+				}
+				return false;
+			}
+			else if (dateText.IndexOf('*') >= 0) {
+				ShowStop(dateText.Replace(" *", "") + "月份的数据的尚未全部导入系统");
+				if (monthly) {
+					cmbReportMonth.Focus();
+				}
+				return false;
+			}
+
+			if (monthly) {
+				dateText = dateText.Replace("-", "/") + "/1";
+			}
+
+			if (!DateTime.TryParse(dateText, out asOfDate)) {
+				ShowStop("填写的月份格式错误");
+				if (monthly) {
+					cmbReportMonth.Focus();
+				}
+				return false;
+			}
+
+			if (monthly) {
+				asOfDate = DateHelper.GetLastDayInMonth(asOfDate);
+			}
+
+			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
+				ShowStop("日期超出范围");
+				if (monthly) {
+					cmbReportMonth.Focus();
+				}
+				return false;
+			}
+
+			return true;
 		}
 
 		private void btnExport_Click(object sender, EventArgs e) {
@@ -360,24 +387,56 @@ namespace Reporting
 		#endregion
 
 		#region Calendar
-		private void calendar_DateSelected(object sender, DateRangeEventArgs e) {
-			this.txtAsOfDate.Text = this.calendar.SelectionStart.ToString("yyyy-M-d");
-			this.calendar.Hide();
+
+		private void btnCalendarImport_Click(object sender, EventArgs e) {
+			this.calendarImport.Show();
+			this.calendarImport.Focus();
 		}
 
-		private void calendar_Leave(object sender, EventArgs e) {
-			this.calendar.Hide();
+		private void calendarImport_DateSelected(object sender, DateRangeEventArgs e) {
+			this.txtImportDate.Text = this.calendarImport.SelectionStart.ToString("yyyy-M-d");
+			this.calendarImport.Hide();
+		}
+
+		private void calendarImport_Leave(object sender, EventArgs e) {
+			this.calendarImport.Hide();
 		}
 
 		private void panelImport_Click(object sender, EventArgs e) {
-			this.calendar.Hide();
+			this.calendarImport.Hide();
 		}
 
-		private void calendar_KeyDown(object sender, KeyEventArgs e) {
+		private void calendarImport_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.Escape) {
-				this.calendar.Hide();
+				this.calendarImport.Hide();
+			}
+		}
+
+		private void btnCalendarExport_Click(object sender, EventArgs e) {
+			this.calendarExport.Show();
+			this.calendarExport.Focus();
+		}
+
+		private void calendarExport_DateSelected(object sender, DateRangeEventArgs e) {
+			this.txtExportDate.Text = this.calendarExport.SelectionStart.ToString("yyyy-M-d");
+			this.calendarExport.Hide();
+		}
+
+		private void calendarExport_Leave(object sender, EventArgs e) {
+			this.calendarExport.Hide();
+		}
+
+		private void panelExport_Click(object sender, EventArgs e) {
+			this.calendarExport.Hide();
+		}
+
+		private void calendarExport_KeyDown(object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Escape) {
+				this.calendarExport.Hide();
 			}
 		}
 		#endregion
+
+
 	}
 }
