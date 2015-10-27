@@ -4,6 +4,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Import')) BE
 		Id int IDENTITY(1,1) NOT NULL,
 		ImportDate smalldatetime NOT NULL,
 		[State] smallint NOT NULL CONSTRAINT DF_Import_State DEFAULT (0),
+		WJFLSubmitDate datetime NULL,
 		DateStamp datetime NOT NULL CONSTRAINT DF_Import_DateStamp DEFAULT (getdate()),
 		ModifyDate datetime NULL,
 		CONSTRAINT PK_Import PRIMARY KEY CLUSTERED (Id ASC)
@@ -18,6 +19,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportItem')
 		FilePath varchar(255) NOT NULL,
 		DateStamp datetime NOT NULL CONSTRAINT DF_ImportItem_DateStamp DEFAULT (getdate()),
 		ModifyDate datetime NULL,
+		WJFLSubmitDate datetime NULL,
 		CONSTRAINT PK_ImportItem PRIMARY KEY CLUSTERED (Id ASC)
 	) ON [PRIMARY]
 

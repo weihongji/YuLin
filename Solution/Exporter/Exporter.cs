@@ -20,9 +20,10 @@ namespace Reporting
 			if (countobject == null) {
 				return string.Format("{0}的数据还没导入系统", asOfDate.ToString("M月d日"));
 			}
-			else if((short) countobject != (short)XEnum.ImportState.Complete) {
-				return string.Format("{0}的数据的尚未全部导入系统", asOfDate.ToString("M月d日"));
-			}
+			//Commented out below since daily report may not need all source tables.
+			//else if((short) countobject != (short)XEnum.ImportState.Complete) {
+			//	return string.Format("{0}的数据的尚未全部导入系统", asOfDate.ToString("M月d日"));
+			//}
 
 			var result = string.Empty;
 			switch (report) {
@@ -47,7 +48,7 @@ namespace Reporting
 				case XEnum.ReportType.X_FXDKTB_D:
 					result = new X_FXDKTB(asOfDate).GenerateReport();
 					break;
-				case XEnum.ReportType.R_DKQKCX_D:
+				case XEnum.ReportType.R_WJFL_M:
 					result = new R_DKQKCX_D(asOfDate).GenerateReport();
 					break;
 				case XEnum.ReportType.C_DQDJQK_M:

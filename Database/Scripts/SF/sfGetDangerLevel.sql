@@ -11,7 +11,7 @@ RETURNS nvarchar(20)
 AS
 BEGIN
 	--DECLARE @importId as int = 1
-	--DECLARE @loanAccount as varchar(50) = '806050001481018516'
+	--DECLARE @loanAccount as varchar(50) = '806050001481024889' --806050001481018516
 	DECLARE @asOfDate as smalldatetime
 	DECLARE @customerType nvarchar(20)
 	DECLARE @customerScale nvarchar(20) /* 1: 大中企业, 2: 小微企业, 3: 个人消费 */
@@ -47,6 +47,23 @@ BEGIN
 		SELECT @danbaofangshi = DanBaoFangShi FROM ImportOverdue O INNER JOIN ImportLoan L ON O.LoanAccount = L.LoanAccount AND O.ImportId = @importId
 		WHERE L.Id = @importLoanId
 	END
+
+	IF @danbaofangshi IS NULL BEGIN
+		IF @customerType = '对公' BEGIN
+			SELECT @danbaofangshi = P.VOUCHTYPENAME
+			FROM ImportPublic P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount AND P.ImportId = L.ImportId
+			WHERE P.ImportId = @importId
+		END
+		ELSE BEGIN
+			SELECT @danbaofangshi = P.DanBaoFangShi
+			FROM ImportPrivate P INNER JOIN ImportLoan L
+				ON P.CustomerName = L.CustomerName AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate AND P.OrgNo = L.OrgNo AND P.ImportId = L.ImportId
+			WHERE P.ImportId = @importId
+		END
+		SELECT @danbaofangshi = Category FROM DanBaoFangShi WHERE Name = @danbaofangshi
+	END
+
+	--SELECT @customerType, @overdueDays, @oweInterestDays, @danbaofangshi
 
 	DECLARE @days int = (CASE WHEN @overdueDays >= @oweInterestDays THEN @overdueDays ELSE @oweInterestDays END)
 	IF @customerScale = '1' BEGIN --大中企业

@@ -94,28 +94,28 @@ namespace Reporting
 			var dao = new SqlDbHelper();
 			var dateString = asOfDate.ToString("yyyyMMdd");
 			logger.DebugFormat("Getting existing import id for {0}", dateString);
-			var importId = (int)dao.ExecuteScalar(string.Format("SELECT ISNULL(MAX(Id), 0) FROM Import WHERE ImportDate = '{0}'", dateString));
-			if (importId == 0) {
-				result = "Import instance cannot be found for date " + asOfDate.ToString("yyyy-M-d");
+
+			var import = Import.GetByDate(asOfDate);
+			if (import == null) {
+				result = string.Format("{0}的数据还没导入系统", asOfDate.ToString("yyyy年M月d日"));
 				logger.Debug(result);
 				return result;
 			}
-			var importFolder = System.Environment.CurrentDirectory + "\\Import\\" + importId.ToString();
-			var targetFilePath = string.Format("{0}\\Processed\\LoanWJFL.xls", importFolder);
+
+			var importFolder = System.Environment.CurrentDirectory + "\\Import\\" + import.Id.ToString();
+			var targetFilePath = string.Format("{0}\\Processed\\WJFL.xls", importFolder);
 			if (!File.Exists(sourceFilePath)) {
-				result = "五级分类修订文件在这个路径下没找到：\r\n" + sourceFilePath;
+				result = "风险贷款情况表的初表修订结果在这个路径下没找到：\r\n" + sourceFilePath;
 				logger.Debug(result);
 				return result;
 			}
+
 			logger.DebugFormat("Copying WJFL update file into {0}", targetFilePath);
 			File.Copy(sourceFilePath, targetFilePath, true);
+			ExcelHelper.ProcessWJFL(targetFilePath);
 
 			logger.Debug("Updating in database");
-			if (String.IsNullOrWhiteSpace(sourceFilePath) || !File.Exists(sourceFilePath)) {
-				result = string.Format("File {0} cannot be found", sourceFilePath ?? "<empty>");
-				logger.Debug(result);
-				return result;
-			}
+
 			var oleOpened = false;
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + targetFilePath + ";Extended Properties=Excel 8.0");
 			try {
@@ -124,50 +124,27 @@ namespace Reporting
 				oleOpened = true;
 				logger.Debug("Opened");
 
-				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-				string sheet1 = dt.Rows[0][2].ToString();
-
-				OleDbCommand ocmd = new OleDbCommand(string.Format("SELECT [数据库编号], [七级分类] FROM [{0}]", sheet1), oconn);
+				logger.Debug("Reading from No Accrual sheet");
+				OleDbCommand ocmd = new OleDbCommand("SELECT [行名], [客户名称], [贷款余额], [放款日期], [到期日期], [七级分类] FROM [非应计$]", oconn);
 				OleDbDataReader reader = ocmd.ExecuteReader();
-				int dataRowIndex = 0;
-				var sql = new StringBuilder();
-				while (reader.Read()) {
-					if (string.IsNullOrEmpty(DataUtility.GetValue(reader, 0))) { // Going to end
-						break;
-					}
-					if (string.IsNullOrEmpty(DataUtility.GetValue(reader, 1))) { // Danger leve not set
-						continue;
-					}
-					dataRowIndex++;
-					sql.AppendLine(string.Format("UPDATE ImportLoan SET DangerLevel = '{1}' WHERE Id = {0} AND (DangerLevel IS NULL OR DangerLevel != '{1}')", reader[0], reader[1]));
-					// Top 1 trial for exception track
-					if (dataRowIndex == 1) {
-						try {
-							dao.ExecuteNonQuery(sql.ToString());
-							sql.Clear();
-						}
-						catch (Exception ex) {
-							logger.Error("Running: " + sql.ToString(), ex);
-							throw ex;
-						}
-					}
-					// Batch inserts
-					if (dataRowIndex > 1 && dataRowIndex % 1000 == 0) {
-						dao.ExecuteNonQuery(sql.ToString());
-						sql.Clear();
-					}
-				}
-				if (sql.Length > 0) {
-					try {
-						dao.ExecuteNonQuery(sql.ToString());
-						sql.Clear();
-					}
-					catch (Exception ex) {
-						logger.Error("Running: " + sql.ToString(), ex);
-						throw ex;
-					}
-				}
-				logger.DebugFormat("{0} records tried to be updated.", dataRowIndex);
+				logger.Debug("Executed");
+				UpdateWJFLSheet(reader);
+
+				logger.Debug("Reading from Overdue sheet");
+				ocmd = new OleDbCommand("SELECT [行名], [客户名称], [贷款余额], [放款日期], [到期日期], [七级分类] FROM [逾期$]", oconn);
+				reader = ocmd.ExecuteReader();
+				logger.Debug("Executed");
+				UpdateWJFLSheet(reader);
+
+				logger.Debug("Reading from ZQX sheet");
+				ocmd = new OleDbCommand("SELECT [行名], [客户名称], [本金余额], [放款日期], [到期日期], [七级分类] FROM [只欠息$]", oconn);
+				reader = ocmd.ExecuteReader();
+				logger.Debug("Executed");
+				UpdateWJFLSheet(reader);
+
+				logger.Debug("Updating WJFLSubmitDate field for import #" + import.Id.ToString());
+				dao.ExecuteNonQuery("UPDATE Import SET WJFLSubmitDate = GETDATE() WHERE Id = " + import.Id.ToString());
+				logger.Debug("Updated");
 			}
 			catch (Exception ex) {
 				logger.Error("Outest catch", ex);
@@ -177,6 +154,63 @@ namespace Reporting
 				if (oleOpened) {
 					oconn.Close();
 				}
+			}
+			return result;
+		}
+
+		private string UpdateWJFLSheet(OleDbDataReader reader) {
+			var result = string.Empty;
+			try {
+				int readRows = 0;
+				int updatedRows = 0;
+				int failedRows = 0;
+				var sql = new StringBuilder();
+				var sqlSingle = "";
+				var firstColumn = "";
+				var dao = new SqlDbHelper();
+
+				while (reader.Read()) {
+					firstColumn = DataUtility.GetValue(reader, 0);
+					if (string.IsNullOrEmpty(firstColumn) || firstColumn.Equals("合计")) { // Going to end
+						break;
+					}
+					readRows++;
+					sql.Clear();
+					sql.AppendLine("SELECT Id FROM ImportLoan");
+					sql.AppendLine("WHERE OrgNo IN (SELECT Number FROM Org O WHERE O.Name = '{0}' OR O.Alias1 = '{0}' OR O.Alias2 = '{0}')");
+					sql.AppendLine("	AND CustomerName = '{1}'");
+					sql.AppendLine("	AND CapitalAmount = {2}");
+					sql.AppendLine("	AND LoanStartDate = '{3}'");
+					sql.AppendLine("	AND LoanEndDate = '{4}'");
+					sqlSingle = string.Format(sql.ToString(), DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+					var o = dao.ExecuteScalar(sqlSingle);
+					if (o == null) {
+						failedRows++;
+						logger.WarnFormat("No record matched for {0}-{1}-{2}-{3}-{4}", DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+					}
+					else {
+						int loanId = (int)o;
+						sqlSingle = string.Format("UPDATE ImportLoan SET DangerLevel = '{0}' WHERE Id = {1} AND ISNULL(DangerLevel, '') != '{0}'", DataUtility.GetValue(reader, 5), loanId);
+						try {
+							var affected = dao.ExecuteNonQuery(sqlSingle);
+							updatedRows += affected;
+							if (affected > 0) {
+								logger.DebugFormat("#{0} update to '{1}'", loanId, DataUtility.GetValue(reader, 5));
+							}
+						}
+						catch (Exception ex) {
+							logger.Error("Running: " + sql.ToString(), ex);
+							throw ex;
+						}
+					}
+				}
+				logger.DebugFormat("Rows read in toal: {0}", readRows);
+				logger.DebugFormat("Rows updated: {0}", updatedRows);
+				logger.DebugFormat("Rows not match: {0}", failedRows);
+			}
+			catch (Exception ex) {
+				logger.Error("Outest catch", ex);
+				return ex.Message;
 			}
 			return result;
 		}
@@ -491,12 +525,14 @@ namespace Reporting
 			logger.Debug("Assigning org number to Private");
 			var result = AssignOrgNo(importId);
 			if (!String.IsNullOrEmpty(result)) {
+				logger.Error(result);
 				return result;
 			}
 
 			logger.Debug("Assigning Danger Level to Loan");
 			result = AssignDangerLevel(importId);
 			if (!String.IsNullOrEmpty(result)) {
+				logger.Error(result);
 				return result;
 			}
 
@@ -526,7 +562,7 @@ namespace Reporting
 			}
 			return string.Empty;
 		}
-		
+
 		private string AssignDangerLevel(int importId) {
 			try {
 				var dao = new SqlDbHelper();

@@ -4,7 +4,7 @@ SELECT * FROM DanBaoFangShi
 SELECT * FROM Direction
 SELECT * FROM Import
 SELECT * FROM ImportItem
-SELECT * FROM ImportLoan
+SELECT * FROM ImportLoan (NOLOCK)
 SELECT * FROM ImportPublic
 SELECT * FROM ImportPrivate
 SELECT * FROM ImportNonAccrual

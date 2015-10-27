@@ -18,7 +18,13 @@ namespace Reporting
 		}
 
 		public override string GenerateReport() {
-			var fileName = string.Format("榆林分行{0}月末风险贷款情况表.xls", this.AsOfDate.Month);
+			var import = Import.GetByDate(this.AsOfDate);
+			if (import == null) {
+				var msg = string.Format("{0}的数据还没导入系统", this.AsOfDate.ToString("yyyy年M月d日"));
+				Logger.Debug(msg);
+				return msg;
+			}
+			var fileName = string.Format("榆林分行{0}月末风险贷款情况表 - {1}.xls", this.AsOfDate.Month, import.WJFLSubmitDate == null ? "初" : "终");
 			Logger.Debug("Generating " + fileName);
 
 			var report = TargetTable.GetById(XEnum.ReportType.X_WJFL_M);

@@ -57,6 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImportItem.cs" />
+    <Compile Include="Import.cs" />
     <Compile Include="SourceTableSheet.cs" />
     <Compile Include="EntityBase.cs" />
     <Compile Include="TableMapping.cs" />

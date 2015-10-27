@@ -226,78 +226,73 @@ namespace Reporting
 			}
 		}
 
-		private void menuImport_WJFL_Import_Click(object sender, EventArgs e) {
+		private void menuImport_WJFL_Click(object sender, EventArgs e) {
 			InitImportWJFLPanel();
 			SwitchToPanel("import_WJFL");
 		}
 
-		private void btnImportLoanWJFL_Click(object sender, EventArgs e) {
+		private void btnImportWJFLOpener_Click(object sender, EventArgs e) {
 			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
-				this.lblImportLoanWJFL.Text = this.openFileDialog1.FileName;
+				this.lblImportWJFLPath.Text = this.openFileDialog1.FileName;
 			}
 			else {
-				this.lblImportLoanWJFL.Text = "";
+				this.lblImportWJFLPath.Text = "";
 			}
 		}
 
 		private void btnImportWJFL_Click(object sender, EventArgs e) {
+			if (!IsValidToImportWJFL()) {
+				return;
+			}
+			var filePath = this.lblImportWJFLPath.Text;
 			DateTime asOfDate;
-			if (IsValidToImportWJFL(out asOfDate)) {
-				var importer = new Importer();
-				this.Cursor = Cursors.WaitCursor;
-				try {
-					var startTime = DateTime.Now;
-					var result = importer.UpdateWJFL(asOfDate, this.lblImportLoanWJFL.Text);
-					this.Cursor = Cursors.Default;
-					if (string.IsNullOrEmpty(result)) {
-						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
-						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
-						ShowInfo(string.Format("{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
-					}
-					else {
-						ShowError(result);
-					}
+			var result = ExcelHelper.GetImportDateFromWJFL(filePath, out asOfDate);
+			if (!string.IsNullOrEmpty(result)) {
+				ShowError(result);
+				return;
+			}
+			var importer = new Importer();
+			this.Cursor = Cursors.WaitCursor;
+			try {
+				var startTime = DateTime.Now;
+				result = importer.UpdateWJFL(asOfDate, filePath);
+				this.Cursor = Cursors.Default;
+				if (string.IsNullOrEmpty(result)) {
+					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
+					var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
+					ShowInfo(string.Format("{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 				}
-				catch (Exception ex) {
-					ShowError(ex.Message);
-					logger.Error(ex);
+				else {
+					ShowError(result);
 				}
-				finally {
-					this.Cursor = Cursors.Default;
-				}
+			}
+			catch (Exception ex) {
+				ShowError(ex.Message);
+				logger.Error(ex);
+			}
+			finally {
+				this.Cursor = Cursors.Default;
 			}
 		}
 
-		private bool IsValidToImportWJFL(out DateTime asOfDate) {
-			asOfDate = new DateTime(1900, 1, 1);
-
-			if (this.lblImportLoanWJFL.Text == "") {
-				ShowStop("未选择五级分类修订结果");
-				this.btnImportLoanWJFL.Focus();
+		private bool IsValidToImportWJFL() {
+			var filePath = this.lblImportWJFLPath.Text;
+			if (filePath == "") {
+				ShowStop("请选择风险贷款情况表的初表");
+				this.btnImportWJFLOpener.Focus();
 				return false;
 			}
-
-			var filePath = this.lblImportLoanWJFL.Text;
-			var period = filePath.LastIndexOf('.');
-			string dateString = filePath.Substring(0, period);
-			dateString = dateString.Substring(dateString.Length - 8);
-			dateString = string.Format("{0}/{1}/{2}", dateString.Substring(0, 4), dateString.Substring(4, 2), dateString.Substring(6, 2));
-			if (!DateTime.TryParse(dateString, out asOfDate)) {
-				ShowStop("数据的日期无效");
-				this.btnCalendarImport.Focus();
-				return false;
-			}
-			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
-				ShowStop("数据的日期超出范围");
-				this.btnCalendarImport.Focus();
-				return false;
+			else if (filePath.IndexOf(" - ") < 0) {
+				if (MessageBox.Show("确定您所选择的文件为修订七级分类之后的风险贷款情况表吗？", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+					return false;
+				}
 			}
 
 			return true;
 		}
 
 		private void InitImportWJFLPanel() {
-			this.lblImportLoanWJFL.Text = "";
+			this.lblImportWJFLPath.Text = "";
 		}
 		#endregion
 

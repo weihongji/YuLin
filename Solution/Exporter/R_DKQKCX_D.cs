@@ -23,7 +23,7 @@ namespace Reporting
 			var fileName = string.Format("贷款欠款查询{0}.xls", this.AsOfDate.ToString("yyyyMMdd"));
 			Logger.Debug("Generating " + fileName);
 
-			var report = TargetTable.GetById(XEnum.ReportType.R_DKQKCX_D);
+			var report = TargetTable.GetById(XEnum.ReportType.R_WJFL_M);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
 			foreach (var sheet in report.Sheets) {

@@ -83,9 +83,128 @@ namespace Reporting
 				GC.Collect();
 			}
 		}
+
+		public static void ProcessWJFL(string filePath) {
+			logger.Debug("Removing rows about column header row for " + filePath.Substring(filePath.LastIndexOf('\\') + 1));
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			theExcelApp.DisplayAlerts = false;
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+
+				theSheet = (Worksheet)theExcelBook.Sheets["非应计"];
+				theSheet.Activate();
+				var range = (Range)theSheet.get_Range("1:2");
+				range.Select();
+				logger.Debug("Removing rows from sheet 非应计");
+				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+
+				theSheet = (Worksheet)theExcelBook.Sheets["逾期"];
+				theSheet.Activate();
+				range = (Range)theSheet.get_Range("1:2");
+				range.Select();
+				logger.Debug("Removing rows from sheet 逾期");
+				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+
+				theSheet = (Worksheet)theExcelBook.Sheets["只欠息"];
+				theSheet.Activate();
+				range = (Range)theSheet.get_Range("1:2");
+				range.Select();
+				logger.Debug("Removing rows from sheet 只欠息");
+				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+
+				theExcelBook.Save();
+				logger.Debug("Remove done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+		}
+
+		public static string GetImportDateFromWJFL(string filePath, out DateTime date) {
+			logger.Debug("Getting import date from WJFL");
+
+			var result = string.Empty;
+			date = new DateTime(1900, 1, 1);
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+
+				theSheet = (Worksheet)theExcelBook.Sheets["非应计"];
+				string val = ((Range)theSheet.Cells[1, 1]).Value2;
+				if (string.IsNullOrEmpty(val)) {
+					result = "在非应计工作表中没有找到标题";
+				}
+				else if(val.IndexOf("月")<0) {
+					result = "在非应计工作表的标题中没有找到数据日期";
+				}
+				else
+				{
+					var dateString = val.Substring(0, val.IndexOf("月")).Replace("年", "/") + "/1";
+					if (DateTime.TryParse(dateString, out date)) {
+						date = DateHelper.GetLastDayInMonth(date);
+					}
+					else {
+						result = "在非应计工作表的标题中没有找到正确的数据日期";
+					}
+				}
+				if (result.Length > 0) {
+					logger.Debug(result);
+				}
+				else {
+					logger.Debug("Got date: " + date.ToString("yyyy-MM-dd"));
+				}
+				return result;
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+		}
+
 		public static void InitSheet(string filePath, TargetTableSheet sheet) {
 			InitSheet(filePath, sheet, 0,null);
 		}
+
 		public static void InitSheet(string filePath, TargetTableSheet sheet,int startCol,List<string> withCol) {
 			if (sheet.RowsBeforeHeader == 0 && sheet.FooterStartRow == 0) {
 				return;
