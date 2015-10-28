@@ -9,10 +9,13 @@ namespace Reporting
 {
 	public class C_DQDJQK_M : BaseReport
 	{
-		private string colList;
-		public C_DQDJQK_M(DateTime asOfDate, List<string> columnNames)
+		private string PublicColumns;
+		private string PrivateColumns;
+
+		public C_DQDJQK_M(DateTime asOfDate, List<string> publicColumns, List<string> privateColumns)
 			: base(asOfDate) {
-			colList = string.Join(",", columnNames);
+			PublicColumns = string.Join(",", publicColumns);
+			PrivateColumns = string.Join(",", privateColumns);
 		}
 		public override string GetClassName4Log() {
 			return this.ToString();
@@ -21,6 +24,8 @@ namespace Reporting
 		public override string GenerateReport() {
 			var fileName = string.Format("{0}月到期贷款情况.xls", this.AsOfDate.ToString("M.dd"));
 			Logger.Debug("Generating " + fileName);
+			Logger.Debug("Selected columns Public: " + string.Join(", ", this.PublicColumns));
+			Logger.Debug("Selected columns Private: " + string.Join(", ", this.PrivateColumns));
 
 			var report = TargetTable.GetById(XEnum.ReportType.C_DQDJQK_M);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
@@ -28,13 +33,16 @@ namespace Reporting
 			foreach (var sheet in report.Sheets) {
 				PopulateSheet(filePath, sheet);
 			}
+			ExcelHelper.ActivateSheet(filePath);
 
 			return string.Empty;
 		}
 		private void PopulateSheet(string filePath, TargetTableSheet sheet) {
 			Logger.Debug("Initializing sheet " + sheet.EvaluateName(this.AsOfDate));
 
-			var sql = string.Format("EXEC spDQDKQK_M '{0}' ,'{1}'", this.AsOfDate.ToString("yyyyMMdd"), colList);
+			var sql = string.Format("EXEC spDQDKQK_M '{0}', '{1}', '{2}'", this.AsOfDate.ToString("yyyyMMdd")
+				, sheet.Index == 1 ? "ImportPublic" : "ImportPrivate"
+				, sheet.Index == 1 ? PublicColumns : PrivateColumns);
 			var dao = new SqlDbHelper();
 			Logger.Debug("Running: " + sql);
 			var reader = dao.ExecuteReader(sql);

@@ -11,38 +11,51 @@ namespace Reporting
 {
 	public partial class frmCustomizeReport : Form
 	{
-		const string TABLENAME = "IMPORTPUBLIC";
-		public List<string> SelectedColumns { get; set; }
-		private List<TableMapping> colmMapping;
+		public List<string> PublicColumns { get; set; }
+		public List<string> PrivateColumns { get; set; }
+
+		private List<TableMapping> publicMappings;
+		private List<TableMapping> privateMappings;
 
 		public frmCustomizeReport() {
 			InitializeComponent();
-			this.SelectedColumns = new List<string>();
-			this.Text = "期贷款情况表自定义";
-			this.lblReportTitle.Text = this.Text;
+			this.PublicColumns = new List<string>();
+			this.PrivateColumns = new List<string>();
+		}
+
+		private void frmCustomizeReport_Load(object sender, EventArgs e) {
+			InitialForm();
 		}
 
 		private void InitialForm() {
-			colmMapping = TableMapping.GetMappingList(TABLENAME);
+			publicMappings = TableMapping.GetMappingList("ImportPublic");
+			privateMappings = TableMapping.GetMappingList("ImportPrivate");
 
-			colmMapping.Where(x => x.Mode == MappingMode.Custom);
-			BindListBox(optionalColList, colmMapping.Where(x => x.Mode != MappingMode.Frozen));
-			var customList = colmMapping.Where(x => x.Mode == MappingMode.Custom);
-			//BindListBox(selectedColList, colmMapping.Where(x => x.Mode == MappingMode.Frozen));
+			BindListBox(listBoxPublicCandidates, publicMappings.Where(x => x.Mode == MappingMode.Custom));
+			BindListBox(listBoxPrivateCandidates, privateMappings.Where(x => x.Mode == MappingMode.Custom));
 		}
+
 		private void BindListBox(ListBox box, IEnumerable<TableMapping> list) {
 			box.Items.Clear();
 			box.Items.AddRange(list.ToArray());
 		}
 
-		private void Form1_Load(object sender, EventArgs e) {
-			InitialForm();
+		private void btnPublicAdd_Click(object sender, EventArgs e) {
+			MoveBoxItem(listBoxPublicCandidates, listBoxPublicSelection);
 		}
 
-		private void btnAdd_Click(object sender, EventArgs e) {
-			MoveBoxItem(optionalColList, selectedColList);
-
+		private void btnPublicRemove_Click(object sender, EventArgs e) {
+			MoveBoxItem(listBoxPublicSelection, listBoxPublicCandidates);
 		}
+
+		private void btnPrivateAdd_Click(object sender, EventArgs e) {
+			MoveBoxItem(listBoxPrivateCandidates, listBoxPrivateSelection);
+		}
+
+		private void btnPrivateRemove_Click(object sender, EventArgs e) {
+			MoveBoxItem(listBoxPrivateSelection, listBoxPrivateCandidates);
+		}
+
 		private void MoveBoxItem(ListBox src, ListBox dest) {
 			if (src.SelectedItem == null) {
 				return;
@@ -65,16 +78,16 @@ namespace Reporting
 			src.Focus();
 		}
 
-		private void btnRemove_Click(object sender, EventArgs e) {
-			MoveBoxItem(selectedColList, optionalColList);
-		}
-
-		private void runReport_Click(object sender, EventArgs e) {
-			this.SelectedColumns.Clear();
-			foreach (TableMapping itm in selectedColList.Items) {
-				this.SelectedColumns.Add(itm.ColName);
+		private void btnOK_Click(object sender, EventArgs e) {
+			this.PublicColumns.Clear();
+			foreach (TableMapping itm in listBoxPublicSelection.Items) {
+				this.PublicColumns.Add(itm.ColName);
 			}
 
+			this.PrivateColumns.Clear();
+			foreach (TableMapping itm in listBoxPrivateSelection.Items) {
+				this.PrivateColumns.Add(itm.ColName);
+			}
 			this.Close();
 		}
 	}

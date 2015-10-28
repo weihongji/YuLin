@@ -15,10 +15,14 @@ namespace Reporting
 		}
 
 		public string ExportData(XEnum.ReportType report, DateTime asOfDate) {
-			return ExportData(report, asOfDate, null);
+			return ExportData(report, asOfDate, null, null);
 		}
 
 		public string ExportData(XEnum.ReportType report, DateTime asOfDate, List<string> columnNames) {
+			return ExportData(report, asOfDate, columnNames, null);
+		}
+
+		public string ExportData(XEnum.ReportType report, DateTime asOfDate, List<string> columnNames, List<string> columnNames2) {
 			var dao = new SqlDbHelper();
 			var countobject = dao.ExecuteScalar(string.Format("SELECT State FROM Import WHERE ImportDate = '{0}'", asOfDate.ToString("yyyyMMdd")));
 			if (countobject == null) {
@@ -52,7 +56,7 @@ namespace Reporting
 					result = new R_DKQKCX_D(asOfDate).GenerateReport();
 					break;
 				case XEnum.ReportType.C_DQDJQK_M:
-					result = new C_DQDJQK_M(asOfDate,columnNames).GenerateReport();
+					result = new C_DQDJQK_M(asOfDate, columnNames, columnNames2).GenerateReport();
 					break;
 				default:
 					result = "Unknown report type: " + report;

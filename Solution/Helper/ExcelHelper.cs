@@ -439,6 +439,9 @@ namespace Reporting
 					if (sheet.Name.Equals("对公已展期")) {
 						((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
 					}
+					else if (sheet.Name.IndexOf("个人") >= 0) {
+						((Range)theSheet.Cells[footerRowFrom, 8]).Value2 = string.Format("=SUM(H{0}:H{1})", dataRowFrom, footerRowFrom - 1);
+					}
 				}
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate);

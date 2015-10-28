@@ -17,7 +17,8 @@ namespace Reporting
 		private Logger logger = Logger.GetLogger("Main");
 		private XEnum.ReportType currentReport = XEnum.ReportType.None;
 		private List<TargetTable> _reports;
-		private List<string> _selectedColumns;
+		private List<string> _publicColumns;
+		private List<string> _privateColumns;
 
 		public List<TargetTable> Reports {
 			get {
@@ -30,10 +31,19 @@ namespace Reporting
 
 		public List<string> SelectedColumns {
 			get {
-				if (_selectedColumns == null) {
-					_selectedColumns = new List<string>();
+				if (_publicColumns == null) {
+					_publicColumns = new List<string>();
 				}
-				return _selectedColumns;
+				return _publicColumns;
+			}
+		}
+
+		public List<string> SelectedColumns2 {
+			get {
+				if (_privateColumns == null) {
+					_privateColumns = new List<string>();
+				}
+				return _privateColumns;
 			}
 		}
 
@@ -455,12 +465,16 @@ namespace Reporting
 					this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns("ImportPublic"));
 					this.SelectedColumns.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
 				}
+				if (this.SelectedColumns2.Count == 0) {
+					this.SelectedColumns2.AddRange(TableMapping.GetFrozenColumns("ImportPrivate"));
+					this.SelectedColumns2.AddRange(new string[] { "彻底从我行退出", "倒贷", "展期", "逾期", "化解方案" });
+				}
 			}
 			this.Cursor = Cursors.WaitCursor;
 			try {
 				var exporter = new Exporter();
 				var startTime = DateTime.Now; // Use to count time cost
-				var result = exporter.ExportData(this.currentReport, asOfDate, this.SelectedColumns);
+				var result = exporter.ExportData(this.currentReport, asOfDate, this.SelectedColumns, this.SelectedColumns2);
 				this.Cursor = Cursors.Default;
 				if (string.IsNullOrEmpty(result)) {
 					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
@@ -482,14 +496,17 @@ namespace Reporting
 
 		private void btnSelectColumns_Click(object sender, EventArgs e) {
 			this.SelectedColumns.Clear();
+			this.SelectedColumns2.Clear();
 			if (this.currentReport == XEnum.ReportType.C_DQDJQK_M) {
 				var form = new frmCustomizeReport();
-				form.Left = this.Left + 20;
-				form.Top = this.Top + 20;
 				form.ShowDialog(this);
 				this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns("ImportPublic"));
-				this.SelectedColumns.AddRange(form.SelectedColumns);
+				this.SelectedColumns.AddRange(form.PublicColumns);
 				this.SelectedColumns.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
+
+				this.SelectedColumns2.AddRange(TableMapping.GetFrozenColumns("ImportPrivate"));
+				this.SelectedColumns2.AddRange(form.PrivateColumns);
+				this.SelectedColumns2.AddRange(new string[] { "彻底从我行退出", "倒贷", "展期", "逾期", "化解方案" });
 			}
 		}
 
