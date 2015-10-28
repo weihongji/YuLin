@@ -25,6 +25,12 @@ namespace Deployer
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e) {
+			// Button will become to be "Close" after deployment is done.
+			if (this.btnUpgrade.Text == "关闭") {
+				Application.Exit();
+				return;
+			}
+
 			if (MessageBox.Show(string.Format("您确定要部署{0}版本吗？", this.lblVersionText.Text), this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) {
 				return;
 			}
@@ -37,15 +43,21 @@ namespace Deployer
 				var binPath = Path.Combine(appPath, "Bin");
 				var dbPath = Path.Combine(appPath, "Database");
 				var upgradePath = System.Environment.CurrentDirectory;
-				var backupStamp = DateTime.Now.ToString("yyMMddHHmmss");
+				var backupPath = Path.Combine(appPath, DateTime.Now.ToString("yyMMddHHmmss"));
 
 				// Backups
-				if (IsDBExists()) {
-					DetachDB();
-					Directory.Move(dbPath, Path.Combine(appPath, backupStamp + "_Database"));
+				DetachDB();
+				if (Directory.Exists(dbPath)) {
+					if (!Directory.Exists(backupPath)) {
+						Directory.CreateDirectory(backupPath);
+					}
+					Directory.Move(dbPath, Path.Combine(backupPath, "Database"));
 				}
 				if (Directory.Exists(binPath)) {
-					Directory.Move(binPath, Path.Combine(appPath, backupStamp + "_Bin"));
+					if (!Directory.Exists(backupPath)) {
+						Directory.CreateDirectory(backupPath);
+					}
+					Directory.Move(binPath, Path.Combine(backupPath, "Bin"));
 				}
 
 				// Create new db
@@ -65,6 +77,7 @@ namespace Deployer
 				process.Close();
 
 				MessageBox.Show("部署完毕", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+				this.btnUpgrade.Text = "关闭";
 			}
 			catch (Exception ex) {
 				if (ex.Message.IndexOf("Operating system error 5") > 0) {
@@ -76,19 +89,17 @@ namespace Deployer
 			}
 		}
 
-		private bool IsDBExists() {
-			var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
-			var dbId = dao.ExecuteScalar("SELECT DB_ID('YuLin')");
-			return dbId != DBNull.Value;
-		}
-
 		private void DetachDB() {
 			var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
 			var table = dao.ExecuteDataTable("select spid from sys.sysprocesses where dbid = DB_ID('YuLin')");
 			foreach (var row in table.Rows) {
 				dao.ExecuteNonQuery("kill " + ((DataRow) row)[0]);
 			}
-			dao.ExecuteNonQuery("sp_detach_db 'YuLin'");
+			var sql = new StringBuilder();
+			sql.AppendLine("IF DB_ID('YuLin') IS NOT NULL BEGIN");
+			sql.AppendLine("	EXEC sp_detach_db 'YuLin'");
+			sql.AppendLine("END");
+			dao.ExecuteNonQuery(sql.ToString());
 		}
 	}
 }
