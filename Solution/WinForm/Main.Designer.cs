@@ -510,7 +510,7 @@
 			this.btnSelectColumns.Name = "btnSelectColumns";
 			this.btnSelectColumns.Size = new System.Drawing.Size(130, 40);
 			this.btnSelectColumns.TabIndex = 23;
-			this.btnSelectColumns.Text = "选择数据列";
+			this.btnSelectColumns.Text = "选择导出列";
 			this.btnSelectColumns.UseVisualStyleBackColor = true;
 			this.btnSelectColumns.Click += new System.EventHandler(this.btnSelectColumns_Click);
 			// 
