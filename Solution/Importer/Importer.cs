@@ -522,15 +522,18 @@ namespace Reporting
 		}
 
 		public string CompleteImport(int importId, string importFolder) {
-
-			logger.Debug("Assigning org number to Private");
 			var result = AssignOrgNo(importId);
 			if (!String.IsNullOrEmpty(result)) {
 				logger.Error(result);
 				return result;
 			}
 
-			logger.Debug("Assigning Danger Level to Loan");
+			result = AssignLoanAccount(importId);
+			if (!String.IsNullOrEmpty(result)) {
+				logger.Error(result);
+				return result;
+			}
+
 			result = AssignDangerLevel(importId);
 			if (!String.IsNullOrEmpty(result)) {
 				logger.Error(result);
@@ -577,13 +580,33 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		// Run this function after OrgNo is assigned
+		private string AssignLoanAccount(int importId) {
+			try {
+				logger.Debug("Assigning LoanAccount column to Private");
+				var sql = new StringBuilder();
+				sql.AppendLine("UPDATE P SET LoanAccount = L.LoanAccount");
+				sql.AppendLine("FROM ImportPrivate P");
+				sql.AppendLine("	INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND L.CustomerType = '对私'");
+				sql.AppendLine("		AND P.OrgNo = L.OrgNo AND P.CustomerName = L.CustomerName AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate");
+				sql.AppendLine("WHERE P.ImportId = {0} AND P.LoanAccount IS NULL");
+				var dao = new SqlDbHelper();
+				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.Debug("Done");
+			}
+			catch (Exception ex) {
+				return ex.Message;
+			}
+			return string.Empty;
+		}
+
 		private string AssignDangerLevel(int importId) {
+			logger.Debug("Assigning Danger Level to Loan");
 			try {
 				var dao = new SqlDbHelper();
 				var sql = new StringBuilder();
 				sql.AppendLine("UPDATE ImportLoan SET DangerLevel = dbo.sfGetDangerLevel({0}, LoanAccount)");
-				sql.AppendLine("WHERE LoanState != '结清' AND DangerLevel IS NULL");
-				sql.AppendLine("	AND ImportId = {0}");
+				sql.AppendLine("WHERE ImportId = {0} AND DangerLevel IS NULL");
 				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
 			}
 			catch (Exception ex) {

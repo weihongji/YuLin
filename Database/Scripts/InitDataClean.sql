@@ -1,0 +1,10 @@
+TRUNCATE TABLE Org
+TRUNCATE TABLE DanBaoFangShi
+TRUNCATE TABLE Direction
+TRUNCATE TABLE SourceTableSheetColumn
+DELETE FROM SourceTableSheet
+DELETE FROM SourceTable
+TRUNCATE TABLE TableMapping
+TRUNCATE TABLE TargetTableSheetColumn
+DELETE FROM TargetTableSheet
+DELETE FROM TargetTable

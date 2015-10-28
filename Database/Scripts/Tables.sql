@@ -91,6 +91,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPrivat
 		Id int IDENTITY(1,1) NOT NULL,
 		ImportId int NOT NULL,
 		OrgNo varchar(50) NULL,
+		LoanAccount varchar(50) NULL,
 		OrgName nvarchar(100) NULL,
 		OrgName2 nvarchar(100) NULL,
 		ProductName nvarchar(100) NULL,
