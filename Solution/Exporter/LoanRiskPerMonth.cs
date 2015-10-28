@@ -31,7 +31,12 @@ namespace Reporting
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
 			foreach (var sheet in report.Sheets) {
-				PopulateSheet(filePath, sheet);
+				if (sheet.Name.Equals("累收累增")) {
+					PopulateSheetVS(filePath, sheet);
+				}
+				else {
+					PopulateSheet(filePath, sheet);
+				}
 			}
 
 			ExcelHelper.ActivateSheet(filePath);
@@ -69,6 +74,16 @@ namespace Reporting
 			Logger.DebugFormat("{0} records exported.", rowCount);
 
 			ExcelHelper.FormatReport4LoanRiskPerMonth(filePath, sheet, rowCount, this.AsOfDate);
+		}
+
+		private string PopulateSheetVS(string filePath, TargetTableSheet sheet) {
+			var result = "";
+			var dao = new SqlDbHelper();
+			var sql = string.Format("EXEC spX_WJFL_M_vs '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
+			Logger.Debug("Running " + sql);
+			var table = dao.ExecuteDataTable(sql);
+			result = ExcelHelper.PopulateX_WJFL_M_VS(filePath, sheet, this.AsOfDate, table);
+			return result;
 		}
 
 		private string GetSheetSuffix(TargetTableSheet sheet) {

@@ -372,6 +372,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (12, 71, 1, '贷款欠款查询', 0, 3, 3)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (13, 61, 1, '对公已展期', 2, 5, 5)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (14, 61, 2, '个人可以展期', 2, 5, 5)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (15, 1, 6, '累收累增', 4, 9, 9)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -460,6 +461,21 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 13, '贷款类型')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 14, '是否本月新增')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (5, 15, '备注')
+
+	/* 累收累增 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 1, '客户类型')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 2, '1_1_户数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 3, '1_1_金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 4, '1_2_户数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 5, '1_2_金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 6, '2_1_户数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 7, '2_1_金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 8, '2_2_户数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 9, '2_2_金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 10, '3_1_户数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 11, '3_1_金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 12, '3_2_户数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 13, '3_2_金额')
 
 	/* 风险贷款情况表-行业版 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (6, 1, '所在分行')

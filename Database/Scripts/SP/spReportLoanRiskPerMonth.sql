@@ -12,6 +12,9 @@ BEGIN
 
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
+	
+	DECLARE @importIdLastMonth int
+	SELECT @importIdLastMonth = MAX(Id) FROM Import WHERE ImportDate <= DATEADD(DAY, -1, CONVERT(varchar(6), @asOfDate, 112) + '01')
 
 	SELECT -1 AS Id INTO #LoanId
 
@@ -65,11 +68,7 @@ BEGIN
 		, Industry = ISNULL(PV.Direction1, PB.Direction1)
 		, CustomerType = ISNULL(PV.ProductName, PB.MyBankIndTypeName)
 		, LoanType = L.LoanTypeName
-		, IsNew = CASE WHEN EXISTS(
-					SELECT * FROM ImportLoan PL
-					WHERE PL.LoanAccount = L.LoanAccount
-						AND PL.ImportId IN (SELECT Id FROM Import WHERE ImportDate < @asOfDate)
-				) THEN '' ELSE 'ÊÇ' END
+		, IsNew = CASE WHEN EXISTS(SELECT * FROM ImportLoan PL WHERE PL.LoanAccount = L.LoanAccount AND PL.ImportId = @importIdLastMonth) THEN '' ELSE 'ÊÇ' END
 		, Comment = L.LoanState
 		, IdCardNo = ISNULL(PV.IdCardNo, PB.OrgCode)
 		, Direction1 = ISNULL(PV.Direction1, PB.Direction1)
