@@ -25,20 +25,38 @@ namespace Deployer
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e) {
+			if (MessageBox.Show(string.Format("您确定要部署{0}版本吗？", this.lblVersionText.Text), this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) {
+				return;
+			}
 			try {
 				var appPath = ConfigurationManager.AppSettings["AppPath"];
+				if (!Directory.Exists(appPath)) {
+					MessageBox.Show("报表系统的安装路径不存在：\r\n" + appPath, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
 				var binPath = Path.Combine(appPath, "Bin");
 				var dbPath = Path.Combine(appPath, "Database");
 				var upgradePath = System.Environment.CurrentDirectory;
+				var backupStamp = DateTime.Now.ToString("yyMMddHHmmss");
 
-				var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
-				dao.ExecuteNonQuery("DROP DATABASE YuLin");
+				// Backups
+				if (IsDBExists()) {
+					DetachDB();
+					Directory.Move(dbPath, Path.Combine(appPath, backupStamp + "_Database"));
+				}
+				if (Directory.Exists(binPath)) {
+					Directory.Move(binPath, Path.Combine(appPath, backupStamp + "_Bin"));
+				}
+
+				// Create new db
+				var dbPathInfo = Directory.CreateDirectory(dbPath);
+
 				File.Copy(Path.Combine(upgradePath, @"database\YuLin.mdf"), Path.Combine(dbPath, "YuLin.mdf"), true);
+				var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
 				dao.ExecuteNonQuery(string.Format("CREATE DATABASE YuLin ON (FILENAME='{0}') FOR ATTACH", Path.Combine(dbPath, "YuLin.mdf")));
 
-				Directory.Move(binPath, binPath + DateTime.Now.ToString("_yyMMddHHmmss"));
+				// Create new bin
 				Directory.CreateDirectory(binPath);
-
 				Process process = new Process();
 				process.StartInfo.FileName = "cmd";
 				process.StartInfo.Arguments = string.Format("/k xcopy /E \"{0}\" \"{1}\"&&exit", Path.Combine(upgradePath, "bin"), binPath);
@@ -49,8 +67,28 @@ namespace Deployer
 				MessageBox.Show("部署完毕", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			catch (Exception ex) {
-				MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				if (ex.Message.IndexOf("Operating system error 5") > 0) {
+					MessageBox.Show("无权限挂载数据库，请把SQL Server服务的启动帐号加入系统管理员用户群组，然后重启该服务。", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+				else {
+					MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
 			}
+		}
+
+		private bool IsDBExists() {
+			var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
+			var dbId = dao.ExecuteScalar("SELECT DB_ID('YuLin')");
+			return dbId != DBNull.Value;
+		}
+
+		private void DetachDB() {
+			var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
+			var table = dao.ExecuteDataTable("select spid from sys.sysprocesses where dbid = DB_ID('YuLin')");
+			foreach (var row in table.Rows) {
+				dao.ExecuteNonQuery("kill " + ((DataRow) row)[0]);
+			}
+			dao.ExecuteNonQuery("sp_detach_db 'YuLin'");
 		}
 	}
 }
