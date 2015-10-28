@@ -21,6 +21,7 @@ BEGIN
 	
 	SELECT DangerLevel, CAST(ROUND(SUM(CapitalAmount)/10000, 2) AS decimal(10, 2)) as Amount INTO #Result FROM ImportLoan
 	WHERE ImportId = @importId
+		AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%ÉñÄ¾%' OR Name LIKE '%¸®¹È%')
 	GROUP BY DangerLevel
 
 	SELECT Total = @total

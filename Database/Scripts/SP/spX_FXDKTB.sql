@@ -43,6 +43,7 @@ BEGIN
 		LEFT JOIN #BLDK  B ON O.Number = B.OrgNo
 		LEFT JOIN #ZQX   Z ON O.Number = Z.OrgNo
 	WHERE Y.Number > 0 OR B.Number > 0 OR Z.Number > 0
+		AND NOT(O.Name LIKE '%ÉñÄ¾%' OR O.Name LIKE '%¸®¹È%')
 
 	SELECT Alias1 AS OrgName, Total_Amount
 		, YQ_Count, YQ_Amount, YQ_Amount/Total_Amount AS YQ_Percentage

@@ -17,6 +17,7 @@ namespace Reporting
 		private Logger logger = Logger.GetLogger("Main");
 		private XEnum.ReportType currentReport = XEnum.ReportType.None;
 		private List<TargetTable> _reports;
+		private List<string> _selectedColumns;
 
 		public List<TargetTable> Reports {
 			get {
@@ -24,6 +25,15 @@ namespace Reporting
 					_reports = TargetTable.GetList();
 				}
 				return _reports;
+			}
+		}
+
+		public List<string> SelectedColumns {
+			get {
+				if (_selectedColumns == null) {
+					_selectedColumns = new List<string>();
+				}
+				return _selectedColumns;
 			}
 		}
 
@@ -126,11 +136,11 @@ namespace Reporting
 						ShowInfo(string.Format("{0}的数据导入完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 					}
 					else {
-						ShowError(result);
+						ShowError("导入发生错误");
 					}
 				}
 				catch (Exception ex) {
-					ShowError(ex.Message);
+					ShowError("导入发生错误");
 					logger.Error(ex);
 				}
 				finally {
@@ -248,7 +258,7 @@ namespace Reporting
 			DateTime asOfDate;
 			var result = ExcelHelper.GetImportDateFromWJFL(filePath, out asOfDate);
 			if (!string.IsNullOrEmpty(result)) {
-				ShowError(result);
+				ShowError("导入发生错误");
 				return;
 			}
 			var importer = new Importer();
@@ -263,11 +273,11 @@ namespace Reporting
 					ShowInfo(string.Format("{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 				}
 				else {
-					ShowError(result);
+					ShowError("导入发生错误");
 				}
 			}
 			catch (Exception ex) {
-				ShowError(ex.Message);
+				ShowError("导入发生错误");
 				logger.Error(ex);
 			}
 			finally {
@@ -429,19 +439,17 @@ namespace Reporting
 			if (!IsValidToExport(out asOfDate)) {
 				return;
 			}
-			// Customize report
 			if (this.currentReport == XEnum.ReportType.C_DQDJQK_M) {
-				var form = new frmCustomizeReport(asOfDate);
-				form.Left = this.Left + 20;
-				form.Top = this.Top + 20;
-				form.Show(this);
-				return;
+				if (this.SelectedColumns.Count == 0) {
+					this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns("ImportPublic"));
+					this.SelectedColumns.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
+				}
 			}
 			this.Cursor = Cursors.WaitCursor;
 			try {
 				var exporter = new Exporter();
 				var startTime = DateTime.Now; // Use to count time cost
-				var result = exporter.ExportData(this.currentReport, asOfDate);
+				var result = exporter.ExportData(this.currentReport, asOfDate, this.SelectedColumns);
 				this.Cursor = Cursors.Default;
 				if (string.IsNullOrEmpty(result)) {
 					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
@@ -449,15 +457,28 @@ namespace Reporting
 					ShowInfo(string.Format("报表导出完毕。{0}", timeSpan));
 				}
 				else {
-					ShowError(result);
+					ShowError("导出发生错误");
 				}
 			}
 			catch (Exception ex) {
 				logger.Error(ex);
-				ShowError(ex.Message);
+				ShowError("导出发生错误");
 			}
 			finally {
 				this.Cursor = Cursors.Default;
+			}
+		}
+
+		private void btnSelectColumns_Click(object sender, EventArgs e) {
+			this.SelectedColumns.Clear();
+			if (this.currentReport == XEnum.ReportType.C_DQDJQK_M) {
+				var form = new frmCustomizeReport();
+				form.Left = this.Left + 20;
+				form.Top = this.Top + 20;
+				form.ShowDialog(this);
+				this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns("ImportPublic"));
+				this.SelectedColumns.AddRange(form.SelectedColumns);
+				this.SelectedColumns.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
 			}
 		}
 
@@ -540,6 +561,5 @@ namespace Reporting
 			}
 		}
 		#endregion
-
 	}
 }

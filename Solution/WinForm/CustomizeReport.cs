@@ -12,16 +12,13 @@ namespace Reporting
 	public partial class frmCustomizeReport : Form
 	{
 		const string TABLENAME = "IMPORTPUBLIC";
+		public List<string> SelectedColumns { get; set; }
 		private List<TableMapping> colmMapping;
-		private XEnum.ReportType currentReport;
 
-		private DateTime _asOfDate { get; set; }
-
-		public frmCustomizeReport(DateTime asOfDate) {
+		public frmCustomizeReport() {
 			InitializeComponent();
-			currentReport = XEnum.ReportType.C_DQDJQK_M;
-			this._asOfDate = asOfDate;
-			this.Text = this._asOfDate.Month.ToString() + "月到期贷款情况表";
+			this.SelectedColumns = new List<string>();
+			this.Text = "期贷款情况表自定义";
 			this.lblReportTitle.Text = this.Text;
 		}
 
@@ -31,7 +28,7 @@ namespace Reporting
 			colmMapping.Where(x => x.Mode == MappingMode.Custom);
 			BindListBox(optionalColList, colmMapping.Where(x => x.Mode != MappingMode.Frozen));
 			var customList = colmMapping.Where(x => x.Mode == MappingMode.Custom);
-			BindListBox(selectedColList, colmMapping.Where(x => x.Mode == MappingMode.Frozen));
+			//BindListBox(selectedColList, colmMapping.Where(x => x.Mode == MappingMode.Frozen));
 		}
 		private void BindListBox(ListBox box, IEnumerable<TableMapping> list) {
 			box.Items.Clear();
@@ -73,23 +70,12 @@ namespace Reporting
 		}
 
 		private void runReport_Click(object sender, EventArgs e) {
-			var exporter = new Exporter();
-			var colList = new List<string>();
-			var empList = new List<string>();
-
+			this.SelectedColumns.Clear();
 			foreach (TableMapping itm in selectedColList.Items) {
-				colList.Add(itm.ColName);
+				this.SelectedColumns.Add(itm.ColName);
 			}
-			colList.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
 
-			var result = exporter.ExportData(this.currentReport, this._asOfDate, string.Join(",", colList));
-			if (string.IsNullOrEmpty(result)) {
-				MessageBox.Show(this.Text + "导出完毕", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
-				this.Close();
-			}
-			else {
-				MessageBox.Show(result, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+			this.Close();
 		}
 	}
 }

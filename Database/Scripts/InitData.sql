@@ -252,6 +252,54 @@ IF NOT EXISTS(SELECT * FROM SourceTableSheetColumn) BEGIN
 	/* YWWai */
 END
 
+IF NOT EXISTS(SELECT * FROM TableMapping) BEGIN
+	SET IDENTITY_INSERT TableMapping ON
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (1, 'ImportPublic', 'ORGNAME', '分行名称', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (2, 'ImportPublic', 'ORGNAME2', '支行名称', 1)
+	--INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (3, 'ImportPublic', 'CustomerNo', '客户编号', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (4, 'ImportPublic', 'CUSTOMERNAME', '客户姓名', 1)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (5, 'ImportPublic', 'ORGTYPE', '借款人企业性质', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (6, 'ImportPublic', 'OrgCode', '组织机构代码', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (7, 'ImportPublic', 'CONTRACTNO', '合同编号', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (8, 'ImportPublic', 'DUEBILLNO', '借据编号', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (9, 'ImportPublic', 'LoanStartDate', '借据开始日期', 1)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (10, 'ImportPublic', 'LoanEndDate', '借据结束日期', 1)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (11, 'ImportPublic', 'INDUSTRYTYPE1', '行业门类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (12, 'ImportPublic', 'INDUSTRYTYPE2', '行业大类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (13, 'ImportPublic', 'INDUSTRYTYPE3', '行业中类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (14, 'ImportPublic', 'INDUSTRYTYPE4', '行业小类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (15, 'ImportPublic', 'TERMMONTH', '贷款期限(月)', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (16, 'ImportPublic', 'CurrencyType', '币种', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (17, 'ImportPublic', 'DIRECTION1', '发放后投向行业门类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (18, 'ImportPublic', 'DIRECTION2', '发放后投向行业大类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (19, 'ImportPublic', 'DIRECTION3', '发放后投向行业中类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (20, 'ImportPublic', 'DIRECTION4', '发放后投向行业小类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (21, 'ImportPublic', 'OCCURTYPE', '业务类别', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (22, 'ImportPublic', 'BUSINESSTYPE', '授信品种', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (23, 'ImportPublic', 'SUBJECTNO', '核算项目名称', 2)
+	--INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (24, 'ImportPublic', 'BALANCE', 'BALANCE', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (25, 'ImportPublic', 'CLASSIFYRESULT', '七级分类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (26, 'ImportPublic', 'CREDITLEVEL', '客户信用等级', 2)
+	--INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (27, 'ImportPublic', 'MYBANKINDTYPE', 'MYBANKINDTYPE', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (28, 'ImportPublic', 'MYBANKINDTYPENAME', '客户规模(行内）', 2)
+	--INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (29, 'ImportPublic', 'SCOPE', 'SCOPE', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (30, 'ImportPublic', 'SCOPENAME', '客户规模(行外）', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (31, 'ImportPublic', 'OVERDUEDAYS', '本金逾期天数', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (32, 'ImportPublic', 'OWEINTERESTDAYS', '欠息天数', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (33, 'ImportPublic', 'BALANCE1', '贷款余额', 1)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (34, 'ImportPublic', 'ACTUALBUSINESSRATE', '利率', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (35, 'ImportPublic', 'RATEFLOAT', '浮动利率', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (36, 'ImportPublic', 'VOUCHTYPENAME', '主要担保方式', 1)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (37, 'ImportPublic', 'BAILRATIO', '保证金比例', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (38, 'ImportPublic', 'NORMALBALANCE', '正常余额', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (39, 'ImportPublic', 'OVERDUEBALANCE', '逾期余额', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (40, 'ImportPublic', 'BADBALANCE', '非应计余额', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (41, 'ImportPublic', 'LoanAccount', '贷款账号', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (42, 'ImportPublic', 'ISAGRICULTURECREDIT', '是否涉农', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (43, 'ImportPublic', 'ISINRZ', '是否政府融资平台', 2)
+	SET IDENTITY_INSERT TableMapping OFF
+END
+
 IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (1, '风险贷款情况表（五级分类）', '榆林分行风险贷款情况表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (2, '风险贷款通报', '风险贷款通报.xls')
@@ -283,8 +331,6 @@ IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (71, '贷款欠款查询', '贷款欠款查询.xls')
 END
 
-update TargetTable set Name= '到期贷款情况', FileName = '到期贷款情况.xls' where Id = 61
-
 IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (1, 1, 1, '非应计', 2, 6, 6)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (2, 1, 2, '不良贷款', 2, 6, 6)
@@ -298,7 +344,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (10, 24, 1, 'SF6401', 3, 33, 36)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (11, 2, 1, 'Sheet1', 4, 7, 7)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (12, 71, 1, '贷款欠款查询', 0, 3, 3)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (13, 61, 1, '对公已展期', 2, 19, 19)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (13, 61, 1, '对公已展期', 2, 5, 5)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -482,52 +528,17 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 18, '贷款种类说明')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 19, '贷款用途')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 20, '利息计至日')
-END
 
-IF NOT EXISTS(SELECT * FROM TableMapping) BEGIN
-	SET IDENTITY_INSERT TableMapping ON
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (1, 'IMPORTPUBLIC', 'ORGNAME', '分行名称', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (2, 'IMPORTPUBLIC', 'ORGNAME2', '支行名称', 1)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (3, 'IMPORTPUBLIC', 'CustomerNo', '客户编号', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (4, 'IMPORTPUBLIC', 'CUSTOMERNAME', '客户姓名', 1)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (5, 'IMPORTPUBLIC', 'ORGTYPE', '借款人企业性质', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (6, 'IMPORTPUBLIC', 'OrgCode', '组织机构代码', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (7, 'IMPORTPUBLIC', 'CONTRACTNO', '合同编号', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (8, 'IMPORTPUBLIC', 'DUEBILLNO', '借据编号', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (9, 'IMPORTPUBLIC', 'LoanStartDate', '借据开始日期', 1)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (10, 'IMPORTPUBLIC', 'LoanEndDate', '借据结束日期', 1)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (11, 'IMPORTPUBLIC', 'INDUSTRYTYPE1', '行业门类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (12, 'IMPORTPUBLIC', 'INDUSTRYTYPE2', '行业大类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (13, 'IMPORTPUBLIC', 'INDUSTRYTYPE3', '行业中类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (14, 'IMPORTPUBLIC', 'INDUSTRYTYPE4', '行业小类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (15, 'IMPORTPUBLIC', 'TERMMONTH', '贷款期限(月)', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (16, 'IMPORTPUBLIC', 'CurrencyType', '币种', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (17, 'IMPORTPUBLIC', 'DIRECTION1', '发放后投向行业门类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (18, 'IMPORTPUBLIC', 'DIRECTION2', '发放后投向行业大类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (19, 'IMPORTPUBLIC', 'DIRECTION3', '发放后投向行业中类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (20, 'IMPORTPUBLIC', 'DIRECTION4', '发放后投向行业小类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (21, 'IMPORTPUBLIC', 'OCCURTYPE', '业务类别', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (22, 'IMPORTPUBLIC', 'BUSINESSTYPE', '授信品种', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (23, 'IMPORTPUBLIC', 'SUBJECTNO', '核算项目名称', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (24, 'IMPORTPUBLIC', 'BALANCE', 'BALANCE', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (25, 'IMPORTPUBLIC', 'CLASSIFYRESULT', '七级分类', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (26, 'IMPORTPUBLIC', 'CREDITLEVEL', '客户信用等级', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (27, 'IMPORTPUBLIC', 'MYBANKINDTYPE', 'MYBANKINDTYPE', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (28, 'IMPORTPUBLIC', 'MYBANKINDTYPENAME', '客户规模(行内）', 2)
-	--INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (29, 'IMPORTPUBLIC', 'SCOPE', 'SCOPE', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (30, 'IMPORTPUBLIC', 'SCOPENAME', '客户规模(行外）', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (31, 'IMPORTPUBLIC', 'OVERDUEDAYS', '本金逾期天数', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (32, 'IMPORTPUBLIC', 'OWEINTERESTDAYS', '欠息天数', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (33, 'IMPORTPUBLIC', 'BALANCE1', '贷款余额', 1)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (34, 'IMPORTPUBLIC', 'ACTUALBUSINESSRATE', '利率', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (35, 'IMPORTPUBLIC', 'RATEFLOAT', '浮动利率', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (36, 'IMPORTPUBLIC', 'VOUCHTYPENAME', '主要担保方式', 1)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (37, 'IMPORTPUBLIC', 'BAILRATIO', '保证金比例', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (38, 'IMPORTPUBLIC', 'NORMALBALANCE', '正常余额', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (39, 'IMPORTPUBLIC', 'OVERDUEBALANCE', '逾期余额', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (40, 'IMPORTPUBLIC', 'BADBALANCE', '非应计余额', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (41, 'IMPORTPUBLIC', 'LoanAccount', '贷款账号', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (42, 'IMPORTPUBLIC', 'ISAGRICULTURECREDIT', '是否涉农', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (43, 'IMPORTPUBLIC', 'ISINRZ', '是否政府融资平台', 2)
-	SET IDENTITY_INSERT TableMapping OFF
+	/* 到期贷款情况 对公已展期 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 1, '序号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 2, '支行名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 3, '客户姓名')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 4, '借据开始日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 5, '借据结束日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 6, '贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 7, '主要担保方式')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 8, '彻底从我行退出')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 9, '倒贷')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 10, '逾期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 11, '化解方案')
 END

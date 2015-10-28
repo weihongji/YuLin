@@ -125,6 +125,7 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.btnSelectColumns = new System.Windows.Forms.Button();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
@@ -473,8 +474,8 @@
 			// 
 			// panelContent
 			// 
-			this.panelContent.Controls.Add(this.panelImportWJFL);
 			this.panelContent.Controls.Add(this.panelReport);
+			this.panelContent.Controls.Add(this.panelImportWJFL);
 			this.panelContent.Controls.Add(this.panelImport);
 			this.panelContent.Controls.Add(this.panelAbout);
 			this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -549,6 +550,7 @@
 			// 
 			// panelReport
 			// 
+			this.panelReport.Controls.Add(this.btnSelectColumns);
 			this.panelReport.Controls.Add(this.calendarExport);
 			this.panelReport.Controls.Add(this.pnlExportDate);
 			this.panelReport.Controls.Add(this.flowLayoutPanel3);
@@ -1076,6 +1078,17 @@
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
 			// 
+			// btnSelectColumns
+			// 
+			this.btnSelectColumns.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnSelectColumns.Location = new System.Drawing.Point(206, 164);
+			this.btnSelectColumns.Name = "btnSelectColumns";
+			this.btnSelectColumns.Size = new System.Drawing.Size(130, 40);
+			this.btnSelectColumns.TabIndex = 23;
+			this.btnSelectColumns.Text = "选择数据列";
+			this.btnSelectColumns.UseVisualStyleBackColor = true;
+			this.btnSelectColumns.Click += new System.EventHandler(this.btnSelectColumns_Click);
+			// 
 			// frmMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1215,6 +1228,7 @@
 		private System.Windows.Forms.Button btnImportWJFLOpener;
 		private System.Windows.Forms.Label label21;
 		private System.Windows.Forms.Label label17;
+		private System.Windows.Forms.Button btnSelectColumns;
 
 
 	}

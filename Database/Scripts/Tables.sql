@@ -135,6 +135,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPublic
 		Id int IDENTITY(1,1) NOT NULL,
 		ImportId int NOT NULL,
 		PublicType int NOT NULL,
+		OrgNo varchar(50) NULL,
 		OrgName nvarchar(100) NULL,
 		OrgName2 nvarchar(100) NULL,
 		CustomerNo varchar(50) NULL,

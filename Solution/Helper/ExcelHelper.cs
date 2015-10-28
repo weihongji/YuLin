@@ -160,11 +160,10 @@ namespace Reporting
 				if (string.IsNullOrEmpty(val)) {
 					result = "在非应计工作表中没有找到标题";
 				}
-				else if(val.IndexOf("月")<0) {
+				else if (val.IndexOf("月") < 0) {
 					result = "在非应计工作表的标题中没有找到数据日期";
 				}
-				else
-				{
+				else {
 					var dateString = val.Substring(0, val.IndexOf("月")).Replace("年", "/") + "/1";
 					if (DateTime.TryParse(dateString, out date)) {
 						date = DateHelper.GetLastDayInMonth(date);
@@ -202,10 +201,10 @@ namespace Reporting
 		}
 
 		public static void InitSheet(string filePath, TargetTableSheet sheet) {
-			InitSheet(filePath, sheet, 0,null);
+			InitSheet(filePath, sheet, null);
 		}
 
-		public static void InitSheet(string filePath, TargetTableSheet sheet,int startCol,List<string> withCol) {
+		public static void InitSheet(string filePath, TargetTableSheet sheet, List<string> columnNames) {
 			if (sheet.RowsBeforeHeader == 0 && sheet.FooterStartRow == 0) {
 				return;
 			}
@@ -234,12 +233,10 @@ namespace Reporting
 					range = (Range)theSheet.get_Range("1:" + sheet.RowsBeforeHeader.ToString());
 					range.Delete();
 				}
-				if (withCol != null) {
-					//for (int index = 0; index < withCol.Count(); index++) { 
-						for (int i = 1; i <= withCol.Count; i++) {
-							theSheet.Cells[1, i + startCol] = withCol[i - 1];
-						}
-					//}
+				if (columnNames != null) {
+					for (int i = 1; i <= columnNames.Count; i++) {
+						theSheet.Cells[1, i] = columnNames[i - 1];
+					}
 				}
 				theExcelBook.Save();
 			}
@@ -437,10 +434,11 @@ namespace Reporting
 					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
 					dataRange.Font.Size = 10;
 
-					for (int i = 0; i < columnCount; i++) {
-						sheet.Columns.Add(new TargetTableSheetColumn());
+					((Range)theSheet.Cells[footerRowFrom, 2]).Value2 = "合计";
+					((Range)theSheet.Cells[footerRowFrom, 2]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					if (sheet.Name.Equals("对公已展期")) {
+						((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
 					}
-
 				}
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate);

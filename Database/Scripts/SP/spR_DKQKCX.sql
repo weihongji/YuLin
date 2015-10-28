@@ -16,5 +16,6 @@ BEGIN
 		, OweCapital, OweYingShouInterest, OweCuiShouInterest, DueBillNo, CONVERT(VARCHAR(8), LoanStartDate, 112), CONVERT(VARCHAR(8), LoanEndDate, 112), LoanState, LoanTypeName, Direction, CONVERT(VARCHAR(8), InterestEndDate, 112)
 	FROM ImportLoan
 	WHERE ImportId = @importId
+		AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%ÉñÄ¾%' OR Name LIKE '%¸®¹È%')
 END
 

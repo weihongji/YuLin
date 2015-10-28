@@ -14,16 +14,16 @@ namespace Reporting
 		public Exporter() {
 		}
 
-		public string ExportData(XEnum.ReportType report, DateTime asOfDate,params string[] p) {
+		public string ExportData(XEnum.ReportType report, DateTime asOfDate) {
+			return ExportData(report, asOfDate, null);
+		}
+
+		public string ExportData(XEnum.ReportType report, DateTime asOfDate, List<string> columnNames) {
 			var dao = new SqlDbHelper();
 			var countobject = dao.ExecuteScalar(string.Format("SELECT State FROM Import WHERE ImportDate = '{0}'", asOfDate.ToString("yyyyMMdd")));
 			if (countobject == null) {
 				return string.Format("{0}的数据还没导入系统", asOfDate.ToString("M月d日"));
 			}
-			//Commented out below since daily report may not need all source tables.
-			//else if((short) countobject != (short)XEnum.ImportState.Complete) {
-			//	return string.Format("{0}的数据的尚未全部导入系统", asOfDate.ToString("M月d日"));
-			//}
 
 			var result = string.Empty;
 			switch (report) {
@@ -52,7 +52,7 @@ namespace Reporting
 					result = new R_DKQKCX_D(asOfDate).GenerateReport();
 					break;
 				case XEnum.ReportType.C_DQDJQK_M:
-					result = new C_DQDJQK_M(asOfDate,p.FirstOrDefault()).GenerateReport();
+					result = new C_DQDJQK_M(asOfDate,columnNames).GenerateReport();
 					break;
 				default:
 					result = "Unknown report type: " + report;

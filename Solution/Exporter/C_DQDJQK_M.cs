@@ -10,9 +10,9 @@ namespace Reporting
 	public class C_DQDJQK_M : BaseReport
 	{
 		private string colList;
-		public C_DQDJQK_M(DateTime asOfDate,string listStr)
+		public C_DQDJQK_M(DateTime asOfDate, List<string> columnNames)
 			: base(asOfDate) {
-			colList=listStr;
+			colList = string.Join(",", columnNames);
 		}
 		public override string GetClassName4Log() {
 			return this.ToString();
@@ -33,34 +33,25 @@ namespace Reporting
 		}
 		private void PopulateSheet(string filePath, TargetTableSheet sheet) {
 			Logger.Debug("Initializing sheet " + sheet.EvaluateName(this.AsOfDate));
-			
 
-		
 			var sql = string.Format("EXEC spDQDKQK_M '{0}' ,'{1}'", this.AsOfDate.ToString("yyyyMMdd"), colList);
 			var dao = new SqlDbHelper();
-			Logger.Debug("Running " + sql);
+			Logger.Debug("Running: " + sql);
 			var reader = dao.ExecuteReader(sql);
-			var exmapleList = new List<List<string>>();
-			var l = new List<string>();
+			var columnNames = new List<string>();
 			for (int i = 0; i < reader.FieldCount; i++) {
-				l.Add( reader.GetName(i));
+				columnNames.Add(reader.GetName(i));
 			}
-			exmapleList.Add(l);
-			//while (reader.Read()) {
-			//	if (exmapleList.Count() > 10) {
-			//	}
-			//}
-			//reader.re
 			int rowCount = 0;
-			
-			ExcelHelper.InitSheet(filePath, sheet,1,l);
+
+			ExcelHelper.InitSheet(filePath, sheet, columnNames);
 			Logger.Debug("Openning connction to " + filePath);
 			var oleConn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
-			
+
 			oleConn.Open();
 			while (reader.Read()) {
 				rowCount++;
-				sql = GetInsertSql(reader, sheet,l);
+				sql = GetInsertSql(reader, sheet, columnNames);
 				try {
 					OleDbCommand cmd = new OleDbCommand(sql, oleConn);
 					cmd.ExecuteNonQuery();
@@ -77,7 +68,7 @@ namespace Reporting
 
 			ExcelHelper.FormatReport4LoanRiskPerMonth(filePath, sheet, rowCount, this.AsOfDate);
 		}
-		private string GetInsertSql(SqlDataReader reader, TargetTableSheet sheet,List<string> cols) {
+		private string GetInsertSql(SqlDataReader reader, TargetTableSheet sheet, List<string> cols) {
 			var fields = new StringBuilder();
 			var values = new StringBuilder();
 			fields.AppendFormat("[{0}]", cols[0]);

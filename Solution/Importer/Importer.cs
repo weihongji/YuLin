@@ -275,7 +275,7 @@ namespace Reporting
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Loan];
 			var excelColumns = "[机构号码], [贷款科目], [贷款帐号], [客户名称], [客户编号], [客户类型], [贷款总额], [本金余额], [拖欠本金], [拖欠应收利息], [拖欠催收利息], [借据编号], [放款日期], [到期日期], [贷款状态], [贷款种类说明], [贷款用途], [利息计至日]";
 			var dbColumns = "OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, DueBillNo, LoanStartDate, LoanEndDate, LoanState, LoanTypeName, Direction, InterestEndDate";
-			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Loan, excelColumns, dbColumns, 18);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Loan, excelColumns, dbColumns);
 		}
 
 		private string ImportPublic(int importId, string importFolder, string sourceFilePath) {
@@ -288,8 +288,8 @@ namespace Reporting
 
 			// Import to database
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Public];
-			var excelColumns = "[支行名称], [客户姓名], [借款人企业性质], [组织机构代码], [合同编号], [借据开始日期], [借据结束日期], [发放后投向行业门类], [发放后投向行业大类], [发放后投向行业中类], [发放后投向行业小类], [授信品种], [七级分类], [客户规模(行内）], [客户规模(行外）], [本金逾期天数], [欠息天数], [贷款余额], [主要担保方式], [正常余额], [逾期余额], [非应计余额], [贷款账号], [是否政府融资平台]";
-			var dbColumns = "OrgName2, CustomerName, OrgType, OrgCode, ContractNo, LoanStartDate, LoanEndDate, Direction1, Direction2, Direction3, Direction4, BusinessType, ClassifyResult, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, VouchTypeName, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsINRZ";
+			var excelColumns = "[分行名称], [支行名称], [客户姓名], [借款人企业性质], [组织机构代码], [合同编号], [借据编号], [借据开始日期], [借据结束日期], [行业门类], [行业大类], [行业中类], [行业小类], [贷款期限(月)], [币种], [发放后投向行业门类], [发放后投向行业大类], [发放后投向行业中类], [发放后投向行业小类], [业务类别], [授信品种], [核算项目名称], [七级分类], [客户信用等级], [客户规模(行内）], [客户规模(行外）], [本金逾期天数], [欠息天数], [贷款余额], [利率], [浮动利率], [主要担保方式], [保证金比例], [正常余额], [逾期余额], [非应计余额], [贷款账号], [是否涉农], [是否政府融资平台]";
+			var dbColumns = "OrgName, OrgName2, CustomerName, OrgType, OrgCode, ContractNo, DueBillNo, LoanStartDate, LoanEndDate, IndustryType1, IndustryType2, IndustryType3, IndustryType4, TermMonth, CurrencyType, Direction1, Direction2, Direction3, Direction4, OccurType, BusinessType, SubjectNo, ClassifyResult, CreditLevel, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, ActualBusinessRate, RateFloat, VouchTypeName, BailRatio, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsAgricultureCredit, IsINRZ";
 			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + targetFilePath + ";Extended Properties=Excel 8.0");
 			oconn.Open();
 			DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
@@ -298,7 +298,7 @@ namespace Reporting
 				if (dt.Rows.Count < sheetIndex * 2 + 1) {
 					break;
 				}
-				var result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.Public, excelColumns, dbColumns, 24, sheetIndex + 1);
+				var result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.Public, excelColumns, dbColumns, sheetIndex + 1);
 				if (!String.IsNullOrEmpty(result)) {
 					return result;
 				}
@@ -316,9 +316,9 @@ namespace Reporting
 
 			// Import to database
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Private];
-			var excelColumns = "[支行], [信贷产品名称], [产品核算项目], [客户名称], [证件号码], [合同开始日期], [合同到期日], [担保方式], [贷款余额], [贷款发放后投向1], [贷款发放后投向2], [贷款发放后投向3], [贷款发放后投向4], [本金最长逾期天数], [利息最长逾期天数], [拖欠利息], [逾期余额], [非应计余额]";
-			var dbColumns = "OrgName2, ProductName, ProductType, CustomerName, IdCardNo, ContractStartDate, ContractEndDate, DanBaoFangShi, LoanBalance, Direction1, Direction2, Direction3, Direction4, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance";
-			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Private, excelColumns, dbColumns, 18);
+			var excelColumns = "[二级分行], [支行], [信贷产品名称], [产品核算项目], [贷款期限（月）], [综合授信额度], [七级分类], [还款方式], [客户名称], [证件号码], [币种], [合同开始日期], [合同到期日], [借款利率（执行）], [担保方式], [贷款余额], [贷款发放后投向1], [贷款发放后投向2], [贷款发放后投向3], [贷款发放后投向4], [本金最长逾期天数], [利息最长逾期天数], [拖欠利息], [逾期余额], [非应计余额]";
+			var dbColumns = "OrgName, OrgName2, ProductName, ProductType, LoanMonths, ZongHeShouXinEDu, DangerLevel, RepaymentMethod, CustomerName, IdCardNo, CurrencyType, ContractStartDate, ContractEndDate, InterestRatio, DanBaoFangShi, LoanBalance, Direction1, Direction2, Direction3, Direction4, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance";
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Private, excelColumns, dbColumns);
 		}
 
 		private string ImportNonAccrual(int importId, string importFolder, string sourceFilePath) {
@@ -333,7 +333,7 @@ namespace Reporting
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.NonAccrual];
 			var excelColumns = "[机构名称], [客户名称], [贷款帐号], [担保情况]";
 			var dbColumns = "OrgName, CustomerName, LoanAccount, DanBaoFangShi";
-			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.NonAccrual, excelColumns, dbColumns, 4);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.NonAccrual, excelColumns, dbColumns);
 		}
 
 		private string ImportOverdue(int importId, string importFolder, string sourceFilePath) {
@@ -348,7 +348,7 @@ namespace Reporting
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Overdue];
 			var excelColumns = "[机构名称], [客户名称], [贷款帐号], [客户编号], [贷款种类], [贷款发放日], [贷款到期日], [逾期本金余额], [利息余额], [担保情况]";
 			var dbColumns = "OrgName, CustomerName, LoanAccount, CustomerNo, LoanType, LoanStartDate, LoanEndDate, CapitalOverdueBalance, InterestBalance, DanBaoFangShi";
-			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Overdue, excelColumns, dbColumns, 10);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.Overdue, excelColumns, dbColumns);
 		}
 
 		private string ImportYWNei(int importId, string importFolder, string sourceFilePath) {
@@ -363,7 +363,7 @@ namespace Reporting
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.YWNei];
 			var excelColumns = "*";
 			var dbColumns = "SubjectCode, SubjectName, LastDebitBalance, LastCreditBalance, CurrentDebitChange, CurrentCreditChange, CurrentDebitBalance, CurrentCreditBalance";
-			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.YWNei, excelColumns, dbColumns, 8);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.YWNei, excelColumns, dbColumns);
 		}
 
 		private string ImportYWWai(int importId, string importFolder, string sourceFilePath) {
@@ -378,10 +378,11 @@ namespace Reporting
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.YWWai];
 			var excelColumns = "*";
 			var dbColumns = "SubjectCode, SubjectName, LastDebitBalance, LastCreditBalance, CurrentDebitChange, CurrentCreditChange, CurrentDebitBalance, CurrentCreditBalance";
-			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.YWWai, excelColumns, dbColumns, 8);
+			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.YWWai, excelColumns, dbColumns);
 		}
 
-		private string ImportTable(int importId, string filePath, XEnum.ImportItemType itemType, string excelColumns, string dbColumns, int columnCount, int sheetIndex = 1) {
+		private string ImportTable(int importId, string filePath, XEnum.ImportItemType itemType, string excelColumns, string dbColumns, int sheetIndex = 1) {
+			int columnCount = dbColumns.Split(',').Length;
 			string suffix = GetTableSuffix(itemType);
 			logger.DebugFormat("Importing {0} to database", suffix);
 			if (String.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath)) {
@@ -545,7 +546,7 @@ namespace Reporting
 
 		private string AssignOrgNo(int importId) {
 			try {
-				//Assign OrgNo column
+				logger.Debug("Assigning OrgNo column to Private");
 				var sql = new StringBuilder();
 				sql.AppendLine("UPDATE ImportPrivate");
 				sql.AppendLine("SET OrgNo = (");
@@ -556,6 +557,19 @@ namespace Reporting
 				sql.AppendLine("WHERE ImportId = {0} AND OrgNo IS NULL");
 				var dao = new SqlDbHelper();
 				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.Debug("Done");
+
+				logger.Debug("Assigning OrgNo column to Public");
+				sql.Clear();
+				sql.AppendLine("UPDATE ImportPublic");
+				sql.AppendLine("SET OrgNo = (");
+				sql.AppendLine("	SELECT TOP 1 Number FROM Org O");
+				sql.AppendLine("	WHERE ImportPublic.OrgName2 IN (O.Name, O.Alias1, O.Alias2)");
+				sql.AppendLine("		OR REPLACE(ImportPublic.OrgName2, '榆林分行', '') IN (O.Name, O.Alias1, O.Alias2)");
+				sql.AppendLine(")");
+				sql.AppendLine("WHERE ImportId = {0} AND OrgNo IS NULL");
+				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.Debug("Done");
 			}
 			catch (Exception ex) {
 				return ex.Message;
