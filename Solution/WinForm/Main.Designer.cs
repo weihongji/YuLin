@@ -68,13 +68,8 @@
 			this.menuReport_C_XZDKMX_M = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C_FXDKBH_M = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
-			this.panelImportWJFL = new System.Windows.Forms.Panel();
-			this.btnImportWJFL = new System.Windows.Forms.Button();
-			this.lblImportWJFLPath = new System.Windows.Forms.Label();
-			this.btnImportWJFLOpener = new System.Windows.Forms.Button();
-			this.label21 = new System.Windows.Forms.Label();
-			this.label17 = new System.Windows.Forms.Label();
 			this.panelReport = new System.Windows.Forms.Panel();
+			this.btnSelectColumns = new System.Windows.Forms.Button();
 			this.calendarExport = new System.Windows.Forms.MonthCalendar();
 			this.pnlExportDate = new System.Windows.Forms.Panel();
 			this.btnCalendarExport = new System.Windows.Forms.Button();
@@ -89,6 +84,12 @@
 			this.label9 = new System.Windows.Forms.Label();
 			this.btnExport = new System.Windows.Forms.Button();
 			this.lblReportTitle = new System.Windows.Forms.Label();
+			this.panelImportWJFL = new System.Windows.Forms.Panel();
+			this.btnImportWJFL = new System.Windows.Forms.Button();
+			this.lblImportWJFLPath = new System.Windows.Forms.Label();
+			this.btnImportWJFLOpener = new System.Windows.Forms.Button();
+			this.label21 = new System.Windows.Forms.Label();
+			this.label17 = new System.Windows.Forms.Label();
 			this.panelImport = new System.Windows.Forms.Panel();
 			this.btnCalendarImport = new System.Windows.Forms.Button();
 			this.txtImportDate = new System.Windows.Forms.TextBox();
@@ -125,15 +126,14 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.btnSelectColumns = new System.Windows.Forms.Button();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
-			this.panelImportWJFL.SuspendLayout();
 			this.panelReport.SuspendLayout();
 			this.pnlExportDate.SuspendLayout();
 			this.flowLayoutPanel3.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
+			this.panelImportWJFL.SuspendLayout();
 			this.panelImport.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.panelAbout.SuspendLayout();
@@ -175,14 +175,14 @@
 			// menuSystem_About
 			// 
 			this.menuSystem_About.Name = "menuSystem_About";
-			this.menuSystem_About.Size = new System.Drawing.Size(144, 22);
+			this.menuSystem_About.Size = new System.Drawing.Size(152, 22);
 			this.menuSystem_About.Text = "版本信息 (&A)";
 			this.menuSystem_About.Click += new System.EventHandler(this.menuSystem_About_Click);
 			// 
 			// menuSystem_Exit
 			// 
 			this.menuSystem_Exit.Name = "menuSystem_Exit";
-			this.menuSystem_Exit.Size = new System.Drawing.Size(144, 22);
+			this.menuSystem_Exit.Size = new System.Drawing.Size(152, 22);
 			this.menuSystem_Exit.Text = "退出系统 (&X)";
 			this.menuSystem_Exit.Click += new System.EventHandler(this.menuSystem_Exit_Click);
 			// 
@@ -363,70 +363,70 @@
 			// menuReport_F_GF1101_121_S
 			// 
 			this.menuReport_F_GF1101_121_S.Name = "menuReport_F_GF1101_121_S";
-			this.menuReport_F_GF1101_121_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1101_121_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF1101_121_S.Text = "GF1101-121";
 			this.menuReport_F_GF1101_121_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1301_081_S
 			// 
 			this.menuReport_F_GF1301_081_S.Name = "menuReport_F_GF1301_081_S";
-			this.menuReport_F_GF1301_081_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1301_081_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF1301_081_S.Text = "GF1301-081";
 			this.menuReport_F_GF1301_081_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1302_081_S
 			// 
 			this.menuReport_F_GF1302_081_S.Name = "menuReport_F_GF1302_081_S";
-			this.menuReport_F_GF1302_081_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1302_081_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF1302_081_S.Text = "GF1302-081";
 			this.menuReport_F_GF1302_081_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1303_081_S
 			// 
 			this.menuReport_F_GF1303_081_S.Name = "menuReport_F_GF1303_081_S";
-			this.menuReport_F_GF1303_081_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1303_081_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF1303_081_S.Text = "GF1303-081";
 			this.menuReport_F_GF1303_081_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1304_081_S
 			// 
 			this.menuReport_F_GF1304_081_S.Name = "menuReport_F_GF1304_081_S";
-			this.menuReport_F_GF1304_081_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1304_081_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF1304_081_S.Text = "GF1304-081";
 			this.menuReport_F_GF1304_081_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1403_111_S
 			// 
 			this.menuReport_F_GF1403_111_S.Name = "menuReport_F_GF1403_111_S";
-			this.menuReport_F_GF1403_111_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1403_111_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF1403_111_S.Text = "GF1403-111";
 			this.menuReport_F_GF1403_111_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_SF6302_131_S
 			// 
 			this.menuReport_F_SF6302_131_S.Name = "menuReport_F_SF6302_131_S";
-			this.menuReport_F_SF6302_131_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_SF6302_131_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_SF6302_131_S.Text = "SF6302-131";
 			this.menuReport_F_SF6302_131_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_SF6402_131_S
 			// 
 			this.menuReport_F_SF6402_131_S.Name = "menuReport_F_SF6402_131_S";
-			this.menuReport_F_SF6402_131_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_SF6402_131_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_SF6402_131_S.Text = "SF6402-131";
 			this.menuReport_F_SF6402_131_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1103_121_S
 			// 
 			this.menuReport_F_GF1103_121_S.Name = "menuReport_F_GF1103_121_S";
-			this.menuReport_F_GF1103_121_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1103_121_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF1103_121_S.Text = "GF1103-121";
 			this.menuReport_F_GF1103_121_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1200_101_S
 			// 
 			this.menuReport_F_GF1200_101_S.Name = "menuReport_F_GF1200_101_S";
-			this.menuReport_F_GF1200_101_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1200_101_S.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF1200_101_S.Text = "GF1200-101";
 			this.menuReport_F_GF1200_101_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
@@ -474,79 +474,15 @@
 			// 
 			// panelContent
 			// 
+			this.panelContent.Controls.Add(this.panelAbout);
 			this.panelContent.Controls.Add(this.panelReport);
 			this.panelContent.Controls.Add(this.panelImportWJFL);
 			this.panelContent.Controls.Add(this.panelImport);
-			this.panelContent.Controls.Add(this.panelAbout);
 			this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panelContent.Location = new System.Drawing.Point(0, 0);
 			this.panelContent.Name = "panelContent";
 			this.panelContent.Size = new System.Drawing.Size(694, 583);
 			this.panelContent.TabIndex = 2;
-			// 
-			// panelImportWJFL
-			// 
-			this.panelImportWJFL.Controls.Add(this.btnImportWJFL);
-			this.panelImportWJFL.Controls.Add(this.lblImportWJFLPath);
-			this.panelImportWJFL.Controls.Add(this.btnImportWJFLOpener);
-			this.panelImportWJFL.Controls.Add(this.label21);
-			this.panelImportWJFL.Controls.Add(this.label17);
-			this.panelImportWJFL.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panelImportWJFL.Location = new System.Drawing.Point(0, 0);
-			this.panelImportWJFL.Name = "panelImportWJFL";
-			this.panelImportWJFL.Size = new System.Drawing.Size(694, 583);
-			this.panelImportWJFL.TabIndex = 6;
-			// 
-			// btnImportWJFL
-			// 
-			this.btnImportWJFL.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnImportWJFL.Location = new System.Drawing.Point(194, 211);
-			this.btnImportWJFL.Name = "btnImportWJFL";
-			this.btnImportWJFL.Size = new System.Drawing.Size(130, 40);
-			this.btnImportWJFL.TabIndex = 24;
-			this.btnImportWJFL.Text = "导入";
-			this.btnImportWJFL.UseVisualStyleBackColor = true;
-			this.btnImportWJFL.Click += new System.EventHandler(this.btnImportWJFL_Click);
-			// 
-			// lblImportWJFLPath
-			// 
-			this.lblImportWJFLPath.AutoEllipsis = true;
-			this.lblImportWJFLPath.Location = new System.Drawing.Point(284, 151);
-			this.lblImportWJFLPath.Name = "lblImportWJFLPath";
-			this.lblImportWJFLPath.Size = new System.Drawing.Size(350, 12);
-			this.lblImportWJFLPath.TabIndex = 28;
-			this.lblImportWJFLPath.Text = "C:\\xxx.xls";
-			// 
-			// btnImportWJFLOpener
-			// 
-			this.btnImportWJFLOpener.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnImportWJFLOpener.Location = new System.Drawing.Point(199, 146);
-			this.btnImportWJFLOpener.Name = "btnImportWJFLOpener";
-			this.btnImportWJFLOpener.Size = new System.Drawing.Size(75, 23);
-			this.btnImportWJFLOpener.TabIndex = 27;
-			this.btnImportWJFLOpener.Text = "选择 ...";
-			this.btnImportWJFLOpener.UseVisualStyleBackColor = true;
-			this.btnImportWJFLOpener.Click += new System.EventHandler(this.btnImportWJFLOpener_Click);
-			// 
-			// label21
-			// 
-			this.label21.AutoSize = true;
-			this.label21.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label21.Location = new System.Drawing.Point(97, 149);
-			this.label21.Name = "label21";
-			this.label21.Size = new System.Drawing.Size(104, 17);
-			this.label21.TabIndex = 26;
-			this.label21.Text = "风险贷款情况表：";
-			// 
-			// label17
-			// 
-			this.label17.AutoSize = true;
-			this.label17.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label17.Location = new System.Drawing.Point(207, 72);
-			this.label17.Name = "label17";
-			this.label17.Size = new System.Drawing.Size(170, 21);
-			this.label17.TabIndex = 19;
-			this.label17.Text = "导入七级分类修订结果";
 			// 
 			// panelReport
 			// 
@@ -566,6 +502,17 @@
 			this.panelReport.Size = new System.Drawing.Size(694, 583);
 			this.panelReport.TabIndex = 1;
 			this.panelReport.Click += new System.EventHandler(this.panelExport_Click);
+			// 
+			// btnSelectColumns
+			// 
+			this.btnSelectColumns.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnSelectColumns.Location = new System.Drawing.Point(206, 164);
+			this.btnSelectColumns.Name = "btnSelectColumns";
+			this.btnSelectColumns.Size = new System.Drawing.Size(130, 40);
+			this.btnSelectColumns.TabIndex = 23;
+			this.btnSelectColumns.Text = "选择数据列";
+			this.btnSelectColumns.UseVisualStyleBackColor = true;
+			this.btnSelectColumns.Click += new System.EventHandler(this.btnSelectColumns_Click);
 			// 
 			// calendarExport
 			// 
@@ -707,6 +654,70 @@
 			this.lblReportTitle.Size = new System.Drawing.Size(186, 21);
 			this.lblReportTitle.TabIndex = 6;
 			this.lblReportTitle.Text = "榆林分行风险贷款情况表";
+			// 
+			// panelImportWJFL
+			// 
+			this.panelImportWJFL.Controls.Add(this.btnImportWJFL);
+			this.panelImportWJFL.Controls.Add(this.lblImportWJFLPath);
+			this.panelImportWJFL.Controls.Add(this.btnImportWJFLOpener);
+			this.panelImportWJFL.Controls.Add(this.label21);
+			this.panelImportWJFL.Controls.Add(this.label17);
+			this.panelImportWJFL.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panelImportWJFL.Location = new System.Drawing.Point(0, 0);
+			this.panelImportWJFL.Name = "panelImportWJFL";
+			this.panelImportWJFL.Size = new System.Drawing.Size(694, 583);
+			this.panelImportWJFL.TabIndex = 6;
+			// 
+			// btnImportWJFL
+			// 
+			this.btnImportWJFL.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnImportWJFL.Location = new System.Drawing.Point(194, 211);
+			this.btnImportWJFL.Name = "btnImportWJFL";
+			this.btnImportWJFL.Size = new System.Drawing.Size(130, 40);
+			this.btnImportWJFL.TabIndex = 24;
+			this.btnImportWJFL.Text = "导入";
+			this.btnImportWJFL.UseVisualStyleBackColor = true;
+			this.btnImportWJFL.Click += new System.EventHandler(this.btnImportWJFL_Click);
+			// 
+			// lblImportWJFLPath
+			// 
+			this.lblImportWJFLPath.AutoEllipsis = true;
+			this.lblImportWJFLPath.Location = new System.Drawing.Point(284, 151);
+			this.lblImportWJFLPath.Name = "lblImportWJFLPath";
+			this.lblImportWJFLPath.Size = new System.Drawing.Size(350, 12);
+			this.lblImportWJFLPath.TabIndex = 28;
+			this.lblImportWJFLPath.Text = "C:\\xxx.xls";
+			// 
+			// btnImportWJFLOpener
+			// 
+			this.btnImportWJFLOpener.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnImportWJFLOpener.Location = new System.Drawing.Point(199, 146);
+			this.btnImportWJFLOpener.Name = "btnImportWJFLOpener";
+			this.btnImportWJFLOpener.Size = new System.Drawing.Size(75, 23);
+			this.btnImportWJFLOpener.TabIndex = 27;
+			this.btnImportWJFLOpener.Text = "选择 ...";
+			this.btnImportWJFLOpener.UseVisualStyleBackColor = true;
+			this.btnImportWJFLOpener.Click += new System.EventHandler(this.btnImportWJFLOpener_Click);
+			// 
+			// label21
+			// 
+			this.label21.AutoSize = true;
+			this.label21.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label21.Location = new System.Drawing.Point(97, 149);
+			this.label21.Name = "label21";
+			this.label21.Size = new System.Drawing.Size(104, 17);
+			this.label21.TabIndex = 26;
+			this.label21.Text = "风险贷款情况表：";
+			// 
+			// label17
+			// 
+			this.label17.AutoSize = true;
+			this.label17.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label17.Location = new System.Drawing.Point(207, 72);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(170, 21);
+			this.label17.TabIndex = 19;
+			this.label17.Text = "导入七级分类修订结果";
 			// 
 			// panelImport
 			// 
@@ -1060,9 +1071,9 @@
 			this.label14.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.label14.Location = new System.Drawing.Point(219, 289);
 			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(112, 21);
+			this.label14.Size = new System.Drawing.Size(138, 21);
 			this.label14.TabIndex = 1;
-			this.label14.Text = "系统版本：1.0";
+			this.label14.Text = "系统版本：1.0.0.1";
 			// 
 			// label8
 			// 
@@ -1077,17 +1088,6 @@
 			// openFileDialog1
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
-			// 
-			// btnSelectColumns
-			// 
-			this.btnSelectColumns.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnSelectColumns.Location = new System.Drawing.Point(206, 164);
-			this.btnSelectColumns.Name = "btnSelectColumns";
-			this.btnSelectColumns.Size = new System.Drawing.Size(130, 40);
-			this.btnSelectColumns.TabIndex = 23;
-			this.btnSelectColumns.Text = "选择数据列";
-			this.btnSelectColumns.UseVisualStyleBackColor = true;
-			this.btnSelectColumns.Click += new System.EventHandler(this.btnSelectColumns_Click);
 			// 
 			// frmMain
 			// 
@@ -1108,8 +1108,6 @@
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.panelContent.ResumeLayout(false);
-			this.panelImportWJFL.ResumeLayout(false);
-			this.panelImportWJFL.PerformLayout();
 			this.panelReport.ResumeLayout(false);
 			this.panelReport.PerformLayout();
 			this.pnlExportDate.ResumeLayout(false);
@@ -1118,6 +1116,8 @@
 			this.flowLayoutPanel3.PerformLayout();
 			this.flowLayoutPanel2.ResumeLayout(false);
 			this.flowLayoutPanel2.PerformLayout();
+			this.panelImportWJFL.ResumeLayout(false);
+			this.panelImportWJFL.PerformLayout();
 			this.panelImport.ResumeLayout(false);
 			this.panelImport.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);

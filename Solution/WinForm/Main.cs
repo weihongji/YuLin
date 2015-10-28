@@ -48,6 +48,7 @@ namespace Reporting
 			this.calendarImport.Visible = false;
 			this.calendarExport.Visible = false;
 			this.pnlExportDate.Visible = false;
+			this.btnSelectColumns.Visible = false;
 
 			var defaultPanel = ConfigurationManager.AppSettings["defaultScreen"] ?? "about";
 			if (defaultPanel.Equals("import")) {
@@ -337,6 +338,15 @@ namespace Reporting
 			}
 		}
 
+		private void ShowSelectColumnButton() {
+			if (this.currentReport == XEnum.ReportType.C_DQDJQK_M) {
+				this.btnSelectColumns.Visible = true;
+			}
+			else {
+				this.btnSelectColumns.Visible = false;
+			}
+		}
+
 		private void ShowReport(XEnum.ReportType reportType) {
 			this.currentReport = reportType;
 
@@ -353,6 +363,7 @@ namespace Reporting
 			}
 
 			this.lblReportTitle.Text = report.Name;
+			ShowSelectColumnButton();
 
 			var dao = new SqlDbHelper();
 			if (currentReport.ToString().EndsWith("_D") || currentReport.ToString().EndsWith("_X")) {
