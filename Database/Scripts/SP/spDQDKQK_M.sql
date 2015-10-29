@@ -42,7 +42,8 @@ BEGIN
 			+ '			, CreditLevel, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, ActualBusinessRate, RateFloat, VouchTypeName, BailRatio, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsAgricultureCredit, IsINRZ'
 			+ '		FROM ImportPublic P1'
 			+ '		WHERE P1.ImportId=@importId AND P1.PublicType = 1'
-			+ '			AND P1.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE ''%神木%'' OR Name LIKE ''%府谷%'')'
+			+ '			AND P1.OrgName2 NOT LIKE ''%神木%'''
+			+ '			AND P1.OrgName2 NOT LIKE ''%府谷%'''
 			+ ' ) AS P'
 			+ ' ORDER BY P.OrgName2'
 	END
@@ -54,7 +55,8 @@ BEGIN
 			+ '			, RepaymentMethod, CustomerName, IdCardNo, CurrencyType, ContractStartDate, ContractEndDate, InterestRatio, DanBaoFangShi, LoanBalance, Direction1, Direction2, Direction3, Direction4, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance'
 			+ '		FROM ImportPrivate P1'
 			+ '		WHERE P1.ImportId=@importId'
-			+ '			AND P1.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE ''%神木%'' OR Name LIKE ''%府谷%'')'
+			+ '			AND P1.OrgName2 NOT LIKE ''%神木%'''
+			+ '			AND P1.OrgName2 NOT LIKE ''%府谷%'''
 			+ ' ) AS P'
 			+ ' ORDER BY P.OrgName2'
 	END

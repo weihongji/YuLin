@@ -1,5 +1,5 @@
 IF NOT EXISTS(SELECT * FROM Org) BEGIN
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050001', '榆林分行营业部', '公司部', '营业部')
+	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050001', '榆林分行公司业务部', '公司部', '营业部')
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050101', '望湖路支行', '望湖路', '榆林分行望湖路支行')
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050201', '榆阳西路支行', '榆阳西路', '榆林分行榆阳西路支行')
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050301', '世纪广场支行', '世纪广场', '榆林分行世纪广场支行')
@@ -24,7 +24,6 @@ IF NOT EXISTS(SELECT * FROM Org) BEGIN
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052201', '府谷县河滨公园小微支行', '府谷河滨公园', NULL)
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052301', '神木县麟州路小微支行', '神木麟州路', NULL)
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052401', '神木县锦界工业园小微支行', '神木锦界工业园', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806058001', '榆林分行营业部', '公司部2', '营业部2')
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052601', '榆林明珠大道支行', '明珠大', '榆林分行明珠大道支行')
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806057777', '806057777', '806057777', NULL)
 END

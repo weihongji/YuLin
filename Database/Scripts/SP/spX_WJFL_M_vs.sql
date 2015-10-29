@@ -197,18 +197,9 @@ BEGIN
 	) AS M ON R.CustomerScale = M.CustomerScale
 
 	SELECT
-		CAST(ROUND(BL_Increase_Count, 2) AS decimal(10, 2)) AS BL_Increase_Count,
-		CAST(ROUND(BL_Increase_Amount, 2) AS decimal(10, 2)) AS BL_Increase_Amount,
-		CAST(ROUND(BL_Decrease_Count, 2) AS decimal(10, 2)) AS BL_Decrease_Count,
-		CAST(ROUND(BL_Decrease_Amount, 2) AS decimal(10, 2)) AS BL_Decrease_Amount,
-		CAST(ROUND(YQ_Increase_Count, 2) AS decimal(10, 2)) AS YQ_Increase_Count,
-		CAST(ROUND(YQ_Increase_Amount, 2) AS decimal(10, 2)) AS YQ_Increase_Amount,
-		CAST(ROUND(YQ_Decrease_Count, 2) AS decimal(10, 2)) AS YQ_Decrease_Count,
-		CAST(ROUND(YQ_Decrease_Amount, 2) AS decimal(10, 2)) AS YQ_Decrease_Amount,
-		CAST(ROUND(FY_Increase_Count, 2) AS decimal(10, 2)) AS FY_Increase_Count,
-		CAST(ROUND(FY_Increase_Amount, 2) AS decimal(10, 2)) AS FY_Increase_Amount,
-		CAST(ROUND(FY_Decrease_Count, 2) AS decimal(10, 2)) AS FY_Decrease_Count,
-		CAST(ROUND(FY_Decrease_Amount, 2) AS decimal(10, 2)) AS FY_Decrease_Amount
+		  BL_Increase_Count, BL_Increase_Amount, BL_Decrease_Count, BL_Decrease_Amount
+		, YQ_Increase_Count, YQ_Increase_Amount, YQ_Decrease_Count, YQ_Decrease_Amount
+		, FY_Increase_Count, FY_Increase_Amount, FY_Decrease_Count, FY_Decrease_Amount
 	FROM #Result ORDER BY Sorting
 
 	DROP TABLE #Result

@@ -25,15 +25,13 @@ BEGIN
 				, Count5 = CASE WHEN MAX(ScopeName) IN ('小型企业', '微型企业') AND MAX(Balance1)<=5000000 THEN 1 ELSE 0 END
 				, Count6 = 0
 			FROM ImportPublic
-			WHERE ImportId = @importId
-				AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
 				AND LoanStartDate BETWEEN @yearStart AND @yearEnd
 			GROUP BY CustomerName
 			UNION ALL
 			SELECT Count1 = 0, Count2 = 0, Count3 = 0, Count4 = 0, Count5 = 0, 1 AS Count6
 			FROM ImportPrivate
-			WHERE ImportId = @importId
-				AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
 				AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 				AND ContractStartDate BETWEEN @yearStart AND @yearEnd
 			GROUP BY CustomerName, IdCardNo

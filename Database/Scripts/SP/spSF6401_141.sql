@@ -37,17 +37,13 @@ BEGIN
 								, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1<=5000000 THEN Balance1 ELSE 0.00 END
 								, Balance6 = 0.00
 							FROM ImportPublic
-							WHERE ImportId = @importId
-								AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
-
+							WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
 							UNION ALL
-
 							SELECT Direction1
 								, Balance1 = 0.00, Balance2 = 0.00, Balance3 = 0.00, Balance4 = 0.00, Balance5 = 0.00
 								, LoanBalance AS Balance6
 							FROM ImportPrivate
-							WHERE ImportId = @importId
-								AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+							WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
 								AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 						) AS X
 					GROUP BY Direction1
@@ -63,14 +59,12 @@ BEGIN
 						, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1<=5000000 THEN Balance1 ELSE 0.00 END
 						, Balance6 = 0.00
 					FROM ImportPublic
-					WHERE ImportId = @importId
-						AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
 						AND LoanStartDate BETWEEN @yearStart AND @yearEnd
 					UNION
 					SELECT Balance1 = 0.00, Balance2 = 0.00, Balance3 = 0.00, Balance4 = 0.00, Balance5 = 0.00, LoanBalance AS Balance6
 					FROM ImportPrivate
-					WHERE ImportId = @importId
-						AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
 						AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 						AND ContractStartDate BETWEEN @yearStart AND @yearEnd
 				) AS X

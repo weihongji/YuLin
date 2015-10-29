@@ -108,7 +108,7 @@ BEGIN
 		ORDER BY Id
 	END
 	ELSE IF @type = 'F_HYB' BEGIN
-		UPDATE #Result SET FinalDays = CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END
+		UPDATE #Result SET FinalDays = ISNULL(CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END, 0)
 
 		SELECT 'ÓÜÁÖ·ÖÐÐ' AS OrgName
 			, OrgName AS OrgName2
