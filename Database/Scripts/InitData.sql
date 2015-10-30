@@ -353,7 +353,6 @@ IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (62, '结清贷款明细表', '结清贷款明细表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (63, '新增贷款明细表', '新增贷款明细表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (64, '风险贷款变化情况表', '风险贷款变化情况表.xls')
-	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (71, '贷款欠款查询', '贷款欠款查询.xls')
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN

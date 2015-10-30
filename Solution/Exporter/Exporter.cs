@@ -52,9 +52,6 @@ namespace Reporting
 				case XEnum.ReportType.X_FXDKTB_D:
 					result = new X_FXDKTB(asOfDate).GenerateReport();
 					break;
-				case XEnum.ReportType.R_WJFL_M:
-					result = new R_DKQKCX_D(asOfDate).GenerateReport();
-					break;
 				case XEnum.ReportType.C_DQDJQK_M:
 					result = new C_DQDJQK_M(asOfDate, columnNames, columnNames2).GenerateReport();
 					break;

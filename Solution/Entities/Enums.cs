@@ -58,9 +58,6 @@ namespace Reporting
 			C_JQDKMX_M = 62,		// 结清贷款明细表
 			C_XZDKMX_M = 63,		// 新增贷款明细表
 			C_FXDKBH_D = 64,		// 风险贷款变化情况表
-
-			// Reserved
-			R_WJFL_M = 71,			// 五级分类
 		}
 
 		public enum ImportState
