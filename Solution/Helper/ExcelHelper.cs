@@ -436,7 +436,7 @@ namespace Reporting
 
 					((Range)theSheet.Cells[footerRowFrom, 2]).Value2 = "合计";
 					((Range)theSheet.Cells[footerRowFrom, 2]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
-					if (sheet.Name.Equals("对公已展期")) {
+					if (sheet.Name.IndexOf("对公") >= 0) {
 						((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
 					}
 					else if (sheet.Name.IndexOf("个人") >= 0) {

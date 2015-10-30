@@ -369,8 +369,8 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (10, 24, 1, 'SF6401', 3, 33, 36)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (11, 2, 1, 'Sheet1', 4, 7, 7)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (12, 71, 1, '贷款欠款查询', 0, 3, 3)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (13, 61, 1, '对公已展期', 2, 5, 5)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (14, 61, 2, '个人可以展期', 2, 5, 5)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (13, 61, 1, '对公', 2, 5, 5)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (14, 61, 2, '个人', 2, 5, 5)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (15, 1, 6, '累收累增', 4, 9, 9)
 END
 
@@ -571,7 +571,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 19, '贷款用途')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 20, '利息计至日')
 
-	/* 到期贷款情况 对公已展期 */
+	/* 到期贷款情况 对公 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 1, '序号')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 2, '支行名称')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 3, '客户姓名')
@@ -580,7 +580,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 6, '贷款余额')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 7, '主要担保方式')
 
-	/* 到期贷款情况 个人可以展期 */
+	/* 到期贷款情况 个人 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (14, 1, '序号')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (14, 2, '支行名称')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (14, 3, '客户姓名')
