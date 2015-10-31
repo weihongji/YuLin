@@ -1,9 +1,9 @@
-IF EXISTS(SELECT * FROM sys.procedures WHERE name = 'spSF6401_141_Count') BEGIN
-	DROP PROCEDURE spSF6401_141_Count
+IF EXISTS(SELECT * FROM sys.procedures WHERE name = 'spSF6301_141_Count') BEGIN
+	DROP PROCEDURE spSF6301_141_Count
 END
 GO
 
-CREATE PROCEDURE spSF6401_141_Count
+CREATE PROCEDURE spSF6301_141_Count
 	@asOfDate as smalldatetime
 AS
 BEGIN
@@ -12,11 +12,10 @@ BEGIN
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
-	DECLARE @yearStart as smalldatetime, @yearEnd as smalldatetime
-	SET @yearStart = CONVERT(varchar(4), @asOfDate, 112) + '0101'
-	SET @yearEnd = CONVERT(varchar(4), @asOfDate, 112) + '1231'
-
-	SELECT SUM(Count1) AS Count1, SUM(Count2) AS Count2, SUM(Count3) AS Count3, SUM(Count4) AS Count4, SUM(Count5) AS Count5, SUM(Count6) AS Count6
+	/* 5.各类客户数 */
+	/* 5.3授信户数 */
+	/* 5.3.1其中：贷款户数 */
+	SELECT SUM(Count1) AS Count1, SUM(Count2) AS Count2, SUM(Count3) AS Count3, SUM(Count4) AS Count4, SUM(Count5) AS Count5, SUM(Count6) AS Count6, SUM(Count6) AS Count7
 	FROM (
 			SELECT Count1 = CASE WHEN MAX(ScopeName) = '大型企业' THEN 1 ELSE 0 END
 				, Count2 = CASE WHEN MAX(ScopeName) = '中型企业' THEN 1 ELSE 0 END
@@ -26,14 +25,12 @@ BEGIN
 				, Count6 = 0
 			FROM ImportPublic
 			WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
-				AND LoanStartDate BETWEEN @yearStart AND @yearEnd
 			GROUP BY CustomerName
 			UNION ALL
 			SELECT Count1 = 0, Count2 = 0, Count3 = 0, Count4 = 0, Count5 = 0, 1 AS Count6
 			FROM ImportPrivate
 			WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
 				AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
-				AND ContractStartDate BETWEEN @yearStart AND @yearEnd
 			GROUP BY CustomerName, IdCardNo
 		) AS X
 END

@@ -20,6 +20,7 @@ namespace Reporting
 		}
 
 		public override string GenerateReport() {
+			var result = "";
 			var fileName = "SF6301-141-境内汇总数据-月-人民币.xls";
 			Logger.Debug("Generating " + fileName);
 			var report = TargetTable.GetById(XEnum.ReportType.F_SF6301_141_M);
@@ -28,10 +29,12 @@ namespace Reporting
 			var sql = string.Format("EXEC spSF6301_141 '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
 			var dao = new SqlDbHelper();
 			Logger.Debug("Running " + sql);
-			var result = "";
-			var table = dao.ExecuteDataTable(sql);
-			if (table != null) {
-				result = ExcelHelper.PopulateSF6301_141(filePath, report.Sheets[0], this.AsOfDate, table);
+			var table1 = dao.ExecuteDataTable(sql);
+			sql = string.Format("EXEC spSF6301_141_Count '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
+			Logger.Debug("Running " + sql);
+			var table2 = dao.ExecuteDataTable(sql);
+			if (table1 != null && table2 != null) {
+				result = ExcelHelper.PopulateSF6301_141(filePath, report.Sheets[0], this.AsOfDate, table1, table2);
 			}
 			else {
 				result = "Procedure returned zero rows";

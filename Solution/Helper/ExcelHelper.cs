@@ -655,7 +655,7 @@ namespace Reporting
 			return string.Empty;
 		}
 
-		public static string PopulateSF6301_141(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+		public static string PopulateSF6301_141(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable, System.Data.DataTable dataTable2) {
 			logger.Debug("Populating SF6301_141");
 
 			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
@@ -668,19 +668,27 @@ namespace Reporting
 				excelOpened = true;
 				theSheet = (Worksheet)theExcelBook.Sheets[1];
 
-				int rowStartAt = 6;
-				for (int i = 0; i < 26; i++) {
-					if ((int)dataTable.Rows[i][1] == 0) {
+				int rowsBeforeStart = 5;
+				int r = 0;
+				for (int i = 1; i <= 21; i++) {
+					if (i ==2 || i ==3 || i ==8 || i ==13 || i ==17 || i ==19) {
 						continue;
 					}
 					for (int j = 1; j <= 7; j++) {
-						if (dataTable.Rows[i][j + 1] == DBNull.Value) {
-							((Range)theSheet.Cells[rowStartAt + i, 2 + j]).Value2 = "0.00";
+						if (dataTable.Rows[r][j + 1] == DBNull.Value) {
+							((Range)theSheet.Cells[rowsBeforeStart + i, 2 + j]).Value2 = "0.00";
 						}
 						else {
-							((Range)theSheet.Cells[rowStartAt + i, 2 + j]).Value2 = dataTable.Rows[i][j + 1];
+							((Range)theSheet.Cells[rowsBeforeStart + i, 2 + j]).Value2 = dataTable.Rows[r][j + 1];
 						}
 					}
+					r++;
+				}
+
+				// 授信户数
+				for (int j = 1; j <= 7; j++) {
+					((Range)theSheet.Cells[rowsBeforeStart + 25, 2 + j]).Value2 = dataTable2.Rows[0]["Count" + j.ToString()];
+					((Range)theSheet.Cells[rowsBeforeStart + 26, 2 + j]).Value2 = dataTable2.Rows[0]["Count" + j.ToString()];
 				}
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate);
@@ -708,7 +716,7 @@ namespace Reporting
 			}
 			return string.Empty;
 		}
-		
+
 		public static string PopulateX_WJFL_M_VS(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
 			logger.Debug("Populating X_WJFL_M_VS");
 

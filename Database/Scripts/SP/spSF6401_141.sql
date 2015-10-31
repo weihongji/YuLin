@@ -34,10 +34,10 @@ BEGIN
 								, Balance2 = CASE WHEN ScopeName = '中型企业' THEN Balance1 ELSE 0.00 END
 								, Balance3 = CASE WHEN ScopeName = '小型企业' THEN Balance1 ELSE 0.00 END
 								, Balance4 = CASE WHEN ScopeName = '微型企业' THEN Balance1 ELSE 0.00 END
-								, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1<=5000000 THEN Balance1 ELSE 0.00 END
+								, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1< 500 THEN Balance1 ELSE 0.00 END
 								, Balance6 = 0.00
 							FROM ImportPublic
-							WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
+							WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
 							UNION ALL
 							SELECT Direction1
 								, Balance1 = 0.00, Balance2 = 0.00, Balance3 = 0.00, Balance4 = 0.00, Balance5 = 0.00
@@ -56,10 +56,10 @@ BEGIN
 						, Balance2 = CASE WHEN ScopeName = '中型企业' THEN Balance1 ELSE 0.00 END
 						, Balance3 = CASE WHEN ScopeName = '小型企业' THEN Balance1 ELSE 0.00 END
 						, Balance4 = CASE WHEN ScopeName = '微型企业' THEN Balance1 ELSE 0.00 END
-						, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1<=5000000 THEN Balance1 ELSE 0.00 END
+						, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1< 500 THEN Balance1 ELSE 0.00 END
 						, Balance6 = 0.00
 					FROM ImportPublic
-					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
+					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
 						AND LoanStartDate BETWEEN @yearStart AND @yearEnd
 					UNION
 					SELECT Balance1 = 0.00, Balance2 = 0.00, Balance3 = 0.00, Balance4 = 0.00, Balance5 = 0.00, LoanBalance AS Balance6
