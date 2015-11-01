@@ -482,8 +482,17 @@ namespace Reporting
 					ShowInfo(string.Format("报表导出完毕。{0}", timeSpan));
 				}
 				else {
-					ShowError("导出发生错误");
+					ShowError(result);
 				}
+			}
+			catch (IOException ex) {
+				if (ex.Message.IndexOf("it is being used by another process") > 0) {
+					ShowError("原来报表文件已经被打开，请先从Excel里关闭该报表然后再导出。");
+				}
+				else {
+					ShowError("请关闭所有excel，然后再尝试导出报表。");
+				}
+				logger.Error(ex);
 			}
 			catch (Exception ex) {
 				logger.Error(ex);
