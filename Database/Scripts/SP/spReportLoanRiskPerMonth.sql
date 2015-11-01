@@ -123,6 +123,7 @@ BEGIN
 			, FinalDays
 			, DaysLevel =
 					CASE
+						WHEN FinalDays <=  0  THEN ''
 						WHEN FinalDays <= 30  THEN '30天以内'
 						WHEN FinalDays <= 90  THEN '31到90天'
 						WHEN FinalDays <= 180 THEN '91天到180天'

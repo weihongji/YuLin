@@ -81,19 +81,19 @@ BEGIN
 	INSERT INTO #ResultSingle
 	SELECT DangerLevel, A = SUM(A), B = SUM(B), C = SUM(C), D = SUM(D), E = SUM(E), F = SUM(F)
 	FROM (
-		SELECT DangerLevel
-				, A = CASE WHEN ScopeName = '大型企业' THEN Balance ELSE 0.00 END
-				, B = CASE WHEN ScopeName = '中型企业' THEN Balance ELSE 0.00 END
-				, C = CASE WHEN ScopeName = '小型企业' THEN Balance ELSE 0.00 END
-				, D = CASE WHEN ScopeName = '微型企业' THEN Balance ELSE 0.00 END
-				, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance < 500 THEN Balance ELSE 0.00 END
-				, F = 0.00
+		SELECT DangerLevel, A = SUM(A), B = SUM(B), C = SUM(C), D = SUM(D), E = SUM(E), F = SUM(F)
 		FROM (
-			SELECT P.ScopeName, SUM(P.Balance1) AS Balance, L.DangerLevel
+			SELECT DangerLevel
+					, A = CASE WHEN ScopeName = '大型企业' THEN Balance1 ELSE 0.00 END
+					, B = CASE WHEN ScopeName = '中型企业' THEN Balance1 ELSE 0.00 END
+					, C = CASE WHEN ScopeName = '小型企业' THEN Balance1 ELSE 0.00 END
+					, D = CASE WHEN ScopeName = '微型企业' THEN Balance1 ELSE 0.00 END
+					, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1 < 500 THEN Balance1 ELSE 0.00 END
+					, F = 0.00
 			FROM ImportPublic P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount
 			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
-			GROUP BY P.ScopeName, L.DangerLevel
 		) AS X1
+		GROUP BY DangerLevel
 		UNION ALL
 		SELECT L.DangerLevel, A = 0.00, B = 0.00, C = 0.00, D = 0.00, E = 0.00, F = SUM(P.LoanBalance)
 		FROM ImportPrivate P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount
@@ -136,19 +136,19 @@ BEGIN
 	INSERT INTO #ResultSingle
 	SELECT DBFS, A = SUM(A), B = SUM(B), C = SUM(C), D = SUM(D), E = SUM(E), F = SUM(F)
 	FROM (
-		SELECT DBFS
-				, A = CASE WHEN ScopeName = '大型企业' THEN Balance ELSE 0.00 END
-				, B = CASE WHEN ScopeName = '中型企业' THEN Balance ELSE 0.00 END
-				, C = CASE WHEN ScopeName = '小型企业' THEN Balance ELSE 0.00 END
-				, D = CASE WHEN ScopeName = '微型企业' THEN Balance ELSE 0.00 END
-				, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance < 500 THEN Balance ELSE 0.00 END
-				, F = 0.00
+		SELECT DBFS, A = SUM(A), B = SUM(B), C = SUM(C), D = SUM(D), E = SUM(E), F = SUM(F)
 		FROM (
-			SELECT P.ScopeName, SUM(P.Balance1) AS Balance, D.Category AS DBFS
+			SELECT D.Category AS DBFS
+					, A = CASE WHEN ScopeName = '大型企业' THEN Balance1 ELSE 0.00 END
+					, B = CASE WHEN ScopeName = '中型企业' THEN Balance1 ELSE 0.00 END
+					, C = CASE WHEN ScopeName = '小型企业' THEN Balance1 ELSE 0.00 END
+					, D = CASE WHEN ScopeName = '微型企业' THEN Balance1 ELSE 0.00 END
+					, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1 < 500 THEN Balance1 ELSE 0.00 END
+					, F = 0.00
 			FROM ImportPublic P INNER JOIN DanBaoFangShi D ON P.VouchTypeName = D.Name
 			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
-			GROUP BY P.ScopeName, D.Category
 		) AS X1
+		GROUP BY DBFS
 		UNION ALL
 		SELECT D.Category AS DBFS, A = 0.00, B = 0.00, C = 0.00, D = 0.00, E = 0.00, F = SUM(P.LoanBalance)
 		FROM ImportPrivate P INNER JOIN DanBaoFangShi D ON P.DanBaoFangShi = D.Name
@@ -176,18 +176,17 @@ BEGIN
 	/* 1.2.4贴现及买断式转贴现 */
 	UPDATE R SET Balance1 = X.A, Balance2 = X.B, Balance3 = X.C, Balance4 = X.D, Balance5 = X.E, Balance6 = X.F, Balance7 = X.F
 	FROM #Result R, (
-			SELECT    A = CASE WHEN ScopeName = '大型企业' THEN Balance ELSE 0.00 END
-					, B = CASE WHEN ScopeName = '中型企业' THEN Balance ELSE 0.00 END
-					, C = CASE WHEN ScopeName = '小型企业' THEN Balance ELSE 0.00 END
-					, D = CASE WHEN ScopeName = '微型企业' THEN Balance ELSE 0.00 END
-					, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance < 500 THEN Balance ELSE 0.00 END
-					, F = 0.00
-			FROM (
-				SELECT P.ScopeName, SUM(P.Balance1) AS Balance
+		SELECT A = SUM(A), B = SUM(B), C = SUM(C), D = SUM(D), E = SUM(E), F = SUM(F)
+		FROM (
+				SELECT    A = CASE WHEN ScopeName = '大型企业' THEN Balance1 ELSE 0.00 END
+						, B = CASE WHEN ScopeName = '中型企业' THEN Balance1 ELSE 0.00 END
+						, C = CASE WHEN ScopeName = '小型企业' THEN Balance1 ELSE 0.00 END
+						, D = CASE WHEN ScopeName = '微型企业' THEN Balance1 ELSE 0.00 END
+						, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1 < 500 THEN Balance1 ELSE 0.00 END
+						, F = 0.00
 				FROM ImportPublic P
 				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
 					AND BusinessType LIKE '%贴现%'
-				GROUP BY P.ScopeName
 			) AS X1
 		) AS X
 	WHERE R.Sorting = 9
@@ -200,7 +199,7 @@ BEGIN
 		DROP TABLE #PrivateOverDue
 	END
 	-- Public
-	SELECT P.ScopeName, P.Balance1 AS Balance
+	SELECT P.ScopeName, P.Balance1
 		, OverdueDays = CASE WHEN P.LoanEndDate < @asOfDate AND P.Balance1 > 0 THEN DATEDIFF(day, P.LoanEndDate, @asOfDate) ELSE 0 END
 		, OweInterestDays
 		, FinalDays = 0
@@ -212,6 +211,7 @@ BEGIN
 	UPDATE #PublicOverDue SET FinalDays = ISNULL(CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END, 0)
 	UPDATE #PublicOverDue SET DaysLevel = (
 			CASE
+				WHEN FinalDays <=  0  THEN ''
 				WHEN FinalDays <= 90  THEN '90天以内'
 				WHEN FinalDays <= 360  THEN '91到360天'
 				ELSE '361天以上'
@@ -232,6 +232,7 @@ BEGIN
 	UPDATE #PrivateOverDue SET FinalDays = ISNULL(CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END, 0)
 	UPDATE #PrivateOverDue SET DaysLevel = (
 			CASE
+				WHEN FinalDays <=  0  THEN ''
 				WHEN FinalDays <= 90  THEN '90天以内'
 				WHEN FinalDays <= 360  THEN '91到360天'
 				ELSE '361天以上'
@@ -246,11 +247,11 @@ BEGIN
 		SELECT DaysLevel, A = SUM(A), B = SUM(B), C = SUM(C), D = SUM(D), E = SUM(E), F = SUM(F)
 		FROM (
 				SELECT DaysLevel
-					, A = CASE WHEN ScopeName = '大型企业' THEN Balance ELSE 0.00 END
-					, B = CASE WHEN ScopeName = '中型企业' THEN Balance ELSE 0.00 END
-					, C = CASE WHEN ScopeName = '小型企业' THEN Balance ELSE 0.00 END
-					, D = CASE WHEN ScopeName = '微型企业' THEN Balance ELSE 0.00 END
-					, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance < 500 THEN Balance ELSE 0.00 END
+					, A = CASE WHEN ScopeName = '大型企业' THEN Balance1 ELSE 0.00 END
+					, B = CASE WHEN ScopeName = '中型企业' THEN Balance1 ELSE 0.00 END
+					, C = CASE WHEN ScopeName = '小型企业' THEN Balance1 ELSE 0.00 END
+					, D = CASE WHEN ScopeName = '微型企业' THEN Balance1 ELSE 0.00 END
+					, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1 < 500 THEN Balance1 ELSE 0.00 END
 					, F = 0.00
 				FROM #PublicOverDue
 			) AS X1
