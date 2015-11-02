@@ -49,152 +49,263 @@ BEGIN
 	UNION
 	SELECT 3, '个人客户', 0, 0.00, 0, 0.00, 0, 0.00, 0, 0.00, 0, 0.00, 0, 0.00
 
-	IF OBJECT_ID('tempdb..#ResultCurrentMonth') IS NOT NULL BEGIN
-		DROP TABLE #ResultCurrentMonth
-	END
-	IF OBJECT_ID('tempdb..#ResultPreviousMonth') IS NOT NULL BEGIN
-		DROP TABLE #ResultPreviousMonth
-	END
-
-	CREATE TABLE #ResultCurrentMonth(
-		CustomerScale nvarchar(20),
-		CustomerName nvarchar(100),
-		Amount decimal(15, 2)
-	)
-	CREATE TABLE #ResultPreviousMonth(
-		CustomerScale nvarchar(20),
-		CustomerName nvarchar(100),
-		Amount decimal(15, 2)
-	)
-
 	/* 不良贷款 */
-	INSERT INTO #ResultCurrentMonth(CustomerScale, CustomerName, Amount)
-	SELECT CustomerScale = '大中客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importId AND L.DangerLevel IN ('次级', '可疑', '损失')
-		AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '小微客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = 1 AND L.DangerLevel IN ('次级', '可疑', '损失')
-		AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '个人客户', L.LoanAccount AS CustomerName, L.CapitalAmount AS Amount FROM ImportLoan L INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importId AND L.DangerLevel IN ('次级', '可疑', '损失')
-	-- Previous Month
-	INSERT INTO #ResultPreviousMonth(CustomerScale, CustomerName, Amount)
-	SELECT CustomerScale = '大中客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
-		AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '小微客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = 2 AND L.DangerLevel IN ('次级', '可疑', '损失')
-		AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '个人客户', L.LoanAccount AS CustomerName, L.CapitalAmount AS Amount FROM ImportLoan L INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
+	-- 大中客户
+	UPDATE R SET BL_Increase_Count = IC, BL_Increase_Amount = IA, BL_Decrease_Count = DC, BL_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
+								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
+							GROUP BY L.CustomerName
+						) AS O
+						FULL OUTER JOIN (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importId AND L.DangerLevel IN ('次级', '可疑', '损失')
+								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
+							GROUP BY L.CustomerName
+						) AS N
+						ON O.CustomerName = N.CustomerName
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '大中客户'
 
-	UPDATE R SET BL_Increase_Count = M.[Count], BL_Increase_Amount = M.Amount
-	FROM #Result R INNER JOIN (
-		SELECT A.CustomerScale, COUNT(*) AS [Count], SUM(A.Amount) AS Amount FROM #ResultCurrentMonth A WHERE NOT EXISTS(SELECT * FROM #ResultPreviousMonth B WHERE B.CustomerName = A.CustomerName)
-		GROUP BY A.CustomerScale
-	) AS M ON R.CustomerScale = M.CustomerScale
+	-- 小微客户
+	UPDATE R SET BL_Increase_Count = IC, BL_Increase_Amount = IA, BL_Decrease_Count = DC, BL_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
+								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
+							GROUP BY L.CustomerName
+						) AS O
+						FULL OUTER JOIN (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importId AND L.DangerLevel IN ('次级', '可疑', '损失')
+								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
+							GROUP BY L.CustomerName
+						) AS N
+						ON O.CustomerName = N.CustomerName
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '小微客户'
 
-	UPDATE R SET BL_Decrease_Count = M.[Count], BL_Decrease_Amount = M.Amount
-	FROM #Result R INNER JOIN (
-		SELECT A.CustomerScale, COUNT(*) AS [Count], SUM(A.Amount) AS Amount FROM #ResultPreviousMonth A WHERE NOT EXISTS(SELECT * FROM #ResultCurrentMonth B WHERE B.CustomerName = A.CustomerName)
-		GROUP BY A.CustomerScale
-	) AS M ON R.CustomerScale = M.CustomerScale
-
-	DELETE FROM #ResultCurrentMonth
-	DELETE FROM #ResultPreviousMonth
+	-- 个人客户
+	UPDATE R SET BL_Increase_Count = IC, BL_Increase_Amount = IA, BL_Decrease_Count = DC, BL_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
+							WHERE ImportId = @importIdLastMonth AND DangerLevel IN ('次级', '可疑', '损失')
+							GROUP BY CustomerName, LoanAccount
+						) AS O
+						FULL OUTER JOIN (
+							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
+							WHERE ImportId = @importId AND DangerLevel IN ('次级', '可疑', '损失')
+							GROUP BY CustomerName, LoanAccount
+						) AS N
+						ON O.LoanAccount = N.LoanAccount
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '个人客户'
 
 	/* 逾期 */
-	INSERT INTO #ResultCurrentMonth(CustomerScale, CustomerName, Amount)
-	SELECT CustomerScale = '大中客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importId AND L.LoanState IN ('逾期', '部分逾期')
-		AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '小微客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importId AND L.LoanState IN ('逾期', '部分逾期')
-		AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '个人客户', L.LoanAccount AS CustomerName, L.CapitalAmount AS Amount FROM ImportLoan L INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importId AND L.LoanState IN ('逾期', '部分逾期')
-	-- Previous Month
-	INSERT INTO #ResultPreviousMonth(CustomerScale, CustomerName, Amount)
-	SELECT CustomerScale = '大中客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importIdLastMonth AND L.LoanState IN ('逾期', '部分逾期')
-		AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '小微客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importIdLastMonth AND L.LoanState IN ('逾期', '部分逾期')
-		AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '个人客户', L.LoanAccount AS CustomerName, L.CapitalAmount AS Amount FROM ImportLoan L INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importIdLastMonth AND L.LoanState IN ('逾期', '部分逾期')
+	-- 大中客户
+	UPDATE R SET YQ_Increase_Count = IC, YQ_Increase_Amount = IA, YQ_Decrease_Count = DC, YQ_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importIdLastMonth AND L.LoanState IN ('逾期', '部分逾期')
+								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
+							GROUP BY L.CustomerName
+						) AS O
+						FULL OUTER JOIN (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importId AND L.LoanState IN ('逾期', '部分逾期')
+								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
+							GROUP BY L.CustomerName
+						) AS N
+						ON O.CustomerName = N.CustomerName
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '大中客户'
 
-	UPDATE R SET YQ_Increase_Count = M.[Count], YQ_Increase_Amount = M.Amount
-	FROM #Result R INNER JOIN (
-		SELECT A.CustomerScale, COUNT(*) AS [Count], SUM(A.Amount) AS Amount FROM #ResultCurrentMonth A WHERE NOT EXISTS(SELECT * FROM #ResultPreviousMonth B WHERE B.CustomerName = A.CustomerName)
-		GROUP BY A.CustomerScale
-	) AS M ON R.CustomerScale = M.CustomerScale
+	-- 小微客户
+	UPDATE R SET YQ_Increase_Count = IC, YQ_Increase_Amount = IA, YQ_Decrease_Count = DC, YQ_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importIdLastMonth AND L.LoanState IN ('逾期', '部分逾期')
+								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
+							GROUP BY L.CustomerName
+						) AS O
+						FULL OUTER JOIN (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importId AND L.LoanState IN ('逾期', '部分逾期')
+								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
+							GROUP BY L.CustomerName
+						) AS N
+						ON O.CustomerName = N.CustomerName
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '小微客户'
 
-	UPDATE R SET YQ_Decrease_Count = M.[Count], YQ_Decrease_Amount = M.Amount
-	FROM #Result R INNER JOIN (
-		SELECT A.CustomerScale, COUNT(*) AS [Count], SUM(A.Amount) AS Amount FROM #ResultPreviousMonth A WHERE NOT EXISTS(SELECT * FROM #ResultCurrentMonth B WHERE B.CustomerName = A.CustomerName)
-		GROUP BY A.CustomerScale
-	) AS M ON R.CustomerScale = M.CustomerScale
-
-	DELETE FROM #ResultCurrentMonth
-	DELETE FROM #ResultPreviousMonth
+	-- 个人客户
+	UPDATE R SET YQ_Increase_Count = IC, YQ_Increase_Amount = IA, YQ_Decrease_Count = DC, YQ_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
+							WHERE ImportId = @importIdLastMonth AND LoanState IN ('逾期', '部分逾期')
+							GROUP BY CustomerName, LoanAccount
+						) AS O
+						FULL OUTER JOIN (
+							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
+							WHERE ImportId = @importId AND LoanState IN ('逾期', '部分逾期')
+							GROUP BY CustomerName, LoanAccount
+						) AS N
+						ON O.LoanAccount = N.LoanAccount
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '个人客户'
 
 	/* 非应计 */
-	INSERT INTO #ResultCurrentMonth(CustomerScale, CustomerName, Amount)
-	SELECT CustomerScale = '大中客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importId AND L.LoanState = '非应计'
-		AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '小微客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importId AND L.LoanState = '非应计'
-		AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '个人客户', L.LoanAccount AS CustomerName, L.CapitalAmount AS Amount FROM ImportLoan L INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importId AND L.LoanState = '非应计'
-	-- Previous Month
-	INSERT INTO #ResultPreviousMonth(CustomerScale, CustomerName, Amount)
-	SELECT CustomerScale = '大中客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importIdLastMonth AND L.LoanState = '非应计'
-		AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '小微客户', L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importIdLastMonth AND L.LoanState = '非应计'
-		AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
-	GROUP BY L.CustomerName
-	UNION ALL
-	SELECT CustomerScale = '个人客户', L.LoanAccount AS CustomerName, L.CapitalAmount AS Amount FROM ImportLoan L INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount
-	WHERE L.ImportId = @importIdLastMonth AND L.LoanState = '非应计'
+	-- 大中客户
+	UPDATE R SET FY_Increase_Count = IC, FY_Increase_Amount = IA, FY_Decrease_Count = DC, FY_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importIdLastMonth AND L.LoanState = '非应计'
+								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
+							GROUP BY L.CustomerName
+						) AS O
+						FULL OUTER JOIN (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importId AND L.LoanState = '非应计'
+								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
+							GROUP BY L.CustomerName
+						) AS N
+						ON O.CustomerName = N.CustomerName
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '大中客户'
 
-	UPDATE R SET FY_Increase_Count = M.[Count], FY_Increase_Amount = M.Amount
-	FROM #Result R INNER JOIN (
-		SELECT A.CustomerScale, COUNT(*) AS [Count], SUM(A.Amount) AS Amount FROM #ResultCurrentMonth A WHERE NOT EXISTS(SELECT * FROM #ResultPreviousMonth B WHERE B.CustomerName = A.CustomerName)
-		GROUP BY A.CustomerScale
-	) AS M ON R.CustomerScale = M.CustomerScale
+	-- 小微客户
+	UPDATE R SET FY_Increase_Count = IC, FY_Increase_Amount = IA, FY_Decrease_Count = DC, FY_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importIdLastMonth AND L.LoanState = '非应计'
+								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
+							GROUP BY L.CustomerName
+						) AS O
+						FULL OUTER JOIN (
+							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount
+							WHERE L.ImportId = @importId AND L.LoanState = '非应计'
+								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
+							GROUP BY L.CustomerName
+						) AS N
+						ON O.CustomerName = N.CustomerName
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '小微客户'
 
-	UPDATE R SET FY_Decrease_Count = M.[Count], FY_Decrease_Amount = M.Amount
-	FROM #Result R INNER JOIN (
-		SELECT A.CustomerScale, COUNT(*) AS [Count], SUM(A.Amount) AS Amount FROM #ResultPreviousMonth A WHERE NOT EXISTS(SELECT * FROM #ResultCurrentMonth B WHERE B.CustomerName = A.CustomerName)
-		GROUP BY A.CustomerScale
-	) AS M ON R.CustomerScale = M.CustomerScale
+	-- 个人客户
+	UPDATE R SET FY_Increase_Count = IC, FY_Increase_Amount = IA, FY_Decrease_Count = DC, FY_Decrease_Amount = DA
+	FROM #Result R
+		, (
+			SELECT ISNULL(SUM(IC), 0) AS IC, ISNULL(SUM(DC), 0) AS DC, ISNULL(SUM(IA), 0) AS IA, ISNULL(SUM(DA), 0) AS DA
+			FROM (
+					SELECT CustomerName = ISNULL(O.CustomerName, N.CustomerName)
+						, IC = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, DC = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN 1 ELSE 0 END
+						, IA = CASE WHEN ISNULL(O.Amount, 0) < ISNULL(N.Amount, 0) THEN ISNULL(N.Amount, 0) - ISNULL(O.Amount, 0) ELSE 0 END
+						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
+					FROM (
+							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
+							WHERE ImportId = @importIdLastMonth AND LoanState = '非应计'
+							GROUP BY CustomerName, LoanAccount
+						) AS O
+						FULL OUTER JOIN (
+							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
+							WHERE ImportId = @importId AND LoanState = '非应计'
+							GROUP BY CustomerName, LoanAccount
+						) AS N
+						ON O.LoanAccount = N.LoanAccount
+					WHERE ISNULL(O.Amount, 0) <> ISNULL(N.Amount, 0)
+				) AS XX
+			) AS X
+	WHERE R.CustomerScale = '个人客户'
 
 	SELECT
 		  BL_Increase_Count, BL_Increase_Amount, BL_Decrease_Count, BL_Decrease_Amount
@@ -203,6 +314,4 @@ BEGIN
 	FROM #Result ORDER BY Sorting
 
 	DROP TABLE #Result
-	DROP TABLE #ResultCurrentMonth
-	DROP TABLE #ResultPreviousMonth
 END

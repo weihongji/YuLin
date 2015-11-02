@@ -128,19 +128,19 @@ namespace Reporting
 				OleDbCommand ocmd = new OleDbCommand("SELECT [行名], [客户名称], [贷款余额], [放款日期], [到期日期], [七级分类] FROM [非应计$]", oconn);
 				OleDbDataReader reader = ocmd.ExecuteReader();
 				logger.Debug("Executed");
-				UpdateWJFLSheet(reader);
+				UpdateWJFLSheet(import.Id, reader);
 
 				logger.Debug("Reading from Overdue sheet");
 				ocmd = new OleDbCommand("SELECT [行名], [客户名称], [贷款余额], [放款日期], [到期日期], [七级分类] FROM [逾期$]", oconn);
 				reader = ocmd.ExecuteReader();
 				logger.Debug("Executed");
-				UpdateWJFLSheet(reader);
+				UpdateWJFLSheet(import.Id, reader);
 
 				logger.Debug("Reading from ZQX sheet");
 				ocmd = new OleDbCommand("SELECT [行名], [客户名称], [本金余额], [放款日期], [到期日期], [七级分类] FROM [只欠息$]", oconn);
 				reader = ocmd.ExecuteReader();
 				logger.Debug("Executed");
-				UpdateWJFLSheet(reader);
+				UpdateWJFLSheet(import.Id, reader);
 
 				logger.Debug("Updating WJFLSubmitDate field for import #" + import.Id.ToString());
 				dao.ExecuteNonQuery("UPDATE Import SET WJFLSubmitDate = GETDATE() WHERE Id = " + import.Id.ToString());
@@ -158,7 +158,7 @@ namespace Reporting
 			return result;
 		}
 
-		private string UpdateWJFLSheet(OleDbDataReader reader) {
+		private string UpdateWJFLSheet(int importId, OleDbDataReader reader) {
 			var result = string.Empty;
 			try {
 				int readRows = 0;
@@ -182,7 +182,8 @@ namespace Reporting
 					sql.AppendLine("	AND CapitalAmount = {2}");
 					sql.AppendLine("	AND LoanStartDate = '{3}'");
 					sql.AppendLine("	AND LoanEndDate = '{4}'");
-					sqlSingle = string.Format(sql.ToString(), DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+					sql.AppendLine("	AND ImportId = '{5}'");
+					sqlSingle = string.Format(sql.ToString(), DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4), importId);
 					var o = dao.ExecuteScalar(sqlSingle);
 					if (o == null) {
 						failedRows++;

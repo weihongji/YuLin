@@ -53,7 +53,7 @@ IF NOT EXISTS(SELECT * FROM DanBaoFangShi) BEGIN
 	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('应收账款质押', '质押')
 	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('著作权中的财产权质押', '质押')
 	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('专利权质押', '质押')
-	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('上市公司', '质押')
+	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('上市公司', '保证')
 	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('100%保证金', '保证')
 	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('其他保证', '保证')
 	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('小型企业保证', '保证')
