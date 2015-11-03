@@ -12,9 +12,6 @@ BEGIN
 
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
-	
-	DECLARE @importIdLastMonth int
-	SELECT @importIdLastMonth = MAX(Id) FROM Import WHERE ImportDate <= DATEADD(DAY, -1, CONVERT(varchar(6), @asOfDate, 112) + '01')
 
 	SELECT -1 AS Id INTO #LoanId
 
@@ -56,7 +53,9 @@ BEGIN
 			AND (DangerLevel IN ('次级', '可疑', '损失') OR DangerLevel LIKE '关%')
 	END
 
-	SELECT L.Id, OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
+	DECLARE @placeTaker_IsNew nvarchar(2) = ''
+
+	SELECT L.Id, L.ImportId, L.LoanAccount, OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
 		, L.CustomerName, L.CapitalAmount, L.OweCapital, L.DangerLevel
 		, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 		, LoanStartDate = CONVERT(VARCHAR(8), L.LoanStartDate, 112)
@@ -68,7 +67,7 @@ BEGIN
 		, Industry = ISNULL(PV.Direction1, PB.Direction1)
 		, CustomerType = ISNULL(PV.ProductName, PB.MyBankIndTypeName)
 		, LoanType = L.LoanTypeName
-		, IsNew = CASE WHEN EXISTS(SELECT * FROM ImportLoan PL WHERE PL.LoanAccount = L.LoanAccount AND PL.ImportId = @importIdLastMonth) THEN '' ELSE '是' END
+		, IsNew = @placeTaker_IsNew
 		, Comment = L.LoanState
 		, IdCardNo = ISNULL(PV.IdCardNo, PB.OrgCode)
 		, Direction1 = ISNULL(PV.Direction1, PB.Direction1)
@@ -94,55 +93,16 @@ BEGIN
 				WHEN CustomerType LIKE '%经营%' THEN '经营'
 				ELSE CustomerType
 			END
-
-	IF @type = 'YQ' BEGIN
-		SELECT OrgName, CustomerName, CapitalAmount, OweCapital, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, OweInterestDays, DanBaoFangShi, Industry, CustomerType, LoanType, IsNew, Comment
-		FROM #Result
-		ORDER BY Id
-	END
-	ELSE IF @type = 'ZQX' BEGIN
-		SELECT OrgName, CustomerName, CapitalAmount, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, OweInterestDays
-			, DanBaoFangShi = (SELECT Category FROM DanBaoFangShi WHERE Name = DanBaoFangShi2)
-			, Industry, CustomerType, LoanType, IsNew, Comment
-		FROM #Result
-		ORDER BY Id
-	END
-	ELSE IF @type = 'F_HYB' BEGIN
+	IF @type = 'F_HYB' BEGIN
 		UPDATE #Result SET FinalDays = ISNULL(CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END, 0)
-
-		SELECT '榆林分行' AS OrgName
-			, OrgName AS OrgName2
-			, CustomerName
-			, IdCardNo
-			, DangerLevel
-			, CapitalAmount = CAST(ROUND(CapitalAmount/10000, 2) AS decimal(10, 2))
-			, CustomerType
-			, LoanType
-			, OverdueDays
-			, OweInterestDays
-			, FinalDays
-			, DaysLevel =
-					CASE
-						WHEN FinalDays <=  0  THEN ''
-						WHEN FinalDays <= 30  THEN '30天以内'
-						WHEN FinalDays <= 90  THEN '31到90天'
-						WHEN FinalDays <= 180 THEN '91天到180天'
-						WHEN FinalDays <= 270  THEN '181天到270天'
-						WHEN FinalDays <= 360  THEN '271天到360天'
-						ELSE '361天以上'
-					END
-			, Direction1
-			, Direction2
-			, Direction3
-			, Direction4
-			, DanBaoFangShi
-			, IsLongTerm = CASE WHEN LoanType LIKE '%短期%' THEN '否' WHEN LoanType LIKE '%中长期%' THEN '是' ELSE '' END
-		FROM #Result
-		ORDER BY Id
 	END
-	ELSE BEGIN
-		SELECT OrgName, CustomerName, CapitalAmount, DangerLevel, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, OweInterestDays, DanBaoFangShi, Industry, CustomerType, LoanType, IsNew, Comment
-		FROM #Result ORDER BY Id
+
+	IF NOT EXISTS(SELECT * FROM sys.tables WHERE name = 'Shell_WJFL') BEGIN
+		SELECT * INTO Shell_WJFL FROM #Result WHERE 1 = 2
+	END
+
+	IF @asOfDate > '2015-01-01' BEGIN
+		SELECT * FROM #Result
 	END
 
 	DROP TABLE #LoanId

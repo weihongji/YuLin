@@ -40,7 +40,7 @@ namespace Reporting
 			var oleConn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			Logger.Debug("Openning connction to " + filePath);
 			oleConn.Open();
-			var sql = string.Format("EXEC spReportLoanRiskPerMonth 'F_HYB', '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
+			var sql = string.Format("EXEC spX_WJFL_M 'F_HYB', '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
 			var dao = new SqlDbHelper();
 			Logger.Debug("Running " + sql);
 			var reader = dao.ExecuteReader(sql);
