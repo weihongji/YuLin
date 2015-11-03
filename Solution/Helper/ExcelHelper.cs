@@ -218,6 +218,9 @@ namespace Reporting
 				excelOpened = true;
 
 				theSheet = (Worksheet)theExcelBook.Sheets[sheet.Index];
+				if (!theSheet.Name.Equals(sheet.Name)) {
+					theSheet.Name = sheet.Name;
+				}
 				theSheet.Copy(Type.Missing, theSheet);
 				((Worksheet)theExcelBook.Sheets[sheet.Index + 1]).Name = theSheet.Name + "Template";
 				Range range = null;
