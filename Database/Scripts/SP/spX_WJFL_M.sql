@@ -18,8 +18,9 @@ BEGIN
 
 	DECLARE @asOfDatePreviousMonth as smalldatetime
 	DECLARE @importIdPreviousMonth int
-	SELECT @asOfDatePreviousMonth = MAX(ImportDate) FROM Import WHERE ImportDate <= DATEADD(DAY, -1, CONVERT(varchar(6), @asOfDate, 112) + '01')
-	SELECT @importIdPreviousMonth = Id FROM Import WHERE ImportDate = @asOfDatePreviousMonth
+	SELECT TOP 1 @importIdPreviousMonth = Id, @asOfDatePreviousMonth = ImportDate FROM Import
+	WHERE ImportDate <= DATEADD(DAY, -1, CONVERT(varchar(6), @asOfDate, 112) + '01')
+	ORDER BY ImportDate DESC
 
 	/* Create temporary table using the empty shell */
 	IF NOT EXISTS(SELECT * FROM sys.tables WHERE name = 'Shell_WJFL') BEGIN

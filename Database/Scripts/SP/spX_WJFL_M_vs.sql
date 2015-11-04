@@ -9,13 +9,15 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	--DECLARE @asOfDate smalldatetime = '20150930'
+	--DECLARE @asOfDate smalldatetime = '20151031'
 
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
-	DECLARE @importIdLastMonth int
-	SELECT @importIdLastMonth = MAX(Id) FROM Import WHERE ImportDate <= DATEADD(DAY, -1, CONVERT(varchar(6), @asOfDate, 112) + '01')
+	DECLARE @importIdPreviousMonth int
+	SELECT TOP 1 @importIdPreviousMonth = Id FROM Import
+	WHERE ImportDate <= DATEADD(DAY, -1, CONVERT(varchar(6), @asOfDate, 112) + '01')
+	ORDER BY ImportDate DESC
 
 	IF OBJECT_ID('tempdb..#Result') IS NOT NULL BEGIN
 		DROP TABLE #Result
@@ -63,7 +65,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-							WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
+							WHERE L.ImportId = @importIdPreviousMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
 								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
 							GROUP BY L.CustomerName
 						) AS O
@@ -92,7 +94,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-							WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
+							WHERE L.ImportId = @importIdPreviousMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
 								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
 							GROUP BY L.CustomerName
 						) AS O
@@ -121,7 +123,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
-							WHERE ImportId = @importIdLastMonth AND LoanAccount IN (SELECT P.LoanAccount FROM ImportPrivate P)
+							WHERE ImportId = @importIdPreviousMonth AND LoanAccount IN (SELECT P.LoanAccount FROM ImportPrivate P)
 								AND DangerLevel IN ('次级', '可疑', '损失')
 							GROUP BY CustomerName, LoanAccount
 						) AS O
@@ -151,7 +153,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-							WHERE L.ImportId = @importIdLastMonth AND L.LoanState IN ('逾期', '部分逾期')
+							WHERE L.ImportId = @importIdPreviousMonth AND L.LoanState IN ('逾期', '部分逾期')
 								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
 							GROUP BY L.CustomerName
 						) AS O
@@ -180,7 +182,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-							WHERE L.ImportId = @importIdLastMonth AND L.LoanState IN ('逾期', '部分逾期')
+							WHERE L.ImportId = @importIdPreviousMonth AND L.LoanState IN ('逾期', '部分逾期')
 								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
 							GROUP BY L.CustomerName
 						) AS O
@@ -209,7 +211,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
-							WHERE ImportId = @importIdLastMonth AND LoanAccount IN (SELECT P.LoanAccount FROM ImportPrivate P)
+							WHERE ImportId = @importIdPreviousMonth AND LoanAccount IN (SELECT P.LoanAccount FROM ImportPrivate P)
 								AND LoanState IN ('逾期', '部分逾期')
 							GROUP BY CustomerName, LoanAccount
 						) AS O
@@ -239,7 +241,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-							WHERE L.ImportId = @importIdLastMonth AND L.LoanState = '非应计'
+							WHERE L.ImportId = @importIdPreviousMonth AND L.LoanState = '非应计'
 								AND P.MyBankIndTypeName IN ('大型企业', '中型企业')
 							GROUP BY L.CustomerName
 						) AS O
@@ -268,7 +270,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT L.CustomerName, SUM(L.CapitalAmount) AS Amount FROM ImportLoan L INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-							WHERE L.ImportId = @importIdLastMonth AND L.LoanState = '非应计'
+							WHERE L.ImportId = @importIdPreviousMonth AND L.LoanState = '非应计'
 								AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
 							GROUP BY L.CustomerName
 						) AS O
@@ -297,7 +299,7 @@ BEGIN
 						, DA = CASE WHEN ISNULL(O.Amount, 0) > ISNULL(N.Amount, 0) THEN ISNULL(O.Amount, 0) - ISNULL(N.Amount, 0) ELSE 0 END
 					FROM (
 							SELECT CustomerName, LoanAccount, SUM(CapitalAmount) AS Amount FROM ImportLoan
-							WHERE ImportId = @importIdLastMonth AND LoanAccount IN (SELECT P.LoanAccount FROM ImportPrivate P)
+							WHERE ImportId = @importIdPreviousMonth AND LoanAccount IN (SELECT P.LoanAccount FROM ImportPrivate P)
 								AND LoanState = '非应计'
 							GROUP BY CustomerName, LoanAccount
 						) AS O

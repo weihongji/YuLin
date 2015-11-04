@@ -14,9 +14,6 @@ BEGIN
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
-	DECLARE @importIdLastMonth int
-	SELECT @importIdLastMonth = MAX(Id) FROM Import WHERE ImportDate <= DATEADD(DAY, -1, CONVERT(varchar(6), @asOfDate, 112) + '01')
-
 	IF OBJECT_ID('tempdb..#Result') IS NOT NULL BEGIN
 		DROP TABLE #Result
 	END
