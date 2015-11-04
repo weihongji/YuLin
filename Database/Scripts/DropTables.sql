@@ -85,3 +85,7 @@ END
 IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('TableMapping')) BEGIN
 	DROP TABLE TableMapping
 END
+
+IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Shell_WJFL')) BEGIN
+	DROP TABLE Shell_WJFL
+END
