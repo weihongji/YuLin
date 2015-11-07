@@ -640,7 +640,7 @@
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(176, 21);
 			this.label16.TabIndex = 1;
-			this.label16.Text = "发布日期：2015年10月";
+			this.label16.Text = "发布日期：2015年11月";
 			// 
 			// label14
 			// 
@@ -650,7 +650,7 @@
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(138, 21);
 			this.label14.TabIndex = 1;
-			this.label14.Text = "系统版本：1.0.0.1";
+			this.label14.Text = "系统版本：1.0.0.2";
 			// 
 			// label8
 			// 
