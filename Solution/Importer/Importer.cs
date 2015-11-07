@@ -411,8 +411,11 @@ namespace Reporting
 				if (itemType == XEnum.ImportItemType.Loan) {
 					sql.Append(" WHERE [贷款状态] <> '结清'");
 				}
-				else if (itemType == XEnum.ImportItemType.Public || itemType == XEnum.ImportItemType.Private) {
+				else if (itemType == XEnum.ImportItemType.Public) {
 					sql.Append(" WHERE [分行名称] = '长安银行榆林分行'");
+				}
+				else if (itemType == XEnum.ImportItemType.Private) {
+					sql.Append(" WHERE [二级分行] = '长安银行榆林分行'");
 				}
 				else if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
 					sql.Append(" WHERE LEN([科目代号]) > 2");
