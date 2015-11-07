@@ -62,8 +62,6 @@ namespace Reporting
 		}
 
 		private void Main_Load(object sender, EventArgs e) {
-			this.calendarImport.Left = 206;
-			this.calendarImport.Visible = false;
 			this.btnSelectColumns.Visible = false;
 
 			var defaultPanel = ConfigurationManager.AppSettings["defaultScreen"] ?? "about";
@@ -171,19 +169,19 @@ namespace Reporting
 
 			if (this.txtImportDate.Text == "") {
 				ShowStop("需要填写数据日期");
-				this.btnCalendarImport.Focus();
+				this.txtImportDate.Focus();
 				return false;
 			}
 
 			string dateString = this.txtImportDate.Text;
 			if (!DateTime.TryParse(dateString, out asOfDate)) {
 				ShowStop("数据的日期无效");
-				this.btnCalendarImport.Focus();
+				this.txtImportDate.Focus();
 				return false;
 			}
 			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
 				ShowStop("数据的日期超出范围");
-				this.btnCalendarImport.Focus();
+				this.txtImportDate.Focus();
 				return false;
 			}
 
@@ -619,34 +617,6 @@ namespace Reporting
 		private void ShowError(string msg) {
 			MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
-		#endregion
-
-		#region Calendar
-
-		private void btnCalendarImport_Click(object sender, EventArgs e) {
-			this.calendarImport.Show();
-			this.calendarImport.Focus();
-		}
-
-		private void calendarImport_DateSelected(object sender, DateRangeEventArgs e) {
-			this.txtImportDate.Text = this.calendarImport.SelectionStart.ToString("yyyy-M-d");
-			this.calendarImport.Hide();
-		}
-
-		private void calendarImport_Leave(object sender, EventArgs e) {
-			this.calendarImport.Hide();
-		}
-
-		private void panelImport_Click(object sender, EventArgs e) {
-			this.calendarImport.Hide();
-		}
-
-		private void calendarImport_KeyDown(object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Escape) {
-				this.calendarImport.Hide();
-			}
-		}
-
 		#endregion
 	}
 }
