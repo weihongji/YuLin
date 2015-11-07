@@ -43,7 +43,7 @@ namespace Deployer
 				var binPath = Path.Combine(appPath, "Bin");
 				var dbPath = Path.Combine(appPath, "Database");
 				var upgradePath = System.Environment.CurrentDirectory;
-				var backupPath = Path.Combine(appPath, DateTime.Now.ToString("yyMMddHHmmss"));
+				var backupPath = Path.Combine(appPath, "Backup", DateTime.Now.ToString("yyMMddHHmmss"));
 
 				// Backups
 				DetachDB();
