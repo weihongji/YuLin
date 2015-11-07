@@ -66,11 +66,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomizeReport.cs">
+    <Compile Include="CustomizeDQDK.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CustomizeReport.Designer.cs">
-      <DependentUpon>CustomizeReport.cs</DependentUpon>
+    <Compile Include="CustomizeDQDK.Designer.cs">
+      <DependentUpon>CustomizeDQDK.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomizeOne.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomizeOne.Designer.cs">
+      <DependentUpon>CustomizeOne.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -80,8 +86,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CustomizeReport.resx">
-      <DependentUpon>CustomizeReport.cs</DependentUpon>
+    <EmbeddedResource Include="CustomizeDQDK.resx">
+      <DependentUpon>CustomizeDQDK.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomizeOne.resx">
+      <DependentUpon>CustomizeOne.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

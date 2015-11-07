@@ -11,18 +11,25 @@ namespace Reporting
 	{
 		private Logger logger = Logger.GetLogger("Exporter.ExcelExporter");
 
+		public DateTime AsOfDate { get; set; }
+		public DateTime AsOfDate2 { get; set; }
+		public List<TableMapping> Columns { get; set; }
+		public List<TableMapping> Columns2 { get; set; }
+
 		public Exporter() {
 		}
 
 		public string ExportData(XEnum.ReportType report, DateTime asOfDate) {
-			return ExportData(report, asOfDate, null, null);
+			return ExportData(report, asOfDate, new DateTime(1900, 1, 1), null, null);
 		}
 
 		public string ExportData(XEnum.ReportType report, DateTime asOfDate, List<string> columnNames) {
-			return ExportData(report, asOfDate, columnNames, null);
+			return ExportData(report, asOfDate, new DateTime(1900, 1, 1), columnNames, null);
 		}
 
-		public string ExportData(XEnum.ReportType report, DateTime asOfDate, List<string> columnNames, List<string> columnNames2) {
+		public string ExportData(XEnum.ReportType report, DateTime asOfDate, DateTime asOfDate2, List<string> columnNames, List<string> columnNames2) {
+			this.AsOfDate = asOfDate;
+
 			var dao = new SqlDbHelper();
 			var countobject = dao.ExecuteScalar(string.Format("SELECT State FROM Import WHERE ImportDate = '{0}'", asOfDate.ToString("yyyyMMdd")));
 			if (countobject == null) {
@@ -52,8 +59,14 @@ namespace Reporting
 				case XEnum.ReportType.X_FXDKTB_D:
 					result = new X_FXDKTB(asOfDate).GenerateReport();
 					break;
-				case XEnum.ReportType.C_DQDJQK_M:
-					result = new C_DQDJQK_M(asOfDate, columnNames, columnNames2).GenerateReport();
+				case XEnum.ReportType.C_DQDKQK_M:
+					result = new C_DQDKQK_M(asOfDate, columnNames, columnNames2).GenerateReport();
+					break;
+				case XEnum.ReportType.C_XZDKMX_D:
+					result = new C_XZDKMX_D(this.AsOfDate, this.AsOfDate2, Columns).GenerateReport();
+					break;
+				case XEnum.ReportType.C_JQDKMX_D:
+					result = new C_JQDKMX_D(this.AsOfDate, this.AsOfDate2, Columns).GenerateReport();
 					break;
 				default:
 					result = "Unknown report type: " + report;

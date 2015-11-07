@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Reporting
 {
-	public partial class frmCustomizeReport : Form
+	public partial class frmCustomizeDQDK : Form
 	{
 		public List<string> PublicColumns { get; set; }
 		public List<string> PrivateColumns { get; set; }
@@ -17,7 +17,7 @@ namespace Reporting
 		private List<TableMapping> publicMappings;
 		private List<TableMapping> privateMappings;
 
-		public frmCustomizeReport() {
+		public frmCustomizeDQDK() {
 			InitializeComponent();
 			this.PublicColumns = new List<string>();
 			this.PrivateColumns = new List<string>();

@@ -54,9 +54,9 @@ namespace Reporting
 			F_GF1200_101_S = 40,	// GF1200-101
 
 			// Customize
-			C_DQDJQK_M = 61,		// 到期贷款情况
-			C_JQDKMX_M = 62,		// 结清贷款明细表
-			C_XZDKMX_M = 63,		// 新增贷款明细表
+			C_DQDKQK_M = 61,		// 到期贷款情况
+			C_XZDKMX_D = 62,		// 新增贷款明细表
+			C_JQDKMX_D = 63,		// 结清贷款明细表
 			C_FXDKBH_D = 64,		// 风险贷款变化情况表
 		}
 

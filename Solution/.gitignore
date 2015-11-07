@@ -17,4 +17,10 @@
 /WinForm/bin/WinForm.vshost*
 /WinForm/bin/Rpt.vshost*
 /WinForm/obj
+/WinForm/bin/DataAccess.*
+/WinForm/bin/Entities.*
+/WinForm/bin/Exporter.*
+/WinForm/bin/Helper.*
+/WinForm/bin/Importer.*
+/WinForm/bin/Logging.*
 /YuLin.v11.suo

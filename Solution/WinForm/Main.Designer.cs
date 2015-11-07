@@ -63,27 +63,28 @@
 			this.menuReport_F_GF1103_121_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_GF1200_101_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuReport_C_DQDJQK_M = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuReport_C_JQDKMX_M = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuReport_C_XZDKMX_M = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuReport_C_FXDKBH_M = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuReport_C_DQDKQK_M = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuReport_C_JQDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuReport_C_XZDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuReport_C_FXDKBH_D = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
 			this.panelReport = new System.Windows.Forms.Panel();
 			this.btnSelectColumns = new System.Windows.Forms.Button();
-			this.calendarExport = new System.Windows.Forms.MonthCalendar();
-			this.pnlExportDate = new System.Windows.Forms.Panel();
-			this.btnCalendarExport = new System.Windows.Forms.Button();
-			this.txtExportDate = new System.Windows.Forms.TextBox();
 			this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
 			this.txtReportPath = new System.Windows.Forms.Label();
 			this.btnOpenReportFolder = new System.Windows.Forms.Button();
 			this.label12 = new System.Windows.Forms.Label();
 			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
 			this.label11 = new System.Windows.Forms.Label();
+			this.cmbReportMonth2 = new System.Windows.Forms.ComboBox();
 			this.cmbReportMonth = new System.Windows.Forms.ComboBox();
-			this.label9 = new System.Windows.Forms.Label();
+			this.lblExportDate = new System.Windows.Forms.Label();
 			this.btnExport = new System.Windows.Forms.Button();
 			this.lblReportTitle = new System.Windows.Forms.Label();
+			this.panelAbout = new System.Windows.Forms.Panel();
+			this.label16 = new System.Windows.Forms.Label();
+			this.label14 = new System.Windows.Forms.Label();
+			this.label8 = new System.Windows.Forms.Label();
 			this.panelImportWJFL = new System.Windows.Forms.Panel();
 			this.btnImportWJFL = new System.Windows.Forms.Button();
 			this.lblImportWJFLPath = new System.Windows.Forms.Label();
@@ -120,23 +121,18 @@
 			this.btnImportLoan = new System.Windows.Forms.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.panelAbout = new System.Windows.Forms.Panel();
-			this.label16 = new System.Windows.Forms.Label();
-			this.label14 = new System.Windows.Forms.Label();
-			this.label8 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
 			this.panelReport.SuspendLayout();
-			this.pnlExportDate.SuspendLayout();
 			this.flowLayoutPanel3.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
+			this.panelAbout.SuspendLayout();
 			this.panelImportWJFL.SuspendLayout();
 			this.panelImport.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
-			this.panelAbout.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panelMenu
@@ -175,14 +171,14 @@
 			// menuSystem_About
 			// 
 			this.menuSystem_About.Name = "menuSystem_About";
-			this.menuSystem_About.Size = new System.Drawing.Size(152, 22);
+			this.menuSystem_About.Size = new System.Drawing.Size(144, 22);
 			this.menuSystem_About.Text = "版本信息 (&A)";
 			this.menuSystem_About.Click += new System.EventHandler(this.menuSystem_About_Click);
 			// 
 			// menuSystem_Exit
 			// 
 			this.menuSystem_Exit.Name = "menuSystem_Exit";
-			this.menuSystem_Exit.Size = new System.Drawing.Size(152, 22);
+			this.menuSystem_Exit.Size = new System.Drawing.Size(144, 22);
 			this.menuSystem_Exit.Text = "退出系统 (&X)";
 			this.menuSystem_Exit.Click += new System.EventHandler(this.menuSystem_Exit_Click);
 			// 
@@ -363,119 +359,117 @@
 			// menuReport_F_GF1101_121_S
 			// 
 			this.menuReport_F_GF1101_121_S.Name = "menuReport_F_GF1101_121_S";
-			this.menuReport_F_GF1101_121_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF1101_121_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1101_121_S.Text = "GF1101-121";
 			this.menuReport_F_GF1101_121_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1301_081_S
 			// 
 			this.menuReport_F_GF1301_081_S.Name = "menuReport_F_GF1301_081_S";
-			this.menuReport_F_GF1301_081_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF1301_081_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1301_081_S.Text = "GF1301-081";
 			this.menuReport_F_GF1301_081_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1302_081_S
 			// 
 			this.menuReport_F_GF1302_081_S.Name = "menuReport_F_GF1302_081_S";
-			this.menuReport_F_GF1302_081_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF1302_081_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1302_081_S.Text = "GF1302-081";
 			this.menuReport_F_GF1302_081_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1303_081_S
 			// 
 			this.menuReport_F_GF1303_081_S.Name = "menuReport_F_GF1303_081_S";
-			this.menuReport_F_GF1303_081_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF1303_081_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1303_081_S.Text = "GF1303-081";
 			this.menuReport_F_GF1303_081_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1304_081_S
 			// 
 			this.menuReport_F_GF1304_081_S.Name = "menuReport_F_GF1304_081_S";
-			this.menuReport_F_GF1304_081_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF1304_081_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1304_081_S.Text = "GF1304-081";
 			this.menuReport_F_GF1304_081_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1403_111_S
 			// 
 			this.menuReport_F_GF1403_111_S.Name = "menuReport_F_GF1403_111_S";
-			this.menuReport_F_GF1403_111_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF1403_111_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1403_111_S.Text = "GF1403-111";
 			this.menuReport_F_GF1403_111_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_SF6302_131_S
 			// 
 			this.menuReport_F_SF6302_131_S.Name = "menuReport_F_SF6302_131_S";
-			this.menuReport_F_SF6302_131_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_SF6302_131_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_SF6302_131_S.Text = "SF6302-131";
 			this.menuReport_F_SF6302_131_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_SF6402_131_S
 			// 
 			this.menuReport_F_SF6402_131_S.Name = "menuReport_F_SF6402_131_S";
-			this.menuReport_F_SF6402_131_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_SF6402_131_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_SF6402_131_S.Text = "SF6402-131";
 			this.menuReport_F_SF6402_131_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1103_121_S
 			// 
 			this.menuReport_F_GF1103_121_S.Name = "menuReport_F_GF1103_121_S";
-			this.menuReport_F_GF1103_121_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF1103_121_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1103_121_S.Text = "GF1103-121";
 			this.menuReport_F_GF1103_121_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1200_101_S
 			// 
 			this.menuReport_F_GF1200_101_S.Name = "menuReport_F_GF1200_101_S";
-			this.menuReport_F_GF1200_101_S.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF1200_101_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1200_101_S.Text = "GF1200-101";
 			this.menuReport_F_GF1200_101_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C
 			// 
 			this.menuReport_C.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuReport_C_DQDJQK_M,
-            this.menuReport_C_JQDKMX_M,
-            this.menuReport_C_XZDKMX_M,
-            this.menuReport_C_FXDKBH_M});
+            this.menuReport_C_DQDKQK_M,
+            this.menuReport_C_XZDKMX_D,
+            this.menuReport_C_JQDKMX_D,
+            this.menuReport_C_FXDKBH_D});
 			this.menuReport_C.Name = "menuReport_C";
 			this.menuReport_C.Size = new System.Drawing.Size(100, 21);
 			this.menuReport_C.Text = "自定义报表 (&C)";
 			// 
-			// menuReport_C_DQDJQK_M
+			// menuReport_C_DQDKQK_M
 			// 
-			this.menuReport_C_DQDJQK_M.Name = "menuReport_C_DQDJQK_M";
-			this.menuReport_C_DQDJQK_M.Size = new System.Drawing.Size(184, 22);
-			this.menuReport_C_DQDJQK_M.Text = "信贷数据需求";
-			this.menuReport_C_DQDJQK_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
+			this.menuReport_C_DQDKQK_M.Name = "menuReport_C_DQDKQK_M";
+			this.menuReport_C_DQDKQK_M.Size = new System.Drawing.Size(184, 22);
+			this.menuReport_C_DQDKQK_M.Text = "到期贷款情况";
+			this.menuReport_C_DQDKQK_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
-			// menuReport_C_JQDKMX_M
+			// menuReport_C_JQDKMX_D
 			// 
-			this.menuReport_C_JQDKMX_M.Name = "menuReport_C_JQDKMX_M";
-			this.menuReport_C_JQDKMX_M.Size = new System.Drawing.Size(184, 22);
-			this.menuReport_C_JQDKMX_M.Text = "结清贷款明细表";
-			this.menuReport_C_JQDKMX_M.Visible = false;
-			this.menuReport_C_JQDKMX_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
+			this.menuReport_C_JQDKMX_D.Name = "menuReport_C_JQDKMX_D";
+			this.menuReport_C_JQDKMX_D.Size = new System.Drawing.Size(184, 22);
+			this.menuReport_C_JQDKMX_D.Text = "结清贷款明细表";
+			this.menuReport_C_JQDKMX_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
-			// menuReport_C_XZDKMX_M
+			// menuReport_C_XZDKMX_D
 			// 
-			this.menuReport_C_XZDKMX_M.Name = "menuReport_C_XZDKMX_M";
-			this.menuReport_C_XZDKMX_M.Size = new System.Drawing.Size(184, 22);
-			this.menuReport_C_XZDKMX_M.Text = "新增贷款明细表";
-			this.menuReport_C_XZDKMX_M.Visible = false;
-			this.menuReport_C_XZDKMX_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
+			this.menuReport_C_XZDKMX_D.Name = "menuReport_C_XZDKMX_D";
+			this.menuReport_C_XZDKMX_D.Size = new System.Drawing.Size(184, 22);
+			this.menuReport_C_XZDKMX_D.Text = "新增贷款明细表";
+			this.menuReport_C_XZDKMX_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
-			// menuReport_C_FXDKBH_M
+			// menuReport_C_FXDKBH_D
 			// 
-			this.menuReport_C_FXDKBH_M.Name = "menuReport_C_FXDKBH_M";
-			this.menuReport_C_FXDKBH_M.Size = new System.Drawing.Size(184, 22);
-			this.menuReport_C_FXDKBH_M.Text = "风险贷款变化情况表";
-			this.menuReport_C_FXDKBH_M.Visible = false;
-			this.menuReport_C_FXDKBH_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
+			this.menuReport_C_FXDKBH_D.Name = "menuReport_C_FXDKBH_D";
+			this.menuReport_C_FXDKBH_D.Size = new System.Drawing.Size(184, 22);
+			this.menuReport_C_FXDKBH_D.Text = "风险贷款变化情况表";
+			this.menuReport_C_FXDKBH_D.Visible = false;
+			this.menuReport_C_FXDKBH_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// panelContent
 			// 
-			this.panelContent.Controls.Add(this.panelAbout);
 			this.panelContent.Controls.Add(this.panelReport);
+			this.panelContent.Controls.Add(this.panelAbout);
 			this.panelContent.Controls.Add(this.panelImportWJFL);
 			this.panelContent.Controls.Add(this.panelImport);
 			this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -487,13 +481,12 @@
 			// panelReport
 			// 
 			this.panelReport.Controls.Add(this.btnSelectColumns);
-			this.panelReport.Controls.Add(this.calendarExport);
-			this.panelReport.Controls.Add(this.pnlExportDate);
 			this.panelReport.Controls.Add(this.flowLayoutPanel3);
 			this.panelReport.Controls.Add(this.label12);
 			this.panelReport.Controls.Add(this.flowLayoutPanel2);
+			this.panelReport.Controls.Add(this.cmbReportMonth2);
 			this.panelReport.Controls.Add(this.cmbReportMonth);
-			this.panelReport.Controls.Add(this.label9);
+			this.panelReport.Controls.Add(this.lblExportDate);
 			this.panelReport.Controls.Add(this.btnExport);
 			this.panelReport.Controls.Add(this.lblReportTitle);
 			this.panelReport.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -501,7 +494,6 @@
 			this.panelReport.Name = "panelReport";
 			this.panelReport.Size = new System.Drawing.Size(694, 583);
 			this.panelReport.TabIndex = 1;
-			this.panelReport.Click += new System.EventHandler(this.panelExport_Click);
 			// 
 			// btnSelectColumns
 			// 
@@ -509,47 +501,10 @@
 			this.btnSelectColumns.Location = new System.Drawing.Point(206, 164);
 			this.btnSelectColumns.Name = "btnSelectColumns";
 			this.btnSelectColumns.Size = new System.Drawing.Size(130, 40);
-			this.btnSelectColumns.TabIndex = 23;
+			this.btnSelectColumns.TabIndex = 2;
 			this.btnSelectColumns.Text = "选择导出列";
 			this.btnSelectColumns.UseVisualStyleBackColor = true;
 			this.btnSelectColumns.Click += new System.EventHandler(this.btnSelectColumns_Click);
-			// 
-			// calendarExport
-			// 
-			this.calendarExport.Location = new System.Drawing.Point(2060, 137);
-			this.calendarExport.Name = "calendarExport";
-			this.calendarExport.TabIndex = 0;
-			this.calendarExport.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calendarExport_DateSelected);
-			this.calendarExport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.calendarExport_KeyDown);
-			this.calendarExport.Leave += new System.EventHandler(this.calendarExport_Leave);
-			// 
-			// pnlExportDate
-			// 
-			this.pnlExportDate.Controls.Add(this.btnCalendarExport);
-			this.pnlExportDate.Controls.Add(this.txtExportDate);
-			this.pnlExportDate.Location = new System.Drawing.Point(206, 80);
-			this.pnlExportDate.Name = "pnlExportDate";
-			this.pnlExportDate.Size = new System.Drawing.Size(204, 25);
-			this.pnlExportDate.TabIndex = 22;
-			// 
-			// btnCalendarExport
-			// 
-			this.btnCalendarExport.Location = new System.Drawing.Point(106, 0);
-			this.btnCalendarExport.Name = "btnCalendarExport";
-			this.btnCalendarExport.Size = new System.Drawing.Size(75, 23);
-			this.btnCalendarExport.TabIndex = 1;
-			this.btnCalendarExport.Text = "选择日期";
-			this.btnCalendarExport.UseVisualStyleBackColor = true;
-			this.btnCalendarExport.Click += new System.EventHandler(this.btnCalendarExport_Click);
-			// 
-			// txtExportDate
-			// 
-			this.txtExportDate.BackColor = System.Drawing.SystemColors.Window;
-			this.txtExportDate.Location = new System.Drawing.Point(0, 1);
-			this.txtExportDate.Name = "txtExportDate";
-			this.txtExportDate.ReadOnly = true;
-			this.txtExportDate.Size = new System.Drawing.Size(100, 21);
-			this.txtExportDate.TabIndex = 0;
 			// 
 			// flowLayoutPanel3
 			// 
@@ -577,7 +532,7 @@
 			this.btnOpenReportFolder.Location = new System.Drawing.Point(72, 3);
 			this.btnOpenReportFolder.Name = "btnOpenReportFolder";
 			this.btnOpenReportFolder.Size = new System.Drawing.Size(74, 24);
-			this.btnOpenReportFolder.TabIndex = 1;
+			this.btnOpenReportFolder.TabIndex = 0;
 			this.btnOpenReportFolder.Text = "打开目录";
 			this.btnOpenReportFolder.UseVisualStyleBackColor = true;
 			this.btnOpenReportFolder.Click += new System.EventHandler(this.btnOpenReportFolder_Click);
@@ -611,6 +566,19 @@
 			this.label11.TabIndex = 0;
 			this.label11.Text = "导出过程可能需要几分钟或更多，请您耐心等待导出完毕。";
 			// 
+			// cmbReportMonth2
+			// 
+			this.cmbReportMonth2.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.cmbReportMonth2.FormattingEnabled = true;
+			this.cmbReportMonth2.Items.AddRange(new object[] {
+            "2015-09",
+            "2015-08",
+            "2015-07"});
+			this.cmbReportMonth2.Location = new System.Drawing.Point(340, 111);
+			this.cmbReportMonth2.Name = "cmbReportMonth2";
+			this.cmbReportMonth2.Size = new System.Drawing.Size(116, 25);
+			this.cmbReportMonth2.TabIndex = 1;
+			// 
 			// cmbReportMonth
 			// 
 			this.cmbReportMonth.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -622,17 +590,17 @@
 			this.cmbReportMonth.Location = new System.Drawing.Point(206, 111);
 			this.cmbReportMonth.Name = "cmbReportMonth";
 			this.cmbReportMonth.Size = new System.Drawing.Size(116, 25);
-			this.cmbReportMonth.TabIndex = 2;
+			this.cmbReportMonth.TabIndex = 0;
 			// 
-			// label9
+			// lblExportDate
 			// 
-			this.label9.AutoSize = true;
-			this.label9.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label9.Location = new System.Drawing.Point(132, 115);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(68, 17);
-			this.label9.TabIndex = 1;
-			this.label9.Text = "数据月份：";
+			this.lblExportDate.AutoSize = true;
+			this.lblExportDate.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.lblExportDate.Location = new System.Drawing.Point(132, 115);
+			this.lblExportDate.Name = "lblExportDate";
+			this.lblExportDate.Size = new System.Drawing.Size(68, 17);
+			this.lblExportDate.TabIndex = 0;
+			this.lblExportDate.Text = "数据月份：";
 			// 
 			// btnExport
 			// 
@@ -652,8 +620,49 @@
 			this.lblReportTitle.Location = new System.Drawing.Point(223, 54);
 			this.lblReportTitle.Name = "lblReportTitle";
 			this.lblReportTitle.Size = new System.Drawing.Size(186, 21);
-			this.lblReportTitle.TabIndex = 6;
+			this.lblReportTitle.TabIndex = 0;
 			this.lblReportTitle.Text = "榆林分行风险贷款情况表";
+			// 
+			// panelAbout
+			// 
+			this.panelAbout.Controls.Add(this.label16);
+			this.panelAbout.Controls.Add(this.label14);
+			this.panelAbout.Controls.Add(this.label8);
+			this.panelAbout.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panelAbout.Location = new System.Drawing.Point(0, 0);
+			this.panelAbout.Name = "panelAbout";
+			this.panelAbout.Size = new System.Drawing.Size(694, 583);
+			this.panelAbout.TabIndex = 3;
+			// 
+			// label16
+			// 
+			this.label16.AutoSize = true;
+			this.label16.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label16.Location = new System.Drawing.Point(219, 323);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(176, 21);
+			this.label16.TabIndex = 1;
+			this.label16.Text = "发布日期：2015年10月";
+			// 
+			// label14
+			// 
+			this.label14.AutoSize = true;
+			this.label14.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label14.Location = new System.Drawing.Point(219, 289);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(138, 21);
+			this.label14.TabIndex = 1;
+			this.label14.Text = "系统版本：1.0.0.1";
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Font = new System.Drawing.Font("Microsoft YaHei", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label8.Location = new System.Drawing.Point(148, 85);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(398, 31);
+			this.label8.TabIndex = 0;
+			this.label8.Text = "欢迎使用长安银行榆林分行报表系统";
 			// 
 			// panelImportWJFL
 			// 
@@ -1044,47 +1053,6 @@
 			this.label1.TabIndex = 1;
 			this.label1.Text = "月份：";
 			// 
-			// panelAbout
-			// 
-			this.panelAbout.Controls.Add(this.label16);
-			this.panelAbout.Controls.Add(this.label14);
-			this.panelAbout.Controls.Add(this.label8);
-			this.panelAbout.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panelAbout.Location = new System.Drawing.Point(0, 0);
-			this.panelAbout.Name = "panelAbout";
-			this.panelAbout.Size = new System.Drawing.Size(694, 583);
-			this.panelAbout.TabIndex = 3;
-			// 
-			// label16
-			// 
-			this.label16.AutoSize = true;
-			this.label16.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label16.Location = new System.Drawing.Point(219, 323);
-			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(176, 21);
-			this.label16.TabIndex = 1;
-			this.label16.Text = "发布日期：2015年10月";
-			// 
-			// label14
-			// 
-			this.label14.AutoSize = true;
-			this.label14.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label14.Location = new System.Drawing.Point(219, 289);
-			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(138, 21);
-			this.label14.TabIndex = 1;
-			this.label14.Text = "系统版本：1.0.0.1";
-			// 
-			// label8
-			// 
-			this.label8.AutoSize = true;
-			this.label8.Font = new System.Drawing.Font("Microsoft YaHei", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label8.Location = new System.Drawing.Point(148, 85);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(398, 31);
-			this.label8.TabIndex = 0;
-			this.label8.Text = "欢迎使用长安银行榆林分行报表系统";
-			// 
 			// openFileDialog1
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
@@ -1110,20 +1078,18 @@
 			this.panelContent.ResumeLayout(false);
 			this.panelReport.ResumeLayout(false);
 			this.panelReport.PerformLayout();
-			this.pnlExportDate.ResumeLayout(false);
-			this.pnlExportDate.PerformLayout();
 			this.flowLayoutPanel3.ResumeLayout(false);
 			this.flowLayoutPanel3.PerformLayout();
 			this.flowLayoutPanel2.ResumeLayout(false);
 			this.flowLayoutPanel2.PerformLayout();
+			this.panelAbout.ResumeLayout(false);
+			this.panelAbout.PerformLayout();
 			this.panelImportWJFL.ResumeLayout(false);
 			this.panelImportWJFL.PerformLayout();
 			this.panelImport.ResumeLayout(false);
 			this.panelImport.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
-			this.panelAbout.ResumeLayout(false);
-			this.panelAbout.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -1156,7 +1122,7 @@
 		private System.Windows.Forms.Button btnExport;
 		private System.Windows.Forms.ToolStripMenuItem menuSystem_Exit;
 		private System.Windows.Forms.ComboBox cmbReportMonth;
-		private System.Windows.Forms.Label label9;
+		private System.Windows.Forms.Label lblExportDate;
 		private System.Windows.Forms.Label lblImportOverdue;
 		private System.Windows.Forms.Label lblImportNonAccrual;
 		private System.Windows.Forms.Label lblImportPrivate;
@@ -1203,17 +1169,13 @@
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1200_101_S;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_X_SZHZ_M;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_X_DKZLFL_M;
-		private System.Windows.Forms.ToolStripMenuItem menuReport_C_DQDJQK_M;
-		private System.Windows.Forms.ToolStripMenuItem menuReport_C_JQDKMX_M;
-		private System.Windows.Forms.ToolStripMenuItem menuReport_C_XZDKMX_M;
-		private System.Windows.Forms.ToolStripMenuItem menuReport_C_FXDKBH_M;
+		private System.Windows.Forms.ToolStripMenuItem menuReport_C_DQDKQK_M;
+		private System.Windows.Forms.ToolStripMenuItem menuReport_C_JQDKMX_D;
+		private System.Windows.Forms.ToolStripMenuItem menuReport_C_XZDKMX_D;
+		private System.Windows.Forms.ToolStripMenuItem menuReport_C_FXDKBH_D;
 		private System.Windows.Forms.Button btnCalendarImport;
 		private System.Windows.Forms.TextBox txtImportDate;
 		private System.Windows.Forms.MonthCalendar calendarImport;
-		private System.Windows.Forms.Panel pnlExportDate;
-		private System.Windows.Forms.Button btnCalendarExport;
-		private System.Windows.Forms.TextBox txtExportDate;
-		private System.Windows.Forms.MonthCalendar calendarExport;
 		private System.Windows.Forms.Panel panelAbout;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.Label label14;
@@ -1229,6 +1191,7 @@
 		private System.Windows.Forms.Label label21;
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.Button btnSelectColumns;
+		private System.Windows.Forms.ComboBox cmbReportMonth2;
 
 
 	}

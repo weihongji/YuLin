@@ -35,6 +35,12 @@ namespace Reporting
 					}
 					theSheet = (Worksheet)theExcelBook.Sheets[sheetEntity.Index];
 					theSheet.Activate();
+					if (sheetEntity.Id == 1) { // 贷款欠款查询
+						if (((Range)theSheet.Cells[1, 1]).Value2 == "机构号码") {
+							sheetEntity.RowsBeforeHeader = 0;
+							continue;
+						}
+					}
 					var range = (Range)theSheet.get_Range("1:" + sheetEntity.RowsBeforeHeader.ToString());
 					range.Select();
 					logger.DebugFormat("Removing {0} rows from sheet: {1}", sheetEntity.RowsBeforeHeader, theSheet.Name);
@@ -295,7 +301,11 @@ namespace Reporting
 			}
 		}
 
-		public static void FormatReport4LoanRiskPerMonth(string filePath, TargetTableSheet sheet, int dataRowCount, DateTime asOfDate) {
+		public static void FinalizeSheet(string filePath, TargetTableSheet sheet, int dataRowCount, DateTime asOfDate) {
+			FinalizeSheet(filePath, sheet, dataRowCount, asOfDate, new DateTime(1900, 1, 1));
+		}
+
+		public static void FinalizeSheet(string filePath, TargetTableSheet sheet, int dataRowCount, DateTime asOfDate, DateTime asOfDate2) {
 			int sheetIndex = sheet.Index;
 
 			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
@@ -342,26 +352,6 @@ namespace Reporting
 				}
 
 				var columnCount = sheet.Columns.Count;
-				for (int i = 1; i <= sheet.RowsBeforeHeader; i++) {
-					for (int j = 1; j <= columnCount; j++) {
-						var cell = ((Range)theSheet.Cells[i, j]);
-						string val = cell.Value2;
-						if (!string.IsNullOrWhiteSpace(val)) {
-							if (val.IndexOf("year") >= 0) {
-								val = val.Replace("year", asOfDate.Year.ToString());
-							}
-							if (val.IndexOf("month") >= 0) {
-								val = val.Replace("month", asOfDate.Month.ToString());
-							}
-							if (val.IndexOf("day") >= 0) {
-								val = val.Replace("day", asOfDate.Day.ToString());
-							}
-							if (!val.Equals((string)cell.Value2)) {
-								cell.Value2 = val;
-							}
-						}
-					}
-				}
 
 				//Totals
 				int dataRowFrom = sheet.RowsBeforeHeader + 2 - dummyHeaderRows;
@@ -419,7 +409,7 @@ namespace Reporting
 					Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.RowHeight = 24;
 				}
-				else if (sheet.TableId == (int)XEnum.ReportType.C_DQDJQK_M) {
+				else if (sheet.TableId == (int)XEnum.ReportType.C_DQDKQK_M) {
 					columnCount = 2;
 					while (true) {
 						if (string.IsNullOrEmpty(((Range)theSheet.Cells[sheet.RowsBeforeHeader + 1, columnCount]).Value2)) {
@@ -446,8 +436,60 @@ namespace Reporting
 						((Range)theSheet.Cells[footerRowFrom, 8]).Value2 = string.Format("=SUM(H{0}:H{1})", dataRowFrom, footerRowFrom - 1);
 					}
 				}
+				else if (sheet.TableId == (int)XEnum.ReportType.C_XZDKMX_D || sheet.TableId == (int)XEnum.ReportType.C_JQDKMX_D) {
+					columnCount = 1;
+					while (true) {
+						if (string.IsNullOrEmpty(((Range)theSheet.Cells[sheet.RowsBeforeHeader + 1, columnCount]).Value2)) {
+							break;
+						}
+						else {
+							columnCount++;
+						}
+					}
+					columnCount--;
+					int headerStartIndex = sheet.RowsBeforeHeader + 1;
+					// Column Header
+					Range dataRange = theSheet.Range[theSheet.Cells[headerStartIndex, 1], theSheet.Cells[headerStartIndex, columnCount]];
+					dataRange.Font.Bold = true;
+					// Data Rows & Footer
+					dataRange = theSheet.Range[theSheet.Cells[headerStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
+					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
+					dataRange.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					dataRange.Font.Size = 10;
+					
+					// Footer
+					dataRange = theSheet.Range[theSheet.Cells[footerRowFrom, 1], theSheet.Cells[footerRowFrom, columnCount]];
+					dataRange.Interior.Color = System.Drawing.Color.FromArgb(192, 192, 192);
 
-				SubstituteReportHeader(theSheet, sheet, asOfDate);
+					((Range)theSheet.Cells[footerRowFrom, 1]).Value2 = "总计";
+					((Range)theSheet.Cells[footerRowFrom, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
+					if (sheet.TableId == (int)XEnum.ReportType.C_XZDKMX_D) {
+						if (dataRowCount > 0) {
+							((Range)theSheet.Cells[footerRowFrom, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", dataRowFrom, footerRowFrom - 1);
+							((Range)theSheet.Cells[footerRowFrom, 9]).Value2 = string.Format("=SUM(I{0}:I{1})", dataRowFrom, footerRowFrom - 1);
+						}
+						else {
+							((Range)theSheet.Cells[footerRowFrom, 3]).Value2 = "0.00";
+							((Range)theSheet.Cells[footerRowFrom, 9]).Value2 = "0.00";
+						}
+					}
+					else if (sheet.TableId == (int)XEnum.ReportType.C_JQDKMX_D) {
+						if (dataRowCount > 0) {
+							((Range)theSheet.Cells[footerRowFrom, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", dataRowFrom, footerRowFrom - 1);
+							((Range)theSheet.Cells[footerRowFrom, 4]).Value2 = string.Format("=SUM(D{0}:D{1})", dataRowFrom, footerRowFrom - 1);
+							((Range)theSheet.Cells[footerRowFrom, 10]).Value2 = string.Format("=SUM(J{0}:J{1})", dataRowFrom, footerRowFrom - 1);
+							((Range)theSheet.Cells[footerRowFrom, 11]).Value2 = string.Format("=SUM(K{0}:K{1})", dataRowFrom, footerRowFrom - 1);
+						}
+						else {
+							((Range)theSheet.Cells[footerRowFrom, 3]).Value2 = "0.00";
+							((Range)theSheet.Cells[footerRowFrom, 4]).Value2 = "0.00";
+							((Range)theSheet.Cells[footerRowFrom, 10]).Value2 = "0.00";
+							((Range)theSheet.Cells[footerRowFrom, 11]).Value2 = "0.00";
+						}
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate, asOfDate2);
 
 				theSheetTemplate.Delete();
 
@@ -477,6 +519,10 @@ namespace Reporting
 		}
 
 		public static bool SubstituteReportHeader(Worksheet theSheet, TargetTableSheet sheet, DateTime asOfDate) {
+			return SubstituteReportHeader(theSheet, sheet, asOfDate, new DateTime(1900, 1, 1));
+		}
+
+		public static bool SubstituteReportHeader(Worksheet theSheet, TargetTableSheet sheet, DateTime asOfDate, DateTime asOfDate2) {
 			var changed = false;
 			var columnCount = sheet.Columns.Count;
 			for (int i = 1; i <= sheet.RowsBeforeHeader; i++) {
@@ -484,6 +530,18 @@ namespace Reporting
 					var cell = ((Range)theSheet.Cells[i, j]);
 					string val = cell.Value2;
 					if (!string.IsNullOrWhiteSpace(val)) {
+						if (asOfDate2.Year > 2001) {
+							if (val.IndexOf("year2") >= 0) {
+								val = val.Replace("year2", asOfDate2.Year.ToString());
+							}
+							if (val.IndexOf("month2") >= 0) {
+								val = val.Replace("month2", asOfDate2.Month.ToString());
+							}
+							if (val.IndexOf("day2") >= 0) {
+								val = val.Replace("day2", asOfDate2.Day.ToString());
+							}
+						}
+
 						if (val.IndexOf("year") >= 0) {
 							val = val.Replace("year", asOfDate.Year.ToString());
 						}

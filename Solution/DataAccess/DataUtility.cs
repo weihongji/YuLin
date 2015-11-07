@@ -18,19 +18,22 @@ namespace Reporting
 			return s;
 		}
 
-		public static string GetSqlValue(DbDataReader reader, int column, bool forOleDB = false) {
+		public static string GetSqlValue(DbDataReader reader, int column, string dateTimePattern = "") {
 			object val = reader[column];
 			var s = string.Empty;
 			if (val == DBNull.Value) {
 				s = "NULL";
 			}
 			else {
-				if (forOleDB) {
-					if (val is DateTime) {
-						s = "#" + val.ToString() + "#";
+				if (val is DateTime) {
+					if (string.IsNullOrEmpty(dateTimePattern)) {
+						dateTimePattern = "yyyy/MM/dd";
+					}
+					if (((DateTime)val).Year == 1900) {
+						s = "NULL";
 					}
 					else {
-						s = "'" + val.ToString().Trim().Replace("'", "''") + "'";
+						s = "'" + ((DateTime)val).ToString(dateTimePattern) + "'";
 					}
 				}
 				else {

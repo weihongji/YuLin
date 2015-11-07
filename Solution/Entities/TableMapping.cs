@@ -64,7 +64,7 @@ namespace Reporting
 			return list;
 		}
 
-		public static List<string> GetFrozenColumns(string tableName) {
+		public static List<string> GetFrozenColumnNames(string tableName) {
 			var list = new List<string>();
 			var p = new SqlParameter("@tableName", tableName);
 			p.SqlDbType = SqlDbType.VarChar;
@@ -72,6 +72,18 @@ namespace Reporting
 			var table = dao.ExecuteDataTable("SELECT ColName FROM TableMapping WHERE TableId=@tableName AND MappingMode=1 ORDER BY Id", new SqlParameter[] { p });
 			foreach (DataRow row in table.Rows) {
 				list.Add((string)row["ColName"]);
+			}
+			return list;
+		}
+
+		public static List<TableMapping> GetFrozenColumns(string tableName) {
+			var list = new List<TableMapping>();
+			var p = new SqlParameter("@tableName", tableName);
+			p.SqlDbType = SqlDbType.VarChar;
+			p.Size = 20;
+			var table = dao.ExecuteDataTable("SELECT * FROM TableMapping WHERE TableId=@tableName AND MappingMode=1 ORDER BY Id", new SqlParameter[] { p });
+			foreach (DataRow row in table.Rows) {
+				list.Add(new TableMapping(row));
 			}
 			return list;
 		}

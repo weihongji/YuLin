@@ -73,7 +73,7 @@ namespace Reporting
 			oleConn.Close();
 			Logger.DebugFormat("{0} records exported.", rowCount);
 
-			ExcelHelper.FormatReport4LoanRiskPerMonth(filePath, sheet, rowCount, this.AsOfDate);
+			ExcelHelper.FinalizeSheet(filePath, sheet, rowCount, this.AsOfDate);
 		}
 
 		private string PopulateSheetVS(string filePath, TargetTableSheet sheet) {

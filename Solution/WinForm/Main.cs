@@ -17,6 +17,7 @@ namespace Reporting
 		private Logger logger = Logger.GetLogger("Main");
 		private XEnum.ReportType currentReport = XEnum.ReportType.None;
 		private List<TargetTable> _reports;
+		private List<TableMapping> _selectedColumns;
 		private List<string> _publicColumns;
 		private List<string> _privateColumns;
 
@@ -29,7 +30,16 @@ namespace Reporting
 			}
 		}
 
-		public List<string> SelectedColumns {
+		public List<TableMapping> SelectedColumns {
+			get {
+				if (_selectedColumns == null) {
+					_selectedColumns = new List<TableMapping>();
+				}
+				return _selectedColumns;
+			}
+		}
+
+		public List<string> SelectedColumns1 {
 			get {
 				if (_publicColumns == null) {
 					_publicColumns = new List<string>();
@@ -53,11 +63,7 @@ namespace Reporting
 
 		private void Main_Load(object sender, EventArgs e) {
 			this.calendarImport.Left = 206;
-			this.calendarExport.Left = 206;
-			this.pnlExportDate.Top = 112;
 			this.calendarImport.Visible = false;
-			this.calendarExport.Visible = false;
-			this.pnlExportDate.Visible = false;
 			this.btnSelectColumns.Visible = false;
 
 			var defaultPanel = ConfigurationManager.AppSettings["defaultScreen"] ?? "about";
@@ -348,8 +354,17 @@ namespace Reporting
 			}
 		}
 
+		private void ShowAsOfDate2() {
+			if (this.currentReport == XEnum.ReportType.C_XZDKMX_D || this.currentReport == XEnum.ReportType.C_JQDKMX_D) {
+				this.cmbReportMonth2.Visible = true;
+			}
+			else {
+				this.cmbReportMonth2.Visible = false;
+			}
+		}
+
 		private void ShowSelectColumnButton() {
-			if (this.currentReport == XEnum.ReportType.C_DQDJQK_M) {
+			if (this.currentReport.ToString().StartsWith("C_")) {
 				this.btnSelectColumns.Visible = true;
 			}
 			else {
@@ -373,17 +388,12 @@ namespace Reporting
 			}
 
 			this.lblReportTitle.Text = report.Name;
+			ShowAsOfDate2();
 			ShowSelectColumnButton();
 
 			var dao = new SqlDbHelper();
-			if (currentReport.ToString().EndsWith("_D") || currentReport.ToString().EndsWith("_X")) {
-				this.cmbReportMonth.Hide();
-				this.pnlExportDate.Show();
-			}
-			else {
-				this.cmbReportMonth.Show();
-				this.pnlExportDate.Hide();
-
+			if (IsMonthly()) {
+				this.lblExportDate.Text = "数据月份：";
 				var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
 				this.cmbReportMonth.Items.Clear();
 				if (table != null) {
@@ -403,28 +413,50 @@ namespace Reporting
 					}
 				}
 			}
+			else {
+				this.lblExportDate.Text = "数据日期：";
+				var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import ORDER BY ImportDate DESC");
+				this.cmbReportMonth.Items.Clear();
+				this.cmbReportMonth2.Items.Clear();
+				if (table != null) {
+					foreach (DataRow row in table.Rows) {
+						var value = ((DateTime)row[0]).ToString("yyyy-MM-dd");
+						this.cmbReportMonth.Items.Add(value);
+						this.cmbReportMonth2.Items.Add(value);
+					}
+
+					// Select the latest one by default
+					if (this.cmbReportMonth.Items.Count > 0) {
+						if (this.cmbReportMonth.SelectedIndex < 0) {
+							this.cmbReportMonth.SelectedIndex = 0;
+						}
+					}
+					if (this.cmbReportMonth2.Items.Count > 0) {
+						if (this.cmbReportMonth2.SelectedIndex < 0) {
+							this.cmbReportMonth2.SelectedIndex = 0;
+						}
+					}
+				}
+			}
 
 			this.txtReportPath.Text = BaseReport.GetReportFolder();
 		}
 
-		private bool IsValidToExport(out DateTime asOfDate) {
+		private bool IsValidToExport(out DateTime asOfDate, out DateTime asOfDate2) {
 			asOfDate = new DateTime(1900, 1, 1);
+			asOfDate2 = new DateTime(1900, 1, 1);
 
-			var monthly = this.cmbReportMonth.Visible;
-			var dateText = monthly ? this.cmbReportMonth.Text : this.txtExportDate.Text;
+			var monthly = IsMonthly();
+			var dateText = this.cmbReportMonth.Text;
 
 			if (dateText == "") {
 				ShowStop("需要填写导出数据的月份");
-				if (monthly) {
-					cmbReportMonth.Focus();
-				}
+				this.cmbReportMonth.Focus();
 				return false;
 			}
 			else if (dateText.IndexOf('*') >= 0) {
 				ShowStop(dateText.Replace(" *", "") + "月份的数据的尚未全部导入系统");
-				if (monthly) {
-					cmbReportMonth.Focus();
-				}
+				this.cmbReportMonth.Focus();
 				return false;
 			}
 
@@ -434,9 +466,7 @@ namespace Reporting
 
 			if (!DateTime.TryParse(dateText, out asOfDate)) {
 				ShowStop("填写的月份格式错误");
-				if (monthly) {
-					cmbReportMonth.Focus();
-				}
+				this.cmbReportMonth.Focus();
 				return false;
 			}
 
@@ -446,35 +476,65 @@ namespace Reporting
 
 			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
 				ShowStop("日期超出范围");
-				if (monthly) {
-					cmbReportMonth.Focus();
+				this.cmbReportMonth.Focus();
+				return false;
+			}
+
+			if (this.cmbReportMonth2.Visible) {
+				if (!DateTime.TryParse(this.cmbReportMonth2.Text, out asOfDate2)) {
+					ShowStop("第二个日期的格式错误");
+					this.cmbReportMonth2.Focus();
+					return false;
 				}
+			}
+
+			if (asOfDate == asOfDate2) {
+				ShowStop("相同日期不能比较");
+				this.cmbReportMonth.Focus();
 				return false;
 			}
 
 			return true;
 		}
 
+		private bool IsMonthly() {
+			return currentReport.ToString().EndsWith("_M") || currentReport.ToString().EndsWith("_S");
+		}
+
 		private void btnExport_Click(object sender, EventArgs e) {
-			DateTime asOfDate;
-			if (!IsValidToExport(out asOfDate)) {
+			DateTime asOfDate, asOfDate2;
+			if (!IsValidToExport(out asOfDate, out asOfDate2)) {
 				return;
 			}
-			if (this.currentReport == XEnum.ReportType.C_DQDJQK_M) {
-				if (this.SelectedColumns.Count == 0) {
-					this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns("ImportPublic"));
-					this.SelectedColumns.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
+			var exporter = new Exporter();
+			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
+				if (this.SelectedColumns1.Count == 0) {
+					this.SelectedColumns1.AddRange(TableMapping.GetFrozenColumnNames("ImportPublic"));
+					this.SelectedColumns1.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
 				}
 				if (this.SelectedColumns2.Count == 0) {
-					this.SelectedColumns2.AddRange(TableMapping.GetFrozenColumns("ImportPrivate"));
+					this.SelectedColumns2.AddRange(TableMapping.GetFrozenColumnNames("ImportPrivate"));
 					this.SelectedColumns2.AddRange(new string[] { "彻底从我行退出", "倒贷", "展期", "逾期", "化解方案" });
 				}
 			}
+			else if (this.currentReport == XEnum.ReportType.C_XZDKMX_D) {
+				if (this.SelectedColumns.Count == 0) {
+					this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns(Consts.C_XZDKMX_D));
+				}
+				exporter.AsOfDate2 = asOfDate2;
+				exporter.Columns = this.SelectedColumns;
+			}
+			else if (this.currentReport == XEnum.ReportType.C_JQDKMX_D) {
+				if (this.SelectedColumns.Count == 0) {
+					this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns(Consts.C_JQDKMX_D));
+				}
+				exporter.AsOfDate2 = asOfDate2;
+				exporter.Columns = this.SelectedColumns;
+			}
 			this.Cursor = Cursors.WaitCursor;
 			try {
-				var exporter = new Exporter();
 				var startTime = DateTime.Now; // Use to count time cost
-				var result = exporter.ExportData(this.currentReport, asOfDate, this.SelectedColumns, this.SelectedColumns2);
+				var result = exporter.ExportData(this.currentReport, asOfDate, asOfDate2, this.SelectedColumns1, this.SelectedColumns2);
 				this.Cursor = Cursors.Default;
 				if (string.IsNullOrEmpty(result)) {
 					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
@@ -505,17 +565,30 @@ namespace Reporting
 
 		private void btnSelectColumns_Click(object sender, EventArgs e) {
 			this.SelectedColumns.Clear();
+			this.SelectedColumns1.Clear();
 			this.SelectedColumns2.Clear();
-			if (this.currentReport == XEnum.ReportType.C_DQDJQK_M) {
-				var form = new frmCustomizeReport();
+			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
+				var form = new frmCustomizeDQDK();
 				form.ShowDialog(this);
-				this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns("ImportPublic"));
-				this.SelectedColumns.AddRange(form.PublicColumns);
-				this.SelectedColumns.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
+				this.SelectedColumns1.AddRange(TableMapping.GetFrozenColumnNames("ImportPublic"));
+				this.SelectedColumns1.AddRange(form.PublicColumns);
+				this.SelectedColumns1.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
 
-				this.SelectedColumns2.AddRange(TableMapping.GetFrozenColumns("ImportPrivate"));
+				this.SelectedColumns2.AddRange(TableMapping.GetFrozenColumnNames("ImportPrivate"));
 				this.SelectedColumns2.AddRange(form.PrivateColumns);
 				this.SelectedColumns2.AddRange(new string[] { "彻底从我行退出", "倒贷", "展期", "逾期", "化解方案" });
+			}
+			else if (this.currentReport == XEnum.ReportType.C_XZDKMX_D) {
+				var form = new frmCustomizeOne() { MappingTable = Consts.C_XZDKMX_D, FormTitle = "新增贷款明细表自定义" };
+				form.ShowDialog(this);
+				this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns(Consts.C_XZDKMX_D));
+				this.SelectedColumns.AddRange(form.Columns);
+			}
+			else if (this.currentReport == XEnum.ReportType.C_JQDKMX_D) {
+				var form = new frmCustomizeOne() { MappingTable = Consts.C_JQDKMX_D, FormTitle = "结清贷款明细表自定义" };
+				form.ShowDialog(this);
+				this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns(Consts.C_JQDKMX_D));
+				this.SelectedColumns.AddRange(form.Columns);
 			}
 		}
 
@@ -574,29 +647,6 @@ namespace Reporting
 			}
 		}
 
-		private void btnCalendarExport_Click(object sender, EventArgs e) {
-			this.calendarExport.Show();
-			this.calendarExport.Focus();
-		}
-
-		private void calendarExport_DateSelected(object sender, DateRangeEventArgs e) {
-			this.txtExportDate.Text = this.calendarExport.SelectionStart.ToString("yyyy-M-d");
-			this.calendarExport.Hide();
-		}
-
-		private void calendarExport_Leave(object sender, EventArgs e) {
-			this.calendarExport.Hide();
-		}
-
-		private void panelExport_Click(object sender, EventArgs e) {
-			this.calendarExport.Hide();
-		}
-
-		private void calendarExport_KeyDown(object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Escape) {
-				this.calendarExport.Hide();
-			}
-		}
 		#endregion
 	}
 }

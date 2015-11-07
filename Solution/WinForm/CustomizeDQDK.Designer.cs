@@ -1,6 +1,6 @@
 ﻿namespace Reporting
 {
-	partial class frmCustomizeReport
+	partial class frmCustomizeDQDK
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -211,7 +211,7 @@
 			this.listBoxPrivateCandidates.Size = new System.Drawing.Size(150, 412);
 			this.listBoxPrivateCandidates.TabIndex = 12;
 			// 
-			// frmCustomizeReport
+			// frmCustomizeDQDK
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -221,9 +221,9 @@
 			this.Controls.Add(this.btnOK);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
-			this.Name = "frmCustomizeReport";
+			this.Name = "frmCustomizeDQDK";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "期贷款情况表自定义";
+			this.Text = "到期贷款情况自定义";
 			this.Load += new System.EventHandler(this.frmCustomizeReport_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();

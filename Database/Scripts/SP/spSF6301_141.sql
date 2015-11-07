@@ -87,13 +87,13 @@ BEGIN
 					, D = CASE WHEN ScopeName = '微型企业' THEN Balance1 ELSE 0.00 END
 					, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1 < 500 THEN Balance1 ELSE 0.00 END
 					, F = 0.00
-			FROM ImportPublic P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount
+			FROM ImportPublic P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount AND L.ImportId = P.ImportId
 			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
 		) AS X1
 		GROUP BY DangerLevel
 		UNION ALL
 		SELECT L.DangerLevel, A = 0.00, B = 0.00, C = 0.00, D = 0.00, E = 0.00, F = SUM(P.LoanBalance)
-		FROM ImportPrivate P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount
+		FROM ImportPrivate P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount AND L.ImportId = P.ImportId
 		WHERE P.ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
 			AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 		GROUP BY L.DangerLevel

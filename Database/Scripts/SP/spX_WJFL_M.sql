@@ -24,7 +24,7 @@ BEGIN
 
 	/* Create temporary table using the empty shell */
 	IF NOT EXISTS(SELECT * FROM sys.tables WHERE name = 'Shell_WJFL') BEGIN
-		EXEC spReportLoanRiskPerMonth @type, '19991231'
+		EXEC spReportLoanRiskPerMonth @type, '19000101'
 	END
 	IF OBJECT_ID('tempdb..#Result') IS NOT NULL BEGIN
 		DROP TABLE #Result
