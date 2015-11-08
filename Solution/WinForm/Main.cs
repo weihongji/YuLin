@@ -571,7 +571,7 @@ namespace Reporting
 
 		private void btnSelectColumns_Click(object sender, EventArgs e) {
 			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
-				var form = new frmCustomizeDQDK();
+				var form = new frmCustomizeDQDK(this.SelectedColumns1, this.SelectedColumns2);
 				var result = form.ShowDialog(this);
 				if (result == System.Windows.Forms.DialogResult.OK) {
 					this.SelectedColumns1.Clear();

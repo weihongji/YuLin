@@ -41,6 +41,10 @@
 			this.listBoxPrivateSelection = new System.Windows.Forms.ListBox();
 			this.listBoxPrivateCandidates = new System.Windows.Forms.ListBox();
 			this.btnCancel = new System.Windows.Forms.Button();
+			this.btnPublicAddAll = new System.Windows.Forms.Button();
+			this.btnPublicRemoveAll = new System.Windows.Forms.Button();
+			this.btnPrivateAddAll = new System.Windows.Forms.Button();
+			this.btnPrivateRemoveAll = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -58,7 +62,9 @@
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.btnPublicRemoveAll);
 			this.groupBox1.Controls.Add(this.btnPublicRemove);
+			this.groupBox1.Controls.Add(this.btnPublicAddAll);
 			this.groupBox1.Controls.Add(this.btnPublicAdd);
 			this.groupBox1.Controls.Add(this.label2);
 			this.groupBox1.Controls.Add(this.label1);
@@ -75,22 +81,22 @@
 			// btnPublicRemove
 			// 
 			this.btnPublicRemove.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnPublicRemove.Location = new System.Drawing.Point(174, 221);
+			this.btnPublicRemove.Location = new System.Drawing.Point(174, 194);
 			this.btnPublicRemove.Name = "btnPublicRemove";
 			this.btnPublicRemove.Size = new System.Drawing.Size(63, 33);
 			this.btnPublicRemove.TabIndex = 2;
-			this.btnPublicRemove.Text = "<-";
+			this.btnPublicRemove.Text = "<";
 			this.btnPublicRemove.UseVisualStyleBackColor = true;
 			this.btnPublicRemove.Click += new System.EventHandler(this.btnPublicRemove_Click);
 			// 
 			// btnPublicAdd
 			// 
 			this.btnPublicAdd.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnPublicAdd.Location = new System.Drawing.Point(174, 161);
+			this.btnPublicAdd.Location = new System.Drawing.Point(174, 134);
 			this.btnPublicAdd.Name = "btnPublicAdd";
 			this.btnPublicAdd.Size = new System.Drawing.Size(63, 33);
 			this.btnPublicAdd.TabIndex = 1;
-			this.btnPublicAdd.Text = "->";
+			this.btnPublicAdd.Text = ">";
 			this.btnPublicAdd.UseVisualStyleBackColor = true;
 			this.btnPublicAdd.Click += new System.EventHandler(this.btnPublicAdd_Click);
 			// 
@@ -136,7 +142,9 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.btnPrivateRemoveAll);
 			this.groupBox2.Controls.Add(this.btnPrivateRemove);
+			this.groupBox2.Controls.Add(this.btnPrivateAddAll);
 			this.groupBox2.Controls.Add(this.btnPrivateAdd);
 			this.groupBox2.Controls.Add(this.label3);
 			this.groupBox2.Controls.Add(this.label4);
@@ -153,22 +161,22 @@
 			// btnPrivateRemove
 			// 
 			this.btnPrivateRemove.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnPrivateRemove.Location = new System.Drawing.Point(174, 221);
+			this.btnPrivateRemove.Location = new System.Drawing.Point(174, 194);
 			this.btnPrivateRemove.Name = "btnPrivateRemove";
 			this.btnPrivateRemove.Size = new System.Drawing.Size(63, 33);
 			this.btnPrivateRemove.TabIndex = 2;
-			this.btnPrivateRemove.Text = "<-";
+			this.btnPrivateRemove.Text = "<";
 			this.btnPrivateRemove.UseVisualStyleBackColor = true;
 			this.btnPrivateRemove.Click += new System.EventHandler(this.btnPrivateRemove_Click);
 			// 
 			// btnPrivateAdd
 			// 
 			this.btnPrivateAdd.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnPrivateAdd.Location = new System.Drawing.Point(174, 161);
+			this.btnPrivateAdd.Location = new System.Drawing.Point(174, 134);
 			this.btnPrivateAdd.Name = "btnPrivateAdd";
 			this.btnPrivateAdd.Size = new System.Drawing.Size(63, 33);
 			this.btnPrivateAdd.TabIndex = 1;
-			this.btnPrivateAdd.Text = "->";
+			this.btnPrivateAdd.Text = ">";
 			this.btnPrivateAdd.UseVisualStyleBackColor = true;
 			this.btnPrivateAdd.Click += new System.EventHandler(this.btnPrivateAdd_Click);
 			// 
@@ -223,6 +231,50 @@
 			this.btnCancel.UseVisualStyleBackColor = true;
 			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
 			// 
+			// btnPublicAddAll
+			// 
+			this.btnPublicAddAll.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnPublicAddAll.Location = new System.Drawing.Point(172, 317);
+			this.btnPublicAddAll.Name = "btnPublicAddAll";
+			this.btnPublicAddAll.Size = new System.Drawing.Size(63, 33);
+			this.btnPublicAddAll.TabIndex = 1;
+			this.btnPublicAddAll.Text = ">>";
+			this.btnPublicAddAll.UseVisualStyleBackColor = true;
+			this.btnPublicAddAll.Click += new System.EventHandler(this.btnPublicAddAll_Click);
+			// 
+			// btnPublicRemoveAll
+			// 
+			this.btnPublicRemoveAll.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnPublicRemoveAll.Location = new System.Drawing.Point(172, 376);
+			this.btnPublicRemoveAll.Name = "btnPublicRemoveAll";
+			this.btnPublicRemoveAll.Size = new System.Drawing.Size(63, 33);
+			this.btnPublicRemoveAll.TabIndex = 2;
+			this.btnPublicRemoveAll.Text = "<<";
+			this.btnPublicRemoveAll.UseVisualStyleBackColor = true;
+			this.btnPublicRemoveAll.Click += new System.EventHandler(this.btnPublicRemoveAll_Click);
+			// 
+			// btnPrivateAddAll
+			// 
+			this.btnPrivateAddAll.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnPrivateAddAll.Location = new System.Drawing.Point(174, 317);
+			this.btnPrivateAddAll.Name = "btnPrivateAddAll";
+			this.btnPrivateAddAll.Size = new System.Drawing.Size(63, 33);
+			this.btnPrivateAddAll.TabIndex = 1;
+			this.btnPrivateAddAll.Text = ">>";
+			this.btnPrivateAddAll.UseVisualStyleBackColor = true;
+			this.btnPrivateAddAll.Click += new System.EventHandler(this.btnPrivateAddAll_Click);
+			// 
+			// btnPrivateRemoveAll
+			// 
+			this.btnPrivateRemoveAll.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnPrivateRemoveAll.Location = new System.Drawing.Point(174, 376);
+			this.btnPrivateRemoveAll.Name = "btnPrivateRemoveAll";
+			this.btnPrivateRemoveAll.Size = new System.Drawing.Size(63, 33);
+			this.btnPrivateRemoveAll.TabIndex = 2;
+			this.btnPrivateRemoveAll.Text = "<<";
+			this.btnPrivateRemoveAll.UseVisualStyleBackColor = true;
+			this.btnPrivateRemoveAll.Click += new System.EventHandler(this.btnPrivateRemoveAll_Click);
+			// 
 			// frmCustomizeDQDK
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -265,6 +317,10 @@
 		private System.Windows.Forms.ListBox listBoxPrivateSelection;
 		private System.Windows.Forms.ListBox listBoxPrivateCandidates;
 		private System.Windows.Forms.Button btnCancel;
+		private System.Windows.Forms.Button btnPublicRemoveAll;
+		private System.Windows.Forms.Button btnPublicAddAll;
+		private System.Windows.Forms.Button btnPrivateRemoveAll;
+		private System.Windows.Forms.Button btnPrivateAddAll;
 
 	}
 }

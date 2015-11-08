@@ -34,6 +34,8 @@
 			this.listBoxSelection = new System.Windows.Forms.ListBox();
 			this.listBoxCandidates = new System.Windows.Forms.ListBox();
 			this.btnCancel = new System.Windows.Forms.Button();
+			this.btnAddAll = new System.Windows.Forms.Button();
+			this.btnRemoveAll = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -50,7 +52,9 @@
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.btnRemoveAll);
 			this.groupBox1.Controls.Add(this.btnRemove);
+			this.groupBox1.Controls.Add(this.btnAddAll);
 			this.groupBox1.Controls.Add(this.btnAdd);
 			this.groupBox1.Controls.Add(this.label2);
 			this.groupBox1.Controls.Add(this.label1);
@@ -67,22 +71,22 @@
 			// btnRemove
 			// 
 			this.btnRemove.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnRemove.Location = new System.Drawing.Point(174, 221);
+			this.btnRemove.Location = new System.Drawing.Point(174, 198);
 			this.btnRemove.Name = "btnRemove";
 			this.btnRemove.Size = new System.Drawing.Size(63, 33);
 			this.btnRemove.TabIndex = 2;
-			this.btnRemove.Text = "<-";
+			this.btnRemove.Text = "<";
 			this.btnRemove.UseVisualStyleBackColor = true;
 			this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
 			// 
 			// btnAdd
 			// 
 			this.btnAdd.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnAdd.Location = new System.Drawing.Point(174, 161);
+			this.btnAdd.Location = new System.Drawing.Point(174, 138);
 			this.btnAdd.Name = "btnAdd";
 			this.btnAdd.Size = new System.Drawing.Size(63, 33);
 			this.btnAdd.TabIndex = 1;
-			this.btnAdd.Text = "->";
+			this.btnAdd.Text = ">";
 			this.btnAdd.UseVisualStyleBackColor = true;
 			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
 			// 
@@ -138,6 +142,28 @@
 			this.btnCancel.UseVisualStyleBackColor = true;
 			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
 			// 
+			// btnAddAll
+			// 
+			this.btnAddAll.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnAddAll.Location = new System.Drawing.Point(174, 316);
+			this.btnAddAll.Name = "btnAddAll";
+			this.btnAddAll.Size = new System.Drawing.Size(63, 33);
+			this.btnAddAll.TabIndex = 1;
+			this.btnAddAll.Text = ">>";
+			this.btnAddAll.UseVisualStyleBackColor = true;
+			this.btnAddAll.Click += new System.EventHandler(this.btnAddAll_Click);
+			// 
+			// btnRemoveAll
+			// 
+			this.btnRemoveAll.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnRemoveAll.Location = new System.Drawing.Point(174, 379);
+			this.btnRemoveAll.Name = "btnRemoveAll";
+			this.btnRemoveAll.Size = new System.Drawing.Size(63, 33);
+			this.btnRemoveAll.TabIndex = 2;
+			this.btnRemoveAll.Text = "<<";
+			this.btnRemoveAll.UseVisualStyleBackColor = true;
+			this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
+			// 
 			// frmCustomizeOne
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -170,6 +196,8 @@
 		private System.Windows.Forms.ListBox listBoxSelection;
 		private System.Windows.Forms.ListBox listBoxCandidates;
 		private System.Windows.Forms.Button btnCancel;
+		private System.Windows.Forms.Button btnRemoveAll;
+		private System.Windows.Forms.Button btnAddAll;
 
 	}
 }

@@ -57,6 +57,22 @@ namespace Reporting
 			MoveBoxItem(listBoxSelection, listBoxCandidates);
 		}
 
+		private void btnAddAll_Click(object sender, EventArgs e) {
+			SelectAllItems(listBoxCandidates);
+			MoveBoxItem(listBoxCandidates, listBoxSelection);
+		}
+
+		private void btnRemoveAll_Click(object sender, EventArgs e) {
+			SelectAllItems(listBoxSelection);
+			MoveBoxItem(listBoxSelection, listBoxCandidates);
+		}
+
+		private void SelectAllItems(ListBox listBox) {
+			for (int i = 0; i < listBox.Items.Count; i++) {
+				listBox.SelectedItems.Add(listBox.Items[i]);
+			}
+		}
+
 		private void MoveBoxItem(ListBox src, ListBox dest) {
 			if (src.SelectedItem == null) {
 				return;
