@@ -78,6 +78,12 @@
     <Compile Include="CustomizeOne.Designer.cs">
       <DependentUpon>CustomizeOne.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImportHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportHistory.Designer.cs">
+      <DependentUpon>ImportHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +97,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomizeOne.resx">
       <DependentUpon>CustomizeOne.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportHistory.resx">
+      <DependentUpon>ImportHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

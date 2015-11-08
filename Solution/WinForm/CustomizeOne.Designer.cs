@@ -33,16 +33,17 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.listBoxSelection = new System.Windows.Forms.ListBox();
 			this.listBoxCandidates = new System.Windows.Forms.ListBox();
+			this.btnCancel = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnOK
 			// 
 			this.btnOK.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnOK.Location = new System.Drawing.Point(168, 527);
+			this.btnOK.Location = new System.Drawing.Point(220, 527);
 			this.btnOK.Name = "btnOK";
-			this.btnOK.Size = new System.Drawing.Size(115, 33);
-			this.btnOK.TabIndex = 7;
+			this.btnOK.Size = new System.Drawing.Size(100, 29);
+			this.btnOK.TabIndex = 1;
 			this.btnOK.Text = "确定";
 			this.btnOK.UseVisualStyleBackColor = true;
 			this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -59,7 +60,7 @@
 			this.groupBox1.Location = new System.Drawing.Point(19, 20);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(417, 490);
-			this.groupBox1.TabIndex = 12;
+			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "数据列";
 			// 
@@ -69,7 +70,7 @@
 			this.btnRemove.Location = new System.Drawing.Point(174, 221);
 			this.btnRemove.Name = "btnRemove";
 			this.btnRemove.Size = new System.Drawing.Size(63, 33);
-			this.btnRemove.TabIndex = 17;
+			this.btnRemove.TabIndex = 2;
 			this.btnRemove.Text = "<-";
 			this.btnRemove.UseVisualStyleBackColor = true;
 			this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
@@ -80,7 +81,7 @@
 			this.btnAdd.Location = new System.Drawing.Point(174, 161);
 			this.btnAdd.Name = "btnAdd";
 			this.btnAdd.Size = new System.Drawing.Size(63, 33);
-			this.btnAdd.TabIndex = 16;
+			this.btnAdd.TabIndex = 1;
 			this.btnAdd.Text = "->";
 			this.btnAdd.UseVisualStyleBackColor = true;
 			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
@@ -113,7 +114,7 @@
 			this.listBoxSelection.Name = "listBoxSelection";
 			this.listBoxSelection.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.listBoxSelection.Size = new System.Drawing.Size(150, 412);
-			this.listBoxSelection.TabIndex = 13;
+			this.listBoxSelection.TabIndex = 3;
 			// 
 			// listBoxCandidates
 			// 
@@ -123,13 +124,27 @@
 			this.listBoxCandidates.Name = "listBoxCandidates";
 			this.listBoxCandidates.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.listBoxCandidates.Size = new System.Drawing.Size(150, 412);
-			this.listBoxCandidates.TabIndex = 12;
+			this.listBoxCandidates.TabIndex = 0;
+			// 
+			// btnCancel
+			// 
+			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.btnCancel.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnCancel.Location = new System.Drawing.Point(338, 527);
+			this.btnCancel.Name = "btnCancel";
+			this.btnCancel.Size = new System.Drawing.Size(100, 29);
+			this.btnCancel.TabIndex = 2;
+			this.btnCancel.Text = "取消";
+			this.btnCancel.UseVisualStyleBackColor = true;
+			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
 			// 
 			// frmCustomizeOne
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.btnCancel;
 			this.ClientSize = new System.Drawing.Size(461, 582);
+			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.btnOK);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -154,6 +169,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ListBox listBoxSelection;
 		private System.Windows.Forms.ListBox listBoxCandidates;
+		private System.Windows.Forms.Button btnCancel;
 
 	}
 }

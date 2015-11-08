@@ -319,6 +319,11 @@ namespace Reporting
 		private void InitImportWJFLPanel() {
 			this.lblImportWJFLPath.Text = "";
 		}
+
+		private void menuImport_History_Click(object sender, EventArgs e) {
+			var form = new frmImportHistory();
+			form.Show();
+		}
 		#endregion
 
 		#region "Exit Menu"
@@ -562,31 +567,38 @@ namespace Reporting
 		}
 
 		private void btnSelectColumns_Click(object sender, EventArgs e) {
-			this.SelectedColumns.Clear();
-			this.SelectedColumns1.Clear();
-			this.SelectedColumns2.Clear();
 			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
 				var form = new frmCustomizeDQDK();
-				form.ShowDialog(this);
-				this.SelectedColumns1.AddRange(TableMapping.GetFrozenColumnNames("ImportPublic"));
-				this.SelectedColumns1.AddRange(form.PublicColumns);
-				this.SelectedColumns1.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
+				var result = form.ShowDialog(this);
+				if (result == System.Windows.Forms.DialogResult.OK) {
+					this.SelectedColumns1.Clear();
+					this.SelectedColumns2.Clear();
+					this.SelectedColumns1.AddRange(TableMapping.GetFrozenColumnNames("ImportPublic"));
+					this.SelectedColumns1.AddRange(form.PublicColumns);
+					this.SelectedColumns1.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
 
-				this.SelectedColumns2.AddRange(TableMapping.GetFrozenColumnNames("ImportPrivate"));
-				this.SelectedColumns2.AddRange(form.PrivateColumns);
-				this.SelectedColumns2.AddRange(new string[] { "彻底从我行退出", "倒贷", "展期", "逾期", "化解方案" });
+					this.SelectedColumns2.AddRange(TableMapping.GetFrozenColumnNames("ImportPrivate"));
+					this.SelectedColumns2.AddRange(form.PrivateColumns);
+					this.SelectedColumns2.AddRange(new string[] { "彻底从我行退出", "倒贷", "展期", "逾期", "化解方案" });
+				}
 			}
 			else if (this.currentReport == XEnum.ReportType.C_XZDKMX_D) {
 				var form = new frmCustomizeOne() { MappingTable = Consts.C_XZDKMX_D, FormTitle = "新增贷款明细表自定义" };
-				form.ShowDialog(this);
-				this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns(Consts.C_XZDKMX_D));
-				this.SelectedColumns.AddRange(form.Columns);
+				var result = form.ShowDialog(this);
+				if (result == System.Windows.Forms.DialogResult.OK) {
+					this.SelectedColumns.Clear();
+					this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns(Consts.C_XZDKMX_D));
+					this.SelectedColumns.AddRange(form.Columns);
+				}
 			}
 			else if (this.currentReport == XEnum.ReportType.C_JQDKMX_D) {
 				var form = new frmCustomizeOne() { MappingTable = Consts.C_JQDKMX_D, FormTitle = "结清贷款明细表自定义" };
-				form.ShowDialog(this);
-				this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns(Consts.C_JQDKMX_D));
-				this.SelectedColumns.AddRange(form.Columns);
+				var result = form.ShowDialog(this);
+				if (result == System.Windows.Forms.DialogResult.OK) {
+					this.SelectedColumns.Clear();
+					this.SelectedColumns.AddRange(TableMapping.GetFrozenColumns(Consts.C_JQDKMX_D));
+					this.SelectedColumns.AddRange(form.Columns);
+				}
 			}
 		}
 

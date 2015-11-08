@@ -88,6 +88,11 @@ namespace Reporting
 			foreach (TableMapping itm in listBoxPrivateSelection.Items) {
 				this.PrivateColumns.Add(itm.ColName);
 			}
+			this.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.Close();
+		}
+
+		private void btnCancel_Click(object sender, EventArgs e) {
 			this.Close();
 		}
 	}

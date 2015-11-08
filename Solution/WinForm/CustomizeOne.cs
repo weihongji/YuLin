@@ -72,7 +72,11 @@ namespace Reporting
 			foreach (TableMapping item in listBoxSelection.Items) {
 				this.Columns.Add(item);
 			}
+			this.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.Close();
+		}
 
+		private void btnCancel_Click(object sender, EventArgs e) {
 			this.Close();
 		}
 	}

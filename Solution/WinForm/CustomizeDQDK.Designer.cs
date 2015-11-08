@@ -40,6 +40,7 @@
 			this.label4 = new System.Windows.Forms.Label();
 			this.listBoxPrivateSelection = new System.Windows.Forms.ListBox();
 			this.listBoxPrivateCandidates = new System.Windows.Forms.ListBox();
+			this.btnCancel = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -47,10 +48,10 @@
 			// btnOK
 			// 
 			this.btnOK.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnOK.Location = new System.Drawing.Point(402, 527);
+			this.btnOK.Location = new System.Drawing.Point(579, 527);
 			this.btnOK.Name = "btnOK";
 			this.btnOK.Size = new System.Drawing.Size(115, 33);
-			this.btnOK.TabIndex = 7;
+			this.btnOK.TabIndex = 2;
 			this.btnOK.Text = "确定";
 			this.btnOK.UseVisualStyleBackColor = true;
 			this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -67,7 +68,7 @@
 			this.groupBox1.Location = new System.Drawing.Point(19, 20);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(417, 490);
-			this.groupBox1.TabIndex = 12;
+			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "对公数据列";
 			// 
@@ -77,7 +78,7 @@
 			this.btnPublicRemove.Location = new System.Drawing.Point(174, 221);
 			this.btnPublicRemove.Name = "btnPublicRemove";
 			this.btnPublicRemove.Size = new System.Drawing.Size(63, 33);
-			this.btnPublicRemove.TabIndex = 17;
+			this.btnPublicRemove.TabIndex = 2;
 			this.btnPublicRemove.Text = "<-";
 			this.btnPublicRemove.UseVisualStyleBackColor = true;
 			this.btnPublicRemove.Click += new System.EventHandler(this.btnPublicRemove_Click);
@@ -88,7 +89,7 @@
 			this.btnPublicAdd.Location = new System.Drawing.Point(174, 161);
 			this.btnPublicAdd.Name = "btnPublicAdd";
 			this.btnPublicAdd.Size = new System.Drawing.Size(63, 33);
-			this.btnPublicAdd.TabIndex = 16;
+			this.btnPublicAdd.TabIndex = 1;
 			this.btnPublicAdd.Text = "->";
 			this.btnPublicAdd.UseVisualStyleBackColor = true;
 			this.btnPublicAdd.Click += new System.EventHandler(this.btnPublicAdd_Click);
@@ -121,7 +122,7 @@
 			this.listBoxPublicSelection.Name = "listBoxPublicSelection";
 			this.listBoxPublicSelection.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.listBoxPublicSelection.Size = new System.Drawing.Size(150, 412);
-			this.listBoxPublicSelection.TabIndex = 13;
+			this.listBoxPublicSelection.TabIndex = 3;
 			// 
 			// listBoxPublicCandidates
 			// 
@@ -131,7 +132,7 @@
 			this.listBoxPublicCandidates.Name = "listBoxPublicCandidates";
 			this.listBoxPublicCandidates.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.listBoxPublicCandidates.Size = new System.Drawing.Size(150, 412);
-			this.listBoxPublicCandidates.TabIndex = 12;
+			this.listBoxPublicCandidates.TabIndex = 0;
 			// 
 			// groupBox2
 			// 
@@ -145,7 +146,7 @@
 			this.groupBox2.Location = new System.Drawing.Point(472, 20);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(417, 490);
-			this.groupBox2.TabIndex = 12;
+			this.groupBox2.TabIndex = 1;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "个人数据列";
 			// 
@@ -155,7 +156,7 @@
 			this.btnPrivateRemove.Location = new System.Drawing.Point(174, 221);
 			this.btnPrivateRemove.Name = "btnPrivateRemove";
 			this.btnPrivateRemove.Size = new System.Drawing.Size(63, 33);
-			this.btnPrivateRemove.TabIndex = 17;
+			this.btnPrivateRemove.TabIndex = 2;
 			this.btnPrivateRemove.Text = "<-";
 			this.btnPrivateRemove.UseVisualStyleBackColor = true;
 			this.btnPrivateRemove.Click += new System.EventHandler(this.btnPrivateRemove_Click);
@@ -166,7 +167,7 @@
 			this.btnPrivateAdd.Location = new System.Drawing.Point(174, 161);
 			this.btnPrivateAdd.Name = "btnPrivateAdd";
 			this.btnPrivateAdd.Size = new System.Drawing.Size(63, 33);
-			this.btnPrivateAdd.TabIndex = 16;
+			this.btnPrivateAdd.TabIndex = 1;
 			this.btnPrivateAdd.Text = "->";
 			this.btnPrivateAdd.UseVisualStyleBackColor = true;
 			this.btnPrivateAdd.Click += new System.EventHandler(this.btnPrivateAdd_Click);
@@ -199,7 +200,7 @@
 			this.listBoxPrivateSelection.Name = "listBoxPrivateSelection";
 			this.listBoxPrivateSelection.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.listBoxPrivateSelection.Size = new System.Drawing.Size(150, 412);
-			this.listBoxPrivateSelection.TabIndex = 13;
+			this.listBoxPrivateSelection.TabIndex = 3;
 			// 
 			// listBoxPrivateCandidates
 			// 
@@ -209,13 +210,26 @@
 			this.listBoxPrivateCandidates.Name = "listBoxPrivateCandidates";
 			this.listBoxPrivateCandidates.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.listBoxPrivateCandidates.Size = new System.Drawing.Size(150, 412);
-			this.listBoxPrivateCandidates.TabIndex = 12;
+			this.listBoxPrivateCandidates.TabIndex = 0;
+			// 
+			// btnCancel
+			// 
+			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.btnCancel.Location = new System.Drawing.Point(754, 527);
+			this.btnCancel.Name = "btnCancel";
+			this.btnCancel.Size = new System.Drawing.Size(115, 33);
+			this.btnCancel.TabIndex = 3;
+			this.btnCancel.Text = "取消";
+			this.btnCancel.UseVisualStyleBackColor = true;
+			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
 			// 
 			// frmCustomizeDQDK
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.btnCancel;
 			this.ClientSize = new System.Drawing.Size(914, 582);
+			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.btnOK);
@@ -250,6 +264,7 @@
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.ListBox listBoxPrivateSelection;
 		private System.Windows.Forms.ListBox listBoxPrivateCandidates;
+		private System.Windows.Forms.Button btnCancel;
 
 	}
 }
