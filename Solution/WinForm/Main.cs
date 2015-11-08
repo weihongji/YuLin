@@ -391,6 +391,9 @@ namespace Reporting
 			}
 
 			this.lblReportTitle.Text = report.Name;
+			this.SelectedColumns.Clear();
+			this.SelectedColumns1.Clear();
+			this.SelectedColumns2.Clear();
 			ShowAsOfDate2();
 			ShowSelectColumnButton();
 
@@ -583,7 +586,7 @@ namespace Reporting
 				}
 			}
 			else if (this.currentReport == XEnum.ReportType.C_XZDKMX_D) {
-				var form = new frmCustomizeOne() { MappingTable = Consts.C_XZDKMX_D, FormTitle = "新增贷款明细表自定义" };
+				var form = new frmCustomizeOne(this.SelectedColumns) { MappingTable = Consts.C_XZDKMX_D, FormTitle = "新增贷款明细表自定义" };
 				var result = form.ShowDialog(this);
 				if (result == System.Windows.Forms.DialogResult.OK) {
 					this.SelectedColumns.Clear();
@@ -592,7 +595,7 @@ namespace Reporting
 				}
 			}
 			else if (this.currentReport == XEnum.ReportType.C_JQDKMX_D) {
-				var form = new frmCustomizeOne() { MappingTable = Consts.C_JQDKMX_D, FormTitle = "结清贷款明细表自定义" };
+				var form = new frmCustomizeOne(this.SelectedColumns) { MappingTable = Consts.C_JQDKMX_D, FormTitle = "结清贷款明细表自定义" };
 				var result = form.ShowDialog(this);
 				if (result == System.Windows.Forms.DialogResult.OK) {
 					this.SelectedColumns.Clear();

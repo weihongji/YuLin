@@ -107,7 +107,7 @@
 			this.ClientSize = new System.Drawing.Size(684, 562);
 			this.Controls.Add(this.panelData);
 			this.Controls.Add(this.panelCommand);
-			this.MinimumSize = new System.Drawing.Size(700, 400);
+			this.MinimumSize = new System.Drawing.Size(400, 300);
 			this.Name = "frmImportHistory";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "数据导入查询";
