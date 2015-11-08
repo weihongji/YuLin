@@ -80,7 +80,7 @@
 			this.lblImportPublic = new System.Windows.Forms.Label();
 			this.lblImportLoan = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
-			this.btnImportOK = new System.Windows.Forms.Button();
+			this.btnImport = new System.Windows.Forms.Button();
 			this.btnImportYWWai = new System.Windows.Forms.Button();
 			this.label15 = new System.Windows.Forms.Label();
 			this.btnImportYWNei = new System.Windows.Forms.Button();
@@ -193,21 +193,21 @@
 			// menuImport_Source
 			// 
 			this.menuImport_Source.Name = "menuImport_Source";
-			this.menuImport_Source.Size = new System.Drawing.Size(152, 22);
+			this.menuImport_Source.Size = new System.Drawing.Size(148, 22);
 			this.menuImport_Source.Text = "基础数据 (&B)";
 			this.menuImport_Source.Click += new System.EventHandler(this.menuImport_Source_Click);
 			// 
 			// menuImport_WJFL
 			// 
 			this.menuImport_WJFL.Name = "menuImport_WJFL";
-			this.menuImport_WJFL.Size = new System.Drawing.Size(152, 22);
+			this.menuImport_WJFL.Size = new System.Drawing.Size(148, 22);
 			this.menuImport_WJFL.Text = "五级分类 (&W)";
 			this.menuImport_WJFL.Click += new System.EventHandler(this.menuImport_WJFL_Click);
 			// 
 			// menuImport_History
 			// 
 			this.menuImport_History.Name = "menuImport_History";
-			this.menuImport_History.Size = new System.Drawing.Size(152, 22);
+			this.menuImport_History.Size = new System.Drawing.Size(148, 22);
 			this.menuImport_History.Text = "导入查询 (&V)";
 			this.menuImport_History.Click += new System.EventHandler(this.menuImport_History_Click);
 			// 
@@ -438,27 +438,27 @@
             this.menuReport_C_XZDKMX_D,
             this.menuReport_C_JQDKMX_D});
 			this.menuReport_C.Name = "menuReport_C";
-			this.menuReport_C.Size = new System.Drawing.Size(112, 21);
+			this.menuReport_C.Size = new System.Drawing.Size(100, 21);
 			this.menuReport_C.Text = "自定义报表 (&C)";
 			// 
 			// menuReport_C_DQDKQK_M
 			// 
 			this.menuReport_C_DQDKQK_M.Name = "menuReport_C_DQDKQK_M";
-			this.menuReport_C_DQDKQK_M.Size = new System.Drawing.Size(184, 22);
+			this.menuReport_C_DQDKQK_M.Size = new System.Drawing.Size(160, 22);
 			this.menuReport_C_DQDKQK_M.Text = "到期贷款情况";
 			this.menuReport_C_DQDKQK_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C_XZDKMX_D
 			// 
 			this.menuReport_C_XZDKMX_D.Name = "menuReport_C_XZDKMX_D";
-			this.menuReport_C_XZDKMX_D.Size = new System.Drawing.Size(184, 22);
+			this.menuReport_C_XZDKMX_D.Size = new System.Drawing.Size(160, 22);
 			this.menuReport_C_XZDKMX_D.Text = "新增贷款明细表";
 			this.menuReport_C_XZDKMX_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C_JQDKMX_D
 			// 
 			this.menuReport_C_JQDKMX_D.Name = "menuReport_C_JQDKMX_D";
-			this.menuReport_C_JQDKMX_D.Size = new System.Drawing.Size(184, 22);
+			this.menuReport_C_JQDKMX_D.Size = new System.Drawing.Size(160, 22);
 			this.menuReport_C_JQDKMX_D.Text = "结清贷款明细表";
 			this.menuReport_C_JQDKMX_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
@@ -486,7 +486,7 @@
 			this.panelImport.Controls.Add(this.lblImportPublic);
 			this.panelImport.Controls.Add(this.lblImportLoan);
 			this.panelImport.Controls.Add(this.label7);
-			this.panelImport.Controls.Add(this.btnImportOK);
+			this.panelImport.Controls.Add(this.btnImport);
 			this.panelImport.Controls.Add(this.btnImportYWWai);
 			this.panelImport.Controls.Add(this.label15);
 			this.panelImport.Controls.Add(this.btnImportYWNei);
@@ -610,16 +610,16 @@
 			this.label7.TabIndex = 0;
 			this.label7.Text = "导入源数据表";
 			// 
-			// btnImportOK
+			// btnImport
 			// 
-			this.btnImportOK.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.btnImportOK.Location = new System.Drawing.Point(204, 428);
-			this.btnImportOK.Name = "btnImportOK";
-			this.btnImportOK.Size = new System.Drawing.Size(130, 40);
-			this.btnImportOK.TabIndex = 18;
-			this.btnImportOK.Text = "导入 (&I)";
-			this.btnImportOK.UseVisualStyleBackColor = true;
-			this.btnImportOK.Click += new System.EventHandler(this.btnImportOK_Click);
+			this.btnImport.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.btnImport.Location = new System.Drawing.Point(204, 428);
+			this.btnImport.Name = "btnImport";
+			this.btnImport.Size = new System.Drawing.Size(130, 40);
+			this.btnImport.TabIndex = 18;
+			this.btnImport.Text = "导入 (&I)";
+			this.btnImport.UseVisualStyleBackColor = true;
+			this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
 			// 
 			// btnImportYWWai
 			// 
@@ -1091,7 +1091,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Button btnImportOK;
+		private System.Windows.Forms.Button btnImport;
 		private System.Windows.Forms.Panel panelReport;
 		private System.Windows.Forms.Label lblReportTitle;
 		private System.Windows.Forms.Button btnExport;

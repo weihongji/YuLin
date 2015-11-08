@@ -125,7 +125,7 @@ namespace Reporting
 			this.lblImportYWWai.Text = "";
 		}
 
-		private void btnImportOK_Click(object sender, EventArgs e) {
+		private void btnImport_Click(object sender, EventArgs e) {
 			DateTime asOfDate;
 			if (IsValidToImport(out asOfDate)) {
 				if (MessageBox.Show(string.Format("确定您导入的数据是{0}的吗？", asOfDate.ToString("yyyy-M-d")), this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
