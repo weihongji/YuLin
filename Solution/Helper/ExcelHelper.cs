@@ -323,7 +323,7 @@ namespace Reporting
 
 				bool dummyHeader = false;
 				int dummyHeaderRows = 0;
-				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D) {
+				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D || sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D) {
 					dummyHeader = true;
 					dummyHeaderRows = 1;
 				}
@@ -390,11 +390,10 @@ namespace Reporting
 					((Range)theSheet.Cells[footerRowFrom, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
 					((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
 				}
-				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D) {
-					for (int i = 2; i <= 15; i++) {
-						((Range)theSheet.Cells[footerRowFrom, i]).Value2 = string.Format("=SUM({0}{1}:{0}{2})", (char)(64 + i), dataRowFrom, footerRowFrom - 1);
+				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D || sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D) {
+					for (int i = 2; i <= sheet.Columns.Count; i++) {
+						((Range)theSheet.Cells[footerRowFrom, i]).Value2 = string.Format("=SUM({0}{1}:{0}{2})", GetColumnCharacters(i), dataRowFrom, footerRowFrom - 1);
 					}
-
 				}
 
 				if (sheet.TableId == (int)XEnum.ReportType.X_WJFL_M || sheet.TableId == (int)XEnum.ReportType.F_HYB_M) {
@@ -408,6 +407,20 @@ namespace Reporting
 					int dataRowStartIndex = sheet.RowsBeforeHeader + 1 + 1;
 					Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.RowHeight = 24;
+				}
+				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D) {
+					Range dataRange = theSheet.Range[theSheet.Cells[dataRowFrom, 1], theSheet.Cells[footerRowFrom, columnCount]];
+					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
+					dataRange.RowHeight = 24;
+					// amount & numbers
+					dataRange = theSheet.Range[theSheet.Cells[dataRowFrom, 2], theSheet.Cells[footerRowFrom, columnCount]];
+					dataRange.HorizontalAlignment = XlHAlign.xlHAlignRight;
+					
+					dataRange = theSheet.Range[theSheet.Cells[footerRowFrom, 1], theSheet.Cells[footerRowFrom, columnCount]];
+					dataRange.Interior.Color = System.Drawing.Color.FromArgb(192, 192, 192);
+
+					((Range)theSheet.Cells[footerRowFrom, 1]).Value2 = "总计";
+					((Range)theSheet.Cells[footerRowFrom, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
 				}
 				else if (sheet.TableId == (int)XEnum.ReportType.C_DQDKQK_M) {
 					columnCount = 2;
@@ -822,6 +835,22 @@ namespace Reporting
 				GC.Collect();
 			}
 			return string.Empty;
+		}
+
+		private static string GetColumnCharacters(int index) {
+			var s = "";
+			while (index > 0) {
+				int c = index%26;
+				if (c == 0) {
+					c = 26;
+				}
+				s = ((char)(64 + c)).ToString() + s;
+				index = (index - c)/26;
+			}
+			if (s == "") {
+				s = "A";
+			}
+			return s;
 		}
 
 		#region tests

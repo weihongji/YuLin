@@ -269,7 +269,6 @@
 			this.menuReport_X_FXDKBH_D.Name = "menuReport_X_FXDKBH_D";
 			this.menuReport_X_FXDKBH_D.Size = new System.Drawing.Size(280, 22);
 			this.menuReport_X_FXDKBH_D.Text = "风险贷款变化情况表";
-			this.menuReport_X_FXDKBH_D.Visible = false;
 			this.menuReport_X_FXDKBH_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_SZHZ_M
@@ -618,7 +617,7 @@
 			this.btnImportOK.Name = "btnImportOK";
 			this.btnImportOK.Size = new System.Drawing.Size(130, 40);
 			this.btnImportOK.TabIndex = 18;
-			this.btnImportOK.Text = "导入";
+			this.btnImportOK.Text = "导入 (&I)";
 			this.btnImportOK.UseVisualStyleBackColor = true;
 			this.btnImportOK.Click += new System.EventHandler(this.btnImportOK_Click);
 			// 
@@ -910,7 +909,7 @@
 			this.btnExport.Name = "btnExport";
 			this.btnExport.Size = new System.Drawing.Size(130, 40);
 			this.btnExport.TabIndex = 3;
-			this.btnExport.Text = "导     出";
+			this.btnExport.Text = "导出 (&E)";
 			this.btnExport.UseVisualStyleBackColor = true;
 			this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
 			// 
@@ -953,7 +952,7 @@
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(138, 21);
 			this.label14.TabIndex = 1;
-			this.label14.Text = "系统版本：1.0.0.2";
+			this.label14.Text = "系统版本：1.0.0.3";
 			// 
 			// label8
 			// 
