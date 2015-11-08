@@ -62,6 +62,8 @@ namespace Reporting
 		}
 
 		private void Main_Load(object sender, EventArgs e) {
+ 			this.calendarImport.Left = 206;
+			this.calendarImport.Visible = false;
 			this.btnSelectColumns.Visible = false;
 
 			var defaultPanel = ConfigurationManager.AppSettings["defaultScreen"] ?? "about";
@@ -123,6 +125,7 @@ namespace Reporting
 			this.lblImportOverdue.Text = "";
 			this.lblImportYWNei.Text = "";
 			this.lblImportYWWai.Text = "";
+			this.txtImportDate.Text = "";
 		}
 
 		private void btnImport_Click(object sender, EventArgs e) {
@@ -149,6 +152,7 @@ namespace Reporting
 						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
 						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
 						ShowInfo(string.Format("{0}的数据导入完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
+						InitImportPanel();
 					}
 					else {
 						ShowError("导入发生错误");
@@ -185,12 +189,30 @@ namespace Reporting
 				return false;
 			}
 
+			if (this.lblImportLoan.Text.Length > 0) {
+				DateTime dt = DateHelper.Look4Date(this.lblImportLoan.Text);
+				if (dt.Year > 2000) {
+					if (dt != asOfDate) {
+						ShowStop("《贷款欠款查询》的文件命名显示日期与所选的数据日期不一致。\r\n请检查输入的数据日期是否正确。");
+						this.txtImportDate.Focus();
+						return false;
+					}
+				}
+			}
+
 			return true;
 		}
 
 		private void btnImportLoan_Click(object sender, EventArgs e) {
 			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
 				this.lblImportLoan.Text = this.openFileDialog1.FileName;
+				// Guess date from file name, like 贷款欠款查询_806050000_20151007.xls
+				DateTime dt = DateHelper.Look4Date(this.openFileDialog1.FileName);
+				if (dt.Year > 2000) {
+					if (this.txtImportDate.Text == "") {
+						this.txtImportDate.Text = dt.ToString("yyyy-M-d");
+					}
+				}
 			}
 			else {
 				this.lblImportLoan.Text = "";
@@ -632,6 +654,34 @@ namespace Reporting
 		private void ShowError(string msg) {
 			MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
+		#endregion
+
+		#region Calendar
+
+		private void btnCalendarImport_Click(object sender, EventArgs e) {
+			this.calendarImport.Show();
+			this.calendarImport.Focus();
+		}
+
+		private void calendarImport_DateSelected(object sender, DateRangeEventArgs e) {
+			this.txtImportDate.Text = this.calendarImport.SelectionStart.ToString("yyyy-M-d");
+			this.calendarImport.Hide();
+		}
+
+		private void calendarImport_Leave(object sender, EventArgs e) {
+			this.calendarImport.Hide();
+		}
+
+		private void panelImport_Click(object sender, EventArgs e) {
+			this.calendarImport.Hide();
+		}
+
+		private void calendarImport_KeyDown(object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Escape) {
+				this.calendarImport.Hide();
+			}
+		}
+
 		#endregion
 	}
 }

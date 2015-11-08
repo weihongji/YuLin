@@ -69,7 +69,9 @@
 			this.menuReport_C_JQDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
 			this.panelImport = new System.Windows.Forms.Panel();
-			this.txtImportDate = new System.Windows.Forms.DateTimePicker();
+			this.btnCalendarImport = new System.Windows.Forms.Button();
+			this.txtImportDate = new System.Windows.Forms.TextBox();
+			this.calendarImport = new System.Windows.Forms.MonthCalendar();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.label10 = new System.Windows.Forms.Label();
 			this.lblImportYWWai = new System.Windows.Forms.Label();
@@ -476,7 +478,9 @@
 			// 
 			// panelImport
 			// 
+			this.panelImport.Controls.Add(this.btnCalendarImport);
 			this.panelImport.Controls.Add(this.txtImportDate);
+			this.panelImport.Controls.Add(this.calendarImport);
 			this.panelImport.Controls.Add(this.flowLayoutPanel1);
 			this.panelImport.Controls.Add(this.lblImportYWWai);
 			this.panelImport.Controls.Add(this.lblImportYWNei);
@@ -507,16 +511,35 @@
 			this.panelImport.Name = "panelImport";
 			this.panelImport.Size = new System.Drawing.Size(694, 583);
 			this.panelImport.TabIndex = 0;
+			this.panelImport.Click += new System.EventHandler(this.panelImport_Click);
+			// 
+			// btnCalendarImport
+			// 
+			this.btnCalendarImport.Location = new System.Drawing.Point(314, 113);
+			this.btnCalendarImport.Name = "btnCalendarImport";
+			this.btnCalendarImport.Size = new System.Drawing.Size(75, 23);
+			this.btnCalendarImport.TabIndex = 3;
+			this.btnCalendarImport.Text = "选择日期";
+			this.btnCalendarImport.UseVisualStyleBackColor = true;
+			this.btnCalendarImport.Click += new System.EventHandler(this.btnCalendarImport_Click);
 			// 
 			// txtImportDate
 			// 
-			this.txtImportDate.CustomFormat = "yyyy-M-d";
-			this.txtImportDate.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.txtImportDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+			this.txtImportDate.BackColor = System.Drawing.SystemColors.Window;
 			this.txtImportDate.Location = new System.Drawing.Point(208, 114);
 			this.txtImportDate.Name = "txtImportDate";
-			this.txtImportDate.Size = new System.Drawing.Size(110, 23);
-			this.txtImportDate.TabIndex = 19;
+			this.txtImportDate.ReadOnly = true;
+			this.txtImportDate.Size = new System.Drawing.Size(100, 21);
+			this.txtImportDate.TabIndex = 2;
+			// 
+			// calendarImport
+			// 
+			this.calendarImport.Location = new System.Drawing.Point(2060, 140);
+			this.calendarImport.Name = "calendarImport";
+			this.calendarImport.TabIndex = 4;
+			this.calendarImport.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calendarImport_DateSelected);
+			this.calendarImport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.calendarImport_KeyDown);
+			this.calendarImport.Leave += new System.EventHandler(this.calendarImport_Leave);
 			// 
 			// flowLayoutPanel1
 			// 
@@ -1147,6 +1170,9 @@
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_DQDKQK_M;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_JQDKMX_D;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_XZDKMX_D;
+		private System.Windows.Forms.Button btnCalendarImport;
+		private System.Windows.Forms.TextBox txtImportDate;
+		private System.Windows.Forms.MonthCalendar calendarImport;
 		private System.Windows.Forms.Panel panelAbout;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.Label label14;
@@ -1163,7 +1189,6 @@
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.Button btnSelectColumns;
 		private System.Windows.Forms.ComboBox cmbReportMonth2;
-		private System.Windows.Forms.DateTimePicker txtImportDate;
 		private System.Windows.Forms.ToolStripMenuItem menuImport_History;
 
 
