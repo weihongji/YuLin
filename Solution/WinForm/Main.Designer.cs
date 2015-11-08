@@ -67,7 +67,6 @@
 			this.menuReport_C_DQDKQK_M = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C_XZDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C_JQDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuReport_C_FXDKBH_D = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
 			this.panelImport = new System.Windows.Forms.Panel();
 			this.txtImportDate = new System.Windows.Forms.DateTimePicker();
@@ -438,11 +437,10 @@
 			this.menuReport_C.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuReport_C_DQDKQK_M,
             this.menuReport_C_XZDKMX_D,
-            this.menuReport_C_JQDKMX_D,
-            this.menuReport_C_FXDKBH_D});
+            this.menuReport_C_JQDKMX_D});
 			this.menuReport_C.Name = "menuReport_C";
 			this.menuReport_C.Size = new System.Drawing.Size(112, 21);
-			this.menuReport_C.Text = "信贷数据需求 (&C)";
+			this.menuReport_C.Text = "自定义报表 (&C)";
 			// 
 			// menuReport_C_DQDKQK_M
 			// 
@@ -464,14 +462,6 @@
 			this.menuReport_C_JQDKMX_D.Size = new System.Drawing.Size(184, 22);
 			this.menuReport_C_JQDKMX_D.Text = "结清贷款明细表";
 			this.menuReport_C_JQDKMX_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
-			// 
-			// menuReport_C_FXDKBH_D
-			// 
-			this.menuReport_C_FXDKBH_D.Name = "menuReport_C_FXDKBH_D";
-			this.menuReport_C_FXDKBH_D.Size = new System.Drawing.Size(184, 22);
-			this.menuReport_C_FXDKBH_D.Text = "风险贷款变化情况表";
-			this.menuReport_C_FXDKBH_D.Visible = false;
-			this.menuReport_C_FXDKBH_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// panelContent
 			// 
@@ -1158,7 +1148,6 @@
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_DQDKQK_M;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_JQDKMX_D;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_XZDKMX_D;
-		private System.Windows.Forms.ToolStripMenuItem menuReport_C_FXDKBH_D;
 		private System.Windows.Forms.Panel panelAbout;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.Label label14;

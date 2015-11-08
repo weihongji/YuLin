@@ -57,7 +57,6 @@ namespace Reporting
 			C_DQDKQK_M = 61,		// 到期贷款情况
 			C_XZDKMX_D = 62,		// 新增贷款明细表
 			C_JQDKMX_D = 63,		// 结清贷款明细表
-			C_FXDKBH_D = 64,		// 风险贷款变化情况表
 		}
 
 		public enum ImportState
