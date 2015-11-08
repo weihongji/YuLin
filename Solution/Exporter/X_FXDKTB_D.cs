@@ -8,10 +8,10 @@ using System.Data.SqlClient;
 
 namespace Reporting
 {
-	public class X_FXDKTB : BaseReport
+	public class X_FXDKTB_D : BaseReport
 	{
 
-		public X_FXDKTB(DateTime asOfDate)
+		public X_FXDKTB_D(DateTime asOfDate)
 			: base(asOfDate) {
 		}
 
@@ -40,7 +40,7 @@ namespace Reporting
 			var oleConn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + filePath + ";Extended Properties=Excel 8.0");
 			Logger.Debug("Openning connction to " + filePath);
 			oleConn.Open();
-			var sql = string.Format("EXEC spX_FXDKTB '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
+			var sql = string.Format("EXEC spX_FXDKTB_D '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
 			var dao = new SqlDbHelper();
 			Logger.Debug("Running " + sql);
 			var reader = dao.ExecuteReader(sql);

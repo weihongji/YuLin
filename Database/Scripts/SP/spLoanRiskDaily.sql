@@ -1,9 +1,9 @@
-IF EXISTS(SELECT * FROM sys.procedures WHERE name = 'spX_FXDKTB') BEGIN
-	DROP PROCEDURE spX_FXDKTB
+IF EXISTS(SELECT * FROM sys.procedures WHERE name = 'spLoanRiskDaily') BEGIN
+	DROP PROCEDURE spLoanRiskDaily
 END
 GO
 
-CREATE PROCEDURE spX_FXDKTB
+CREATE PROCEDURE spLoanRiskDaily
 	@asOfDate as smalldatetime
 AS
 BEGIN
@@ -11,6 +11,7 @@ BEGIN
 
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
+	DECLARE @importIdWJFL int = dbo.sfGetImportIdWJFL(@asOfDate)
 
 	SELECT OrgNo, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number, SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) AS OweInterest INTO #Total FROM ImportLoan
 	WHERE ImportId = @importId
@@ -23,7 +24,9 @@ BEGIN
 
 	SELECT OrgNo, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #BLDK FROM ImportLoan
 	WHERE ImportId = @importId
-		AND DangerLevel IN ('次级', '可疑', '损失')
+		AND LoanAccount IN (
+			SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdWJFL AND DangerLevel IN ('次级', '可疑', '损失')
+		)
 	GROUP BY OrgNo
 
 	SELECT OrgNo, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #ZQX FROM ImportLoan
@@ -32,7 +35,7 @@ BEGIN
 			AND OweYingShouInterest + OweCuiShouInterest != 0
 	GROUP BY OrgNo
 
-	SELECT O.Alias1, ISNULL(T.Number, 0) AS Total_Count, CAST(ROUND(ISNULL(T.Amount/10000, 0), 2) AS decimal(10, 2)) AS Total_Amount, CAST(ROUND(ISNULL(T.OweInterest/10000, 0), 2) AS decimal(10, 2)) AS Total_Interest
+	SELECT O.Number AS OrgNo, O.Alias1 AS OrgName, ISNULL(T.Number, 0) AS Total_Count, CAST(ROUND(ISNULL(T.Amount/10000, 0), 2) AS decimal(10, 2)) AS Total_Amount, CAST(ROUND(ISNULL(T.OweInterest/10000, 0), 2) AS decimal(10, 2)) AS Total_Interest
 		, ISNULL(Y.Number, 0) AS YQ_Count, CAST(ROUND(ISNULL(Y.Amount/10000, 0), 2) AS decimal(10, 2)) AS YQ_Amount
 		, ISNULL(B.Number, 0) AS BLDK_Count, CAST(ROUND(ISNULL(B.Amount/10000, 0), 2) AS decimal(10, 2)) AS BLDK_Amount
 		, ISNULL(Z.Number, 0) AS ZQX_Count, CAST(ROUND(ISNULL(Z.Amount/10000, 0), 2) AS decimal(10, 2)) AS ZQX_Amount
@@ -45,12 +48,12 @@ BEGIN
 	WHERE Y.Number > 0 OR B.Number > 0 OR Z.Number > 0
 		AND NOT(O.Name LIKE '%神木%' OR O.Name LIKE '%府谷%')
 
-	SELECT Alias1 AS OrgName, Total_Amount
-		, YQ_Count, YQ_Amount, YQ_Amount/Total_Amount AS YQ_Percentage
-		, BLDK_Count, BLDK_Amount, BLDK_Amount/Total_Amount AS BLDK_Percentage
-		, ZQX_Count, ZQX_Amount, ZQX_Amount/Total_Amount AS ZQX_Percentage
-		, Total_Interest
-		, Y_B_Count = YQ_Count + BLDK_Count, Y_B_Amount = YQ_Amount + BLDK_Amount, Y_B_Percentage = (YQ_Amount + BLDK_Amount)/Total_Amount
-	FROM #Result
+	IF NOT EXISTS(SELECT * FROM sys.tables WHERE name = 'Shell_LoanRisk') BEGIN
+		SELECT * INTO Shell_LoanRisk FROM #Result WHERE 1 = 2
+	END
+
+	IF @asOfDate > '2015-01-01' BEGIN
+		SELECT * FROM #Result
+	END
 END
 

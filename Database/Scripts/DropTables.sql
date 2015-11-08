@@ -89,3 +89,7 @@ END
 IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Shell_WJFL')) BEGIN
 	DROP TABLE Shell_WJFL
 END
+
+IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Shell_LoanRisk')) BEGIN
+	DROP TABLE Shell_LoanRisk
+END

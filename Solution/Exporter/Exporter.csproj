@@ -68,7 +68,7 @@
     <Compile Include="ImportLoanDaily.cs" />
     <Compile Include="C_XZDKMX_D.cs" />
     <Compile Include="C_DQDKQK_M.cs" />
-    <Compile Include="X_FXDKTB.cs" />
+    <Compile Include="X_FXDKTB_D.cs" />
     <Compile Include="SF6301_141.cs" />
     <Compile Include="SF6401_141.cs" />
     <Compile Include="GF0107_141.cs" />
