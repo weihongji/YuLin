@@ -71,6 +71,9 @@ namespace Reporting
 				case XEnum.ReportType.C_JQDKMX_D:
 					result = new C_JQDKMX_D(this.AsOfDate, this.AsOfDate2, Columns).GenerateReport();
 					break;
+				case XEnum.ReportType.X_ZXQYZJXQ_S:
+					result = new X_ZXQYZJXQ_S(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;

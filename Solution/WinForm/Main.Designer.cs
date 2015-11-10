@@ -254,8 +254,7 @@
 			// 
 			this.menuReport_X_ZXQYZJXQ_S.Name = "menuReport_X_ZXQYZJXQ_S";
 			this.menuReport_X_ZXQYZJXQ_S.Size = new System.Drawing.Size(280, 22);
-			this.menuReport_X_ZXQYZJXQ_S.Text = "中小企业资金需求及银行业支持情况表";
-			this.menuReport_X_ZXQYZJXQ_S.Visible = false;
+			this.menuReport_X_ZXQYZJXQ_S.Text = "中小企业资金需求及银行业支持情况报表";
 			this.menuReport_X_ZXQYZJXQ_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_CSHSX_M
@@ -975,7 +974,7 @@
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(138, 21);
 			this.label14.TabIndex = 1;
-			this.label14.Text = "系统版本：1.0.0.3";
+			this.label14.Text = "系统版本：1.0.0.4";
 			// 
 			// label8
 			// 

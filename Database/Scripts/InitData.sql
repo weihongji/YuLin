@@ -421,7 +421,7 @@ IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (1, '风险贷款情况表（五级分类）', '榆林分行风险贷款情况表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (2, '风险贷款通报', '风险贷款通报.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (3, '榆林地区不良贷款监测旬报', '榆林地区不良贷款监测旬报.xls')
-	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (4, '中小企业资金需求及银行业支持情况表', '中小企业资金需求及银行业支持情况表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (4, '中小企业资金需求及银行业支持情况报表', '中小企业资金需求及银行业支持情况报表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (5, '城商行授信情况统计表', '城商行授信情况统计表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (6, '风险贷款变化情况表', '风险贷款变化情况表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (7, '榆林分行三张表汇总表', '榆林分行三张表汇总表.xls')
@@ -468,6 +468,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (19, 63, 2, '逾期', 2, 7, 14)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (20, 63, 3, '只欠息', 2, 7, 14)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (21, 6, 1, 'Sheet1', 5, 10, 10)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (22, 4, 1, 'Sheet1', 3, 10, 15)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -741,4 +742,15 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (21, 33, '时点2')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (21, 34, '比上日2')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (21, 35, '比上月2')
+
+	/* 中小企业资金需求及银行业支持情况报表 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 1, '序号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 2, '企业名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 3, '注册时间')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 4, '企业性质')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 5, '行业')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 6, '申请授信额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 7, '贷款用途')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 8, '2014年末发放余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (22, 9, '2015年上半年发放余额')
 END

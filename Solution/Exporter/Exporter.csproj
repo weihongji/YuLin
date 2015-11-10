@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseReport.cs" />
+    <Compile Include="X_ZXQYZJXQ_S.cs" />
     <Compile Include="X_FXDKBH_D.cs" />
     <Compile Include="C_JQDKMX_D.cs" />
     <Compile Include="ImportLoanDaily.cs" />

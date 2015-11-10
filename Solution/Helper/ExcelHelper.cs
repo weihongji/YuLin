@@ -356,9 +356,10 @@ namespace Reporting
 				//Totals
 				int dataRowFrom = sheet.RowsBeforeHeader + 2 - dummyHeaderRows;
 				int footerRowFrom = dataRowFrom + dataRowCount;
+				int footerRowTo = footerRowFrom + (sheet.FooterEndRow - sheet.FooterStartRow);
 
-				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D) {
-					// Copy the footer back
+				// Copy the footer back
+				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D || sheet.TableId == (int)XEnum.ReportType.X_ZXQYZJXQ_S) {
 					if (sheet.FooterStartRow > 0) {
 						theSheetTemplate.Activate();
 						oRange = (Range)theSheetTemplate.get_Range(string.Format("{0}:{1}", sheet.FooterStartRow, sheet.FooterEndRow));
@@ -500,6 +501,30 @@ namespace Reporting
 							((Range)theSheet.Cells[footerRowFrom, 11]).Value2 = "0.00";
 						}
 					}
+				}
+				else if (sheet.TableId == (int)XEnum.ReportType.X_ZXQYZJXQ_S) {
+					int dataRowStartIndex = sheet.RowsBeforeHeader + 1 + 1;
+					Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[footerRowTo, columnCount]];
+					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
+					dataRange.Font.Size = 10;
+
+					var lastYear = asOfDate.Year - 1;
+					var lastSeason = asOfDate.Month / 3;
+					if (lastSeason == 0) { // as_of_date = 2016-1-31
+						lastYear--;
+						lastSeason = 4;
+					}
+					var season = "";
+					if (lastSeason == 1 || lastSeason == 3) {
+						season = string.Format("{0}年度第{1}季度", lastYear + 1, lastSeason);
+					}
+					else {
+						season = string.Format("{0}年{1}半年发放余额", lastYear + 1, (lastSeason == 2 ? "上" : "下"));
+					}
+					((Range)theSheet.Cells[sheet.RowsBeforeHeader + 1, columnCount - 1]).Value2 = string.Format("{0}年末发放余额", lastYear);
+					((Range)theSheet.Cells[sheet.RowsBeforeHeader + 1, columnCount]).Value2 = season;
+
+					((Range)theSheet.Cells[1, 1]).Select();
 				}
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate, asOfDate2);

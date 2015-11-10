@@ -26,7 +26,7 @@ namespace Reporting
 			X_WJFL_M = 1,			// 风险贷款情况表（五级分类）
 			X_FXDKTB_D = 2,			// 风险贷款通报（日报）
 			X_BLDKJC_X = 3,			// 榆林地区不良贷款监测旬报（旬报）
-			X_ZXQYZJXQ_S = 4,		// 中小企业资金需求及银行业支持情况表（季报）
+			X_ZXQYZJXQ_S = 4,		// 中小企业资金需求及银行业支持情况报表（季报）
 			X_CSHSX_M = 5,			// 城商行授信情况统计表
 			X_FXDKBH_D = 6,			// 风险贷款变化情况表
 			X_SZHZ_M = 7,			// 榆林分行三张表汇总表（月报）
