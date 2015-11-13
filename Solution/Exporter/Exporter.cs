@@ -74,6 +74,9 @@ namespace Reporting
 				case XEnum.ReportType.X_ZXQYZJXQ_S:
 					result = new X_ZXQYZJXQ_S(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.X_DKZLFL_M:
+					result = new X_DKZLFL_M(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;

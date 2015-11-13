@@ -73,8 +73,8 @@ BEGIN
 		IF @danbaofangshi = '信用' BEGIN
 			SET @dangerLevel = (CASE
 					WHEN @days = 0 THEN '正常'
-					WHEN @days BETWEEN  1 AND 30 THEN '关注2'
-					WHEN @days BETWEEN 31 AND 60 THEN '关注3'
+					WHEN @days BETWEEN  1 AND 30 THEN '关注二'
+					WHEN @days BETWEEN 31 AND 60 THEN '关注三'
 					WHEN @days BETWEEN 61 AND 90 THEN '次级'
 					WHEN @days BETWEEN 91 AND 180 THEN '可疑'
 					WHEN @days BETWEEN 181 AND 360 THEN '可疑'
@@ -84,9 +84,9 @@ BEGIN
 		ELSE IF @danbaofangshi = '保证' BEGIN
 			SET @dangerLevel = (CASE
 					WHEN @days = 0 THEN '正常'
-					WHEN @days BETWEEN  1 AND 30 THEN '关注1'
-					WHEN @days BETWEEN 31 AND 60 THEN '关注2'
-					WHEN @days BETWEEN 61 AND 90 THEN '关注3'
+					WHEN @days BETWEEN  1 AND 30 THEN '关注一'
+					WHEN @days BETWEEN 31 AND 60 THEN '关注二'
+					WHEN @days BETWEEN 61 AND 90 THEN '关注三'
 					WHEN @days BETWEEN 91 AND 180 THEN '次级'
 					WHEN @days BETWEEN 181 AND 360 THEN '可疑'
 					WHEN @days > 361 THEN '损失' END
@@ -96,9 +96,9 @@ BEGIN
 			SET @dangerLevel = (CASE
 					WHEN @days = 0 THEN '正常'
 					WHEN @days BETWEEN  1 AND 30 THEN '正常'
-					WHEN @days BETWEEN 31 AND 60 THEN '关注1'
-					WHEN @days BETWEEN 61 AND 90 THEN '关注2'
-					WHEN @days BETWEEN 91 AND 180 THEN '关注3'
+					WHEN @days BETWEEN 31 AND 60 THEN '关注一'
+					WHEN @days BETWEEN 61 AND 90 THEN '关注二'
+					WHEN @days BETWEEN 91 AND 180 THEN '关注三'
 					WHEN @days BETWEEN 181 AND 360 THEN '次级'
 					WHEN @days BETWEEN 361 AND 540 THEN '可疑'
 					WHEN @days > 541 THEN '损失' END
@@ -109,8 +109,8 @@ BEGIN
 					WHEN @days = 0 THEN '正常'
 					WHEN @days BETWEEN  1 AND 30 THEN '正常'
 					WHEN @days BETWEEN 31 AND 60 THEN '正常'
-					WHEN @days BETWEEN 61 AND 90 THEN '关注2'
-					WHEN @days BETWEEN 91 AND 180 THEN '关注3'
+					WHEN @days BETWEEN 61 AND 90 THEN '关注二'
+					WHEN @days BETWEEN 91 AND 180 THEN '关注三'
 					WHEN @days BETWEEN 181 AND 360 THEN '次级'
 					WHEN @days BETWEEN 361 AND 540 THEN '可疑'
 					WHEN @days > 541 THEN '损失' END
@@ -120,9 +120,9 @@ BEGIN
 	ELSE IF @customerScale = '3' BEGIN --个人消费
 		SET @dangerLevel = (CASE
 				WHEN @days = 0 THEN '正常'
-				WHEN @days BETWEEN  1 AND 30 THEN '关注1'
-				WHEN @days BETWEEN 31 AND 60 THEN '关注2'
-				WHEN @days BETWEEN 61 AND 90 THEN '关注3'
+				WHEN @days BETWEEN  1 AND 30 THEN '关注一'
+				WHEN @days BETWEEN 31 AND 60 THEN '关注二'
+				WHEN @days BETWEEN 61 AND 90 THEN '关注三'
 				WHEN @days BETWEEN 91 AND 180 THEN '次级'
 				WHEN @days > 181 THEN '可疑' END
 			)

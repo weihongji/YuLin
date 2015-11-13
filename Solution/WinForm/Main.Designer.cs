@@ -285,7 +285,6 @@
 			this.menuReport_X_DKZLFL_M.Name = "menuReport_X_DKZLFL_M";
 			this.menuReport_X_DKZLFL_M.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_DKZLFL_M.Text = "贷款质量分类情况汇总表";
-			this.menuReport_X_DKZLFL_M.Visible = false;
 			this.menuReport_X_DKZLFL_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F
