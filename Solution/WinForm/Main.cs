@@ -155,7 +155,7 @@ namespace Reporting
 						InitImportPanel();
 					}
 					else {
-						ShowError("导入发生错误");
+						ShowError(result);
 					}
 				}
 				catch (Exception ex) {
@@ -295,7 +295,7 @@ namespace Reporting
 			DateTime asOfDate;
 			var result = ExcelHelper.GetImportDateFromWJFL(filePath, out asOfDate);
 			if (!string.IsNullOrEmpty(result)) {
-				ShowError("导入发生错误");
+				ShowError(result);
 				return;
 			}
 			var importer = new Importer();
@@ -310,8 +310,17 @@ namespace Reporting
 					ShowInfo(string.Format("{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 				}
 				else {
-					ShowError("导入发生错误");
+					ShowError(result);
 				}
+			}
+			catch (IOException ex) {
+				if (ex.Message.IndexOf("it is being used by another process") > 0) {
+					ShowError("五级分类文件已经被打开，请先从Excel里关闭该报表然后再导入。");
+				}
+				else {
+					ShowError("请关闭所有excel，然后再尝试导出报表。");
+				}
+				logger.Error(ex);
 			}
 			catch (Exception ex) {
 				ShowError("导入发生错误");
@@ -575,7 +584,7 @@ namespace Reporting
 			}
 			catch (IOException ex) {
 				if (ex.Message.IndexOf("it is being used by another process") > 0) {
-					ShowError("原来报表文件已经被打开，请先从Excel里关闭该报表然后再导出。");
+					ShowError("报表文件已经被打开，请先从Excel里关闭该报表然后再导出。");
 				}
 				else {
 					ShowError("请关闭所有excel，然后再尝试导出报表。");
@@ -652,6 +661,16 @@ namespace Reporting
 		}
 
 		private void ShowError(string msg) {
+			if (string.IsNullOrEmpty(msg)) {
+				return;
+			}
+			if (msg.IndexOf("Exception") >= 0) {
+				msg = "发生错误";
+			}
+			ShowErrorDialog(msg);
+		}
+
+		private void ShowErrorDialog(string msg) {
 			MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		#endregion

@@ -231,21 +231,21 @@
 			// menuReport_X_WJFL_M
 			// 
 			this.menuReport_X_WJFL_M.Name = "menuReport_X_WJFL_M";
-			this.menuReport_X_WJFL_M.Size = new System.Drawing.Size(280, 22);
+			this.menuReport_X_WJFL_M.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_WJFL_M.Text = "末风险贷款情况表（五级分类）";
 			this.menuReport_X_WJFL_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_FXDKTB_D
 			// 
 			this.menuReport_X_FXDKTB_D.Name = "menuReport_X_FXDKTB_D";
-			this.menuReport_X_FXDKTB_D.Size = new System.Drawing.Size(280, 22);
+			this.menuReport_X_FXDKTB_D.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_FXDKTB_D.Text = "风险贷款通报";
 			this.menuReport_X_FXDKTB_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_BLDKJC_X
 			// 
 			this.menuReport_X_BLDKJC_X.Name = "menuReport_X_BLDKJC_X";
-			this.menuReport_X_BLDKJC_X.Size = new System.Drawing.Size(280, 22);
+			this.menuReport_X_BLDKJC_X.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_BLDKJC_X.Text = "榆林地区不良贷款监测旬报";
 			this.menuReport_X_BLDKJC_X.Visible = false;
 			this.menuReport_X_BLDKJC_X.Click += new System.EventHandler(this.menu_Report_Item_Click);
@@ -253,14 +253,14 @@
 			// menuReport_X_ZXQYZJXQ_S
 			// 
 			this.menuReport_X_ZXQYZJXQ_S.Name = "menuReport_X_ZXQYZJXQ_S";
-			this.menuReport_X_ZXQYZJXQ_S.Size = new System.Drawing.Size(280, 22);
+			this.menuReport_X_ZXQYZJXQ_S.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_ZXQYZJXQ_S.Text = "中小企业资金需求及银行业支持情况报表";
 			this.menuReport_X_ZXQYZJXQ_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_CSHSX_M
 			// 
 			this.menuReport_X_CSHSX_M.Name = "menuReport_X_CSHSX_M";
-			this.menuReport_X_CSHSX_M.Size = new System.Drawing.Size(280, 22);
+			this.menuReport_X_CSHSX_M.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_CSHSX_M.Text = "城商行授信情况统计表";
 			this.menuReport_X_CSHSX_M.Visible = false;
 			this.menuReport_X_CSHSX_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
@@ -268,14 +268,14 @@
 			// menuReport_X_FXDKBH_D
 			// 
 			this.menuReport_X_FXDKBH_D.Name = "menuReport_X_FXDKBH_D";
-			this.menuReport_X_FXDKBH_D.Size = new System.Drawing.Size(280, 22);
+			this.menuReport_X_FXDKBH_D.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_FXDKBH_D.Text = "风险贷款变化情况表";
 			this.menuReport_X_FXDKBH_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_SZHZ_M
 			// 
 			this.menuReport_X_SZHZ_M.Name = "menuReport_X_SZHZ_M";
-			this.menuReport_X_SZHZ_M.Size = new System.Drawing.Size(280, 22);
+			this.menuReport_X_SZHZ_M.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_SZHZ_M.Text = "榆林分行三张表汇总表";
 			this.menuReport_X_SZHZ_M.Visible = false;
 			this.menuReport_X_SZHZ_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
@@ -283,7 +283,7 @@
 			// menuReport_X_DKZLFL_M
 			// 
 			this.menuReport_X_DKZLFL_M.Name = "menuReport_X_DKZLFL_M";
-			this.menuReport_X_DKZLFL_M.Size = new System.Drawing.Size(280, 22);
+			this.menuReport_X_DKZLFL_M.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_DKZLFL_M.Text = "贷款质量分类情况汇总表";
 			this.menuReport_X_DKZLFL_M.Visible = false;
 			this.menuReport_X_DKZLFL_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
@@ -465,10 +465,10 @@
 			// 
 			// panelContent
 			// 
+			this.panelContent.Controls.Add(this.panelImportWJFL);
 			this.panelContent.Controls.Add(this.panelImport);
 			this.panelContent.Controls.Add(this.panelReport);
 			this.panelContent.Controls.Add(this.panelAbout);
-			this.panelContent.Controls.Add(this.panelImportWJFL);
 			this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panelContent.Location = new System.Drawing.Point(0, 0);
 			this.panelContent.Name = "panelContent";
@@ -1005,8 +1005,8 @@
 			this.btnImportWJFL.Location = new System.Drawing.Point(194, 211);
 			this.btnImportWJFL.Name = "btnImportWJFL";
 			this.btnImportWJFL.Size = new System.Drawing.Size(130, 40);
-			this.btnImportWJFL.TabIndex = 24;
-			this.btnImportWJFL.Text = "导入";
+			this.btnImportWJFL.TabIndex = 1;
+			this.btnImportWJFL.Text = "导入 (&I)";
 			this.btnImportWJFL.UseVisualStyleBackColor = true;
 			this.btnImportWJFL.Click += new System.EventHandler(this.btnImportWJFL_Click);
 			// 
@@ -1025,8 +1025,8 @@
 			this.btnImportWJFLOpener.Location = new System.Drawing.Point(199, 146);
 			this.btnImportWJFLOpener.Name = "btnImportWJFLOpener";
 			this.btnImportWJFLOpener.Size = new System.Drawing.Size(75, 23);
-			this.btnImportWJFLOpener.TabIndex = 27;
-			this.btnImportWJFLOpener.Text = "选择 ...";
+			this.btnImportWJFLOpener.TabIndex = 0;
+			this.btnImportWJFLOpener.Text = "选择 (&O) ...";
 			this.btnImportWJFLOpener.UseVisualStyleBackColor = true;
 			this.btnImportWJFLOpener.Click += new System.EventHandler(this.btnImportWJFLOpener_Click);
 			// 

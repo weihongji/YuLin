@@ -112,7 +112,10 @@ namespace Reporting
 
 			logger.DebugFormat("Copying WJFL update file into {0}", targetFilePath);
 			File.Copy(sourceFilePath, targetFilePath, true);
-			ExcelHelper.ProcessWJFL(targetFilePath);
+			result = ExcelHelper.ProcessWJFL(targetFilePath);
+			if (!string.IsNullOrEmpty(result)) {
+				return result;
+			}
 
 			logger.Debug("Updating in database");
 
@@ -128,19 +131,28 @@ namespace Reporting
 				OleDbCommand ocmd = new OleDbCommand("SELECT [行名], [客户名称], [贷款余额], [放款日期], [到期日期], [七级分类] FROM [非应计$]", oconn);
 				OleDbDataReader reader = ocmd.ExecuteReader();
 				logger.Debug("Executed");
-				UpdateWJFLSheet(import.Id, reader);
+				result = UpdateWJFLSheet(import.Id, reader);
+				if (!string.IsNullOrEmpty(result)) {
+					return result;
+				}
 
 				logger.Debug("Reading from Overdue sheet");
 				ocmd = new OleDbCommand("SELECT [行名], [客户名称], [贷款余额], [放款日期], [到期日期], [七级分类] FROM [逾期$]", oconn);
 				reader = ocmd.ExecuteReader();
 				logger.Debug("Executed");
-				UpdateWJFLSheet(import.Id, reader);
+				result = UpdateWJFLSheet(import.Id, reader);
+				if (!string.IsNullOrEmpty(result)) {
+					return result;
+				}
 
 				logger.Debug("Reading from ZQX sheet");
-				ocmd = new OleDbCommand("SELECT [行名], [客户名称], [本金余额], [放款日期], [到期日期], [七级分类] FROM [只欠息$]", oconn);
+				ocmd = new OleDbCommand("SELECT [行名], [客户名称], [贷款余额], [放款日期], [到期日期], [七级分类] FROM [只欠息$]", oconn);
 				reader = ocmd.ExecuteReader();
 				logger.Debug("Executed");
-				UpdateWJFLSheet(import.Id, reader);
+				result = UpdateWJFLSheet(import.Id, reader);
+				if (!string.IsNullOrEmpty(result)) {
+					return result;
+				}
 
 				logger.Debug("Updating WJFLSubmitDate field for import #" + import.Id.ToString());
 				dao.ExecuteNonQuery("UPDATE Import SET WJFLSubmitDate = GETDATE() WHERE Id = " + import.Id.ToString());
@@ -168,26 +180,39 @@ namespace Reporting
 				var sqlSingle = "";
 				var firstColumn = "";
 				var dao = new SqlDbHelper();
+				var failedCustomers = new StringBuilder();
 
 				while (reader.Read()) {
 					firstColumn = DataUtility.GetValue(reader, 0);
-					if (string.IsNullOrEmpty(firstColumn) || firstColumn.Equals("合计")) { // Going to end
+					if (string.IsNullOrEmpty(firstColumn) || firstColumn.Replace(" ", "").Equals("合计")) { // Going to end
 						break;
 					}
 					readRows++;
 					sql.Clear();
 					sql.AppendLine("SELECT Id FROM ImportLoan");
-					sql.AppendLine("WHERE OrgNo IN (SELECT Number FROM Org O WHERE O.Name = '{0}' OR O.Alias1 = '{0}' OR O.Alias2 = '{0}')");
+					sql.AppendLine("WHERE OrgNo = dbo.sfGetOrgNo('{0}')");
 					sql.AppendLine("	AND CustomerName = '{1}'");
 					sql.AppendLine("	AND CapitalAmount = {2}");
-					sql.AppendLine("	AND LoanStartDate = '{3}'");
-					sql.AppendLine("	AND LoanEndDate = '{4}'");
+					if (!string.IsNullOrEmpty(DataUtility.GetValue(reader, 0))) {
+						sql.AppendLine("	AND LoanStartDate = '{3}'");
+					}
+					if (!string.IsNullOrEmpty(DataUtility.GetValue(reader, 4))) {
+						sql.AppendLine("	AND LoanEndDate = '{4}'");
+					}
 					sql.AppendLine("	AND ImportId = '{5}'");
 					sqlSingle = string.Format(sql.ToString(), DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4), importId);
 					var o = dao.ExecuteScalar(sqlSingle);
 					if (o == null) {
 						failedRows++;
-						logger.WarnFormat("No record matched for {0}-{1}-{2}-{3}-{4}", DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+						if (failedRows <= 10) {
+							failedCustomers.AppendFormat("{0} （贷款余额：{1}, 放款日期：{2}, 到期日期：{3}）\r\n", DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+							logger.WarnFormat("No record matched for {0}-{1}-{2}-{3}-{4}", DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+						}
+						else {
+							failedCustomers.AppendFormat("还有更多……\r\n", DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+							logger.Warn("Stopped because of more un-matched records.");
+							break;
+						}
 					}
 					else {
 						int loanId = (int)o;
@@ -208,6 +233,12 @@ namespace Reporting
 				logger.DebugFormat("Rows read in toal: {0}", readRows);
 				logger.DebugFormat("Rows updated: {0}", updatedRows);
 				logger.DebugFormat("Rows not match: {0}", failedRows);
+				if (failedRows == 1) {
+					result = "下面客户的五级分类无法导入：\r\n" + failedCustomers.ToString() + "\r\n请确保新修改的五级分类Excel文件中，该客户的贷款余额、放款日期和到期日期格式正确。";
+				}
+				else if (failedRows > 1) {
+					result = "下列客户的五级分类无法导入：\r\n" + (new string('-', 20)) + "\r\n" + failedCustomers.ToString() + "\r\n" + (new string('-', 20)) + "\r\n请确保新修改的五级分类Excel文件中，他们的贷款余额、放款日期和到期日期格式正确。";
+				}
 			}
 			catch (Exception ex) {
 				logger.Error("Outest catch", ex);

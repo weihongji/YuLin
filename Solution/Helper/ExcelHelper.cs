@@ -90,7 +90,8 @@ namespace Reporting
 			}
 		}
 
-		public static void ProcessWJFL(string filePath) {
+		public static string ProcessWJFL(string filePath) {
+			var result = "";
 			logger.Debug("Removing rows about column header row for " + filePath.Substring(filePath.LastIndexOf('\\') + 1));
 
 			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
@@ -103,26 +104,21 @@ namespace Reporting
 				theExcelBook = theExcelApp.Workbooks.Open(filePath);
 				excelOpened = true;
 
-				theSheet = (Worksheet)theExcelBook.Sheets["非应计"];
-				theSheet.Activate();
-				var range = (Range)theSheet.get_Range("1:2");
-				range.Select();
-				logger.Debug("Removing rows from sheet 非应计");
-				range.Delete(XlDeleteShiftDirection.xlShiftUp);
-
-				theSheet = (Worksheet)theExcelBook.Sheets["逾期"];
-				theSheet.Activate();
-				range = (Range)theSheet.get_Range("1:2");
-				range.Select();
-				logger.Debug("Removing rows from sheet 逾期");
-				range.Delete(XlDeleteShiftDirection.xlShiftUp);
-
-				theSheet = (Worksheet)theExcelBook.Sheets["只欠息"];
-				theSheet.Activate();
-				range = (Range)theSheet.get_Range("1:2");
-				range.Select();
-				logger.Debug("Removing rows from sheet 只欠息");
-				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+				result = UnifyColumnHeader4WJFL(theExcelBook, "非应计");
+				if (!string.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
+				result = UnifyColumnHeader4WJFL(theExcelBook, "逾期");
+				if (!string.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
+				result = UnifyColumnHeader4WJFL(theExcelBook, "只欠息");
+				if (!string.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
 
 				theExcelBook.Save();
 				logger.Debug("Remove done");
@@ -145,6 +141,46 @@ namespace Reporting
 				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
 				GC.Collect();
 			}
+			return result;
+		}
+
+		private static string UnifyColumnHeader4WJFL(Workbook excelBook, string sheetName) {
+			var theSheet = (Worksheet)excelBook.Sheets[sheetName];
+			theSheet.Activate();
+			int headerRow = GetColumnHeaderRow(theSheet, "行名", 5);
+			var result = "";
+			Range range = null;
+			if (headerRow == 0) {
+				result = "在" + sheetName + "工作表中没有找到列名";
+				logger.Error(result);
+				return result;
+			}
+			else if (headerRow > 1) {
+				range = (Range)theSheet.get_Range(string.Format("1:{0}", headerRow - 1));
+				range.Select();
+				logger.Debug("Removing rows from sheet " + sheetName);
+				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+			}
+			int i = 1;
+			while (++i < 20) {
+				var cell = ((Range)theSheet.Cells[1, i]);
+				if (string.IsNullOrEmpty(cell.Value2)) {
+					break;
+				}
+				else if (cell.Value2 == "企业（客户）名称") {
+					cell.Value2 = "客户名称";
+				}
+				else if (cell.Value2 == "发放日") {
+					cell.Value2 = "放款日期";
+				}
+				else if (cell.Value2 == "到期日") {
+					cell.Value2 = "到期日期";
+				}
+				else if (cell.Value2 == "本金余额") {
+					cell.Value2 = "贷款余额";
+				}
+			}
+			return result;
 		}
 
 		public static string GetImportDateFromWJFL(string filePath, out DateTime date) {
@@ -416,7 +452,7 @@ namespace Reporting
 					// amount & numbers
 					dataRange = theSheet.Range[theSheet.Cells[dataRowFrom, 2], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.HorizontalAlignment = XlHAlign.xlHAlignRight;
-					
+
 					dataRange = theSheet.Range[theSheet.Cells[footerRowFrom, 1], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.Interior.Color = System.Drawing.Color.FromArgb(192, 192, 192);
 
@@ -470,7 +506,7 @@ namespace Reporting
 					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
 					dataRange.HorizontalAlignment = XlHAlign.xlHAlignCenter;
 					dataRange.Font.Size = 10;
-					
+
 					// Footer
 					dataRange = theSheet.Range[theSheet.Cells[footerRowFrom, 1], theSheet.Cells[footerRowFrom, columnCount]];
 					dataRange.Interior.Color = System.Drawing.Color.FromArgb(192, 192, 192);
@@ -770,7 +806,7 @@ namespace Reporting
 				int rowsBeforeStart = 5;
 				int r = 0;
 				for (int i = 1; i <= 21; i++) {
-					if (i ==2 || i ==3 || i ==8 || i ==13 || i ==17 || i ==19) {
+					if (i == 2 || i == 3 || i == 8 || i == 13 || i == 17 || i == 19) {
 						continue;
 					}
 					for (int j = 1; j <= 7; j++) {
@@ -862,15 +898,26 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		private static int GetColumnHeaderRow(Worksheet sheet, string firstColumnName, int maxRow) {
+			int row = 0;
+			while (++row <= maxRow) {
+				string val = ((Range)sheet.Cells[row, 1]).Value2;
+				if (!string.IsNullOrEmpty(val) && val.Equals(firstColumnName)) {
+					return row;
+				}
+			}
+			return 0;
+		}
+
 		private static string GetColumnCharacters(int index) {
 			var s = "";
 			while (index > 0) {
-				int c = index%26;
+				int c = index % 26;
 				if (c == 0) {
 					c = 26;
 				}
 				s = ((char)(64 + c)).ToString() + s;
-				index = (index - c)/26;
+				index = (index - c) / 26;
 			}
 			if (s == "") {
 				s = "A";

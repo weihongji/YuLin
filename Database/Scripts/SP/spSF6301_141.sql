@@ -100,6 +100,12 @@ BEGIN
 	) AS X2
 	GROUP BY DangerLevel
 
+	/* 合并各关注类金额 */
+	UPDATE #ResultSingle SET Category = '关注0' WHERE Category = '关注'
+	INSERT INTO #ResultSingle
+	SELECT '关注', A = SUM(A), B = SUM(B), C = SUM(C), D = SUM(D), E = SUM(E), F = SUM(F) FROM #ResultSingle WHERE Category LIKE '关%'
+	DELETE FROM #ResultSingle WHERE Category LIKE '关%' AND Category <> '关注'
+
 	/* 1.境内贷款余额合计 */
 	UPDATE R SET Balance1 = X.A, Balance2 = X.B, Balance3 = X.C, Balance4 = X.D, Balance5 = X.E, Balance6 = X.F, Balance7 = X.F
 	FROM #Result R, (
@@ -204,6 +210,11 @@ BEGIN
 	INTO #PublicOverDue
 	FROM ImportPublic P
 	WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
+		AND EXISTS(
+			SELECT * FROM ImportLoan L
+			WHERE L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
+				AND (L.DangerLevel IN ('次级', '可疑', '损失') OR L.DangerLevel LIKE '关%')
+		)
 
 	UPDATE #PublicOverDue SET FinalDays = ISNULL(CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END, 0)
 	UPDATE #PublicOverDue SET DaysLevel = (
@@ -224,6 +235,11 @@ BEGIN
 	FROM ImportPrivate P
 	WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
 		AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
+		AND EXISTS(
+			SELECT * FROM ImportLoan L
+			WHERE L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
+				AND (L.DangerLevel IN ('次级', '可疑', '损失') OR L.DangerLevel LIKE '关%')
+		)
 
 	UPDATE #PrivateOverDue SET OverdueDays = OweInterestDays WHERE OverdueDays = 0 AND OweInterestDays > 0 AND CustomerType LIKE '%房%'
 	UPDATE #PrivateOverDue SET FinalDays = ISNULL(CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END, 0)
