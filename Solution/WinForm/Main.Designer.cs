@@ -359,7 +359,6 @@
 			this.menuReport_F_Season.Name = "menuReport_F_Season";
 			this.menuReport_F_Season.Size = new System.Drawing.Size(201, 22);
 			this.menuReport_F_Season.Text = "季报";
-			this.menuReport_F_Season.Visible = false;
 			// 
 			// menuReport_F_GF1101_121_S
 			// 

@@ -470,6 +470,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (21, 6, 1, 'Sheet1', 5, 10, 10)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (22, 4, 1, 'Sheet1', 3, 10, 15)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (23, 8, 1, 'Sheet1', 5, 14, 14)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (24, 31, 1, 'GF1101', 6, 54, 57)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -768,4 +769,15 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (23, 10, '次级类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (23, 11, '可疑类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (23, 12, '损失类')
+	
+	/* GF1101-121 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 1, '行业名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 2, '各项贷款')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 3, '正常贷款')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 4, '正常类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 5, '关注类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 6, '不良贷款')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 7, '次级类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 8, '可疑类')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 9, '损失类')
 END

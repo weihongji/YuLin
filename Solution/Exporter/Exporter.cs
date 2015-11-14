@@ -77,6 +77,9 @@ namespace Reporting
 				case XEnum.ReportType.X_DKZLFL_M:
 					result = new X_DKZLFL_M(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.F_GF1101_121_S:
+					result = new GF1101_121(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;

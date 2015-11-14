@@ -948,6 +948,66 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateGF1101_121(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating GF1101_121");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				int excelRow = 10;
+				for (int i = 0; i < 31; i++) {
+					((Range)theSheet.Cells[excelRow, 5]).Value2 = dataTable.Rows[i]["ZC"];
+					((Range)theSheet.Cells[excelRow, 6]).Value2 = dataTable.Rows[i]["GZ"];
+					((Range)theSheet.Cells[excelRow, 8]).Value2 = dataTable.Rows[i]["CJ"];
+					((Range)theSheet.Cells[excelRow, 9]).Value2 = dataTable.Rows[i]["KY"];
+					((Range)theSheet.Cells[excelRow, 10]).Value2 = dataTable.Rows[i]["SS"];
+					if (excelRow == 29) { // 2.1 - 2.20 end
+						excelRow = 31;
+					}
+					else if (excelRow == 34) { // 2.21 个人贷款(不含个人经营性贷款) end
+						excelRow = 38;
+					}
+					else if (excelRow == 38) { // 7. 个人经营性贷款 end
+						excelRow = 40;
+					}
+					else {
+						excelRow++;
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		private static int GetColumnHeaderRow(Worksheet sheet, string firstColumnName, int maxRow) {
 			int row = 0;
 			while (++row <= maxRow) {
