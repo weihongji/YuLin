@@ -6,6 +6,10 @@ IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DanBaoFangShi'))
 	DROP TABLE DanBaoFangShi
 END
 
+IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction2')) BEGIN
+	DROP TABLE Direction2
+END
+
 IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction')) BEGIN
 	DROP TABLE Direction
 END

@@ -1066,6 +1066,65 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateGF1103_121(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating GF1103_121");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				int excelRow = 8;
+				int lastDirectionId = 0;
+				for (int i = 0; i < 97; i++) {
+					if ((int)dataTable.Rows[i]["DirectionId"] != lastDirectionId) {
+						excelRow += 1; // 此行用公式计算, 跳过
+						lastDirectionId = (int)dataTable.Rows[i]["DirectionId"];
+					}
+					((Range)theSheet.Cells[excelRow, 5]).Value2 = dataTable.Rows[i]["ZC"];
+					((Range)theSheet.Cells[excelRow, 6]).Value2 = dataTable.Rows[i]["GZ"];
+					((Range)theSheet.Cells[excelRow, 8]).Value2 = dataTable.Rows[i]["CJ"];
+					((Range)theSheet.Cells[excelRow, 9]).Value2 = dataTable.Rows[i]["KY"];
+					((Range)theSheet.Cells[excelRow, 10]).Value2 = dataTable.Rows[i]["SS"];
+					if (excelRow == 123) { // 20.1国际组织 end
+						excelRow = 126;
+					}
+					else {
+						excelRow++;
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		private static int GetColumnHeaderRow(Worksheet sheet, string firstColumnName, int maxRow) {
 			int row = 0;
 			while (++row <= maxRow) {

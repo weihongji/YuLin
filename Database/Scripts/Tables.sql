@@ -344,6 +344,20 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction'))
 	) ON [PRIMARY]
 END
 
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction2')) BEGIN
+	CREATE TABLE dbo.Direction2(
+		UniqueId int NOT NULL IDENTITY(1,1),
+		Id int NOT NULL,
+		DirectionId int NOT NULL,
+		Name nvarchar(100) NOT NULL
+		CONSTRAINT PK_Direction2 PRIMARY KEY CLUSTERED (UniqueId ASC)
+	) ON [PRIMARY]
+
+	ALTER TABLE dbo.Direction2  WITH NOCHECK ADD CONSTRAINT FK_Direction2_Direction FOREIGN KEY(DirectionId)
+	REFERENCES dbo.Direction (Id)
+	ALTER TABLE dbo.Direction2 CHECK CONSTRAINT FK_Direction2_Direction
+END
+
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('SourceTable')) BEGIN
 	CREATE TABLE dbo.SourceTable(
 		Id int NOT NULL,
