@@ -54,6 +54,8 @@
 			this.menuReport_F_SF6401_141_M = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_Season = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_GF1101_121_S = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuReport_F_GF1103_121_S = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuReport_F_GF1200_101_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_GF1301_081_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_GF1302_081_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_GF1303_081_S = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,8 +63,6 @@
 			this.menuReport_F_GF1403_111_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_SF6302_131_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_SF6402_131_S = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuReport_F_GF1103_121_S = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuReport_F_GF1200_101_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C_DQDKQK_M = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C_XZDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
@@ -347,15 +347,15 @@
 			// 
 			this.menuReport_F_Season.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuReport_F_GF1101_121_S,
+            this.menuReport_F_GF1103_121_S,
+            this.menuReport_F_GF1200_101_S,
             this.menuReport_F_GF1301_081_S,
             this.menuReport_F_GF1302_081_S,
             this.menuReport_F_GF1303_081_S,
             this.menuReport_F_GF1304_081_S,
             this.menuReport_F_GF1403_111_S,
             this.menuReport_F_SF6302_131_S,
-            this.menuReport_F_SF6402_131_S,
-            this.menuReport_F_GF1103_121_S,
-            this.menuReport_F_GF1200_101_S});
+            this.menuReport_F_SF6402_131_S});
 			this.menuReport_F_Season.Name = "menuReport_F_Season";
 			this.menuReport_F_Season.Size = new System.Drawing.Size(201, 22);
 			this.menuReport_F_Season.Text = "季报 (&S)";
@@ -366,6 +366,20 @@
 			this.menuReport_F_GF1101_121_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_GF1101_121_S.Text = "GF1101-121";
 			this.menuReport_F_GF1101_121_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
+			// 
+			// menuReport_F_GF1103_121_S
+			// 
+			this.menuReport_F_GF1103_121_S.Name = "menuReport_F_GF1103_121_S";
+			this.menuReport_F_GF1103_121_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1103_121_S.Text = "GF1103-121";
+			this.menuReport_F_GF1103_121_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
+			// 
+			// menuReport_F_GF1200_101_S
+			// 
+			this.menuReport_F_GF1200_101_S.Name = "menuReport_F_GF1200_101_S";
+			this.menuReport_F_GF1200_101_S.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF1200_101_S.Text = "GF1200-101";
+			this.menuReport_F_GF1200_101_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF1301_081_S
 			// 
@@ -415,20 +429,6 @@
 			this.menuReport_F_SF6402_131_S.Size = new System.Drawing.Size(145, 22);
 			this.menuReport_F_SF6402_131_S.Text = "SF6402-131";
 			this.menuReport_F_SF6402_131_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
-			// 
-			// menuReport_F_GF1103_121_S
-			// 
-			this.menuReport_F_GF1103_121_S.Name = "menuReport_F_GF1103_121_S";
-			this.menuReport_F_GF1103_121_S.Size = new System.Drawing.Size(145, 22);
-			this.menuReport_F_GF1103_121_S.Text = "GF1103-121";
-			this.menuReport_F_GF1103_121_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
-			// 
-			// menuReport_F_GF1200_101_S
-			// 
-			this.menuReport_F_GF1200_101_S.Name = "menuReport_F_GF1200_101_S";
-			this.menuReport_F_GF1200_101_S.Size = new System.Drawing.Size(145, 22);
-			this.menuReport_F_GF1200_101_S.Text = "GF1200-101";
-			this.menuReport_F_GF1200_101_S.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C
 			// 
@@ -1153,6 +1153,8 @@
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_SF6401_141_M;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_Season;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1101_121_S;
+		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1103_121_S;
+		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1200_101_S;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1301_081_S;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1302_081_S;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1303_081_S;
@@ -1160,8 +1162,6 @@
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1403_111_S;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_SF6302_131_S;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_SF6402_131_S;
-		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1103_121_S;
-		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF1200_101_S;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_X_SZHZ_M;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_X_DKZLFL_M;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_DQDKQK_M;
