@@ -852,6 +852,64 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateGF1302_081(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			return PopulateGF1301_081(filePath, sheet, asOfDate, dataTable);
+		}
+
+		public static string PopulateGF1303_081(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			return PopulateGF1301_081(filePath, sheet, asOfDate, dataTable);
+		}
+
+		public static string PopulateGF1304_081(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			return PopulateGF1301_081(filePath, sheet, asOfDate, dataTable);
+		}
+
+		public static string PopulateGF1301_081(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating " + ((XEnum.ReportType)sheet.TableId).ToString());
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				int rowStartAt = 6;
+				for (int i = 0; i < dataTable.Rows.Count && i < 10; i++) {
+					for (int j = 0; j < 6; j++) {
+						((Range)theSheet.Cells[rowStartAt + i, j + 2]).Value2 = dataTable.Rows[i][j];
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		public static string PopulateX_WJFL_M_VS(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
 			logger.Debug("Populating X_WJFL_M_VS");
 

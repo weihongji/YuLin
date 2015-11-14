@@ -301,7 +301,7 @@
 			// 
 			this.menuReport_F_HYB_M.Name = "menuReport_F_HYB_M";
 			this.menuReport_F_HYB_M.Size = new System.Drawing.Size(201, 22);
-			this.menuReport_F_HYB_M.Text = "风险贷款情况表-行业版";
+			this.menuReport_F_HYB_M.Text = "风险贷款情况表-行业版 (&H)";
 			this.menuReport_F_HYB_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_Month
@@ -313,7 +313,7 @@
             this.menuReport_F_SF6401_141_M});
 			this.menuReport_F_Month.Name = "menuReport_F_Month";
 			this.menuReport_F_Month.Size = new System.Drawing.Size(201, 22);
-			this.menuReport_F_Month.Text = "月报";
+			this.menuReport_F_Month.Text = "月报 (&M)";
 			// 
 			// menuReport_F_GF0102_081_M
 			// 
@@ -358,7 +358,7 @@
             this.menuReport_F_GF1200_101_S});
 			this.menuReport_F_Season.Name = "menuReport_F_Season";
 			this.menuReport_F_Season.Size = new System.Drawing.Size(201, 22);
-			this.menuReport_F_Season.Text = "季报";
+			this.menuReport_F_Season.Text = "季报 (&S)";
 			// 
 			// menuReport_F_GF1101_121_S
 			// 

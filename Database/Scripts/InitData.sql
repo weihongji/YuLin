@@ -471,6 +471,10 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (22, 4, 1, 'Sheet1', 3, 10, 15)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (23, 8, 1, 'Sheet1', 5, 14, 14)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (24, 31, 1, 'GF1101', 6, 54, 57)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (25, 32, 1, 'GF1301', 5, 17, 19)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (26, 33, 1, 'GF1302', 5, 17, 19)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (27, 34, 1, 'GF1303', 5, 17, 19)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (28, 35, 1, 'GF1304', 5, 17, 19)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -780,4 +784,52 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 7, '次级类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 8, '可疑类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (24, 9, '损失类')
+	
+	/* GF1301-081 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 1, '排序')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 2, '客户名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 3, '客户代码')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 4, '关注类贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 5, '本金')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 6, '利息')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 7, '逾期最长时间')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 8, '专项准备')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 9, '其他类贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (25, 10, '其他表内授信')
+	
+	/* GF1302-081 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 1, '排序')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 2, '客户名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 3, '客户代码')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 4, '次级类贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 5, '本金')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 6, '利息')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 7, '逾期最长时间')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 8, '专项准备')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 9, '其他类贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (26, 10, '其他表内授信')
+	
+	/* GF1303-081 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 1, '排序')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 2, '客户名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 3, '客户代码')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 4, '可疑类贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 5, '本金')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 6, '利息')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 7, '逾期最长时间')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 8, '专项准备')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 9, '其他类贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (27, 10, '其他表内授信')
+	
+	/* GF1304-081 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 1, '排序')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 2, '客户名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 3, '客户代码')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 4, '损失类贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 5, '本金')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 6, '利息')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 7, '逾期最长时间')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 8, '专项准备')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 9, '其他类贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (28, 10, '其他表内授信')
 END
