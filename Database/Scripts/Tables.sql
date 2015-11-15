@@ -358,6 +358,18 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction2')
 	ALTER TABLE dbo.Direction2 CHECK CONSTRAINT FK_Direction2_Direction
 END
 
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DirectionMix')) BEGIN
+	CREATE TABLE dbo.DirectionMix(
+		Id int NOT NULL,
+		Name nvarchar(100) NOT NULL,
+		Code varchar(10) NULL,
+		CONSTRAINT PK_DirectionMix PRIMARY KEY CLUSTERED
+		(
+			Id ASC
+		)
+	) ON [PRIMARY]
+END
+
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('SourceTable')) BEGIN
 	CREATE TABLE dbo.SourceTable(
 		Id int NOT NULL,

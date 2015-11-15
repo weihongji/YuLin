@@ -2,6 +2,7 @@ TRUNCATE TABLE Org
 TRUNCATE TABLE DanBaoFangShi
 --TRUNCATE TABLE Direction
 TRUNCATE TABLE Direction2
+TRUNCATE TABLE DirectionMix
 TRUNCATE TABLE SourceTableSheetColumn
 DELETE FROM SourceTableSheet
 DELETE FROM SourceTable

@@ -1177,6 +1177,52 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateGF1900_151(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating GF1900_151");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				int rowStartAt = 7;
+				for (int i = 0; i < dataTable.Rows.Count; i++) {
+					for (int j = 0; j < 5; j++) {
+						((Range)theSheet.Cells[rowStartAt + i, 14 + j]).Value2 = dataTable.Rows[i][2 + j];
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		private static int GetColumnHeaderRow(Worksheet sheet, string firstColumnName, int maxRow) {
 			int row = 0;
 			while (++row <= maxRow) {

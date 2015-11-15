@@ -14,6 +14,10 @@ IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction')) BEG
 	DROP TABLE Direction
 END
 
+IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DirectionMix')) BEGIN
+	DROP TABLE DirectionMix
+END
+
 IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportLoan')) BEGIN
 	ALTER TABLE dbo.ImportLoan DROP CONSTRAINT FK_ImportLoan_ImportItem
 	DROP TABLE ImportLoan
