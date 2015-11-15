@@ -1023,7 +1023,7 @@ namespace Reporting
 				theSheet = (Worksheet)theExcelBook.Sheets[1];
 
 				int excelRow = 10;
-				for (int i = 0; i < 31; i++) {
+				for (int i = 0; i < dataTable.Rows.Count; i++) {
 					((Range)theSheet.Cells[excelRow, 5]).Value2 = dataTable.Rows[i]["ZC"];
 					((Range)theSheet.Cells[excelRow, 6]).Value2 = dataTable.Rows[i]["GZ"];
 					((Range)theSheet.Cells[excelRow, 8]).Value2 = dataTable.Rows[i]["CJ"];
@@ -1032,7 +1032,7 @@ namespace Reporting
 					if (excelRow == 29) { // 2.1 - 2.20 end
 						excelRow = 31;
 					}
-					else if (excelRow == 34) { // 2.21 个人贷款(不含个人经营性贷款) end
+					else if (excelRow == 35) { // 2.22买断式转贴现 end
 						excelRow = 38;
 					}
 					else if (excelRow == 38) { // 7. 个人经营性贷款 end

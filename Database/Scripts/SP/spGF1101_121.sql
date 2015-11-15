@@ -112,7 +112,22 @@ BEGIN
 			) AS X
 
 			UNION ALL
-			SELECT 105 AS Id, '个人经营性贷款' AS Name
+			SELECT 105 AS Id, '买断式转贴现' AS Name
+				, (SUM(Balance) - SUM(GZ) - SUM(CJ) - SUM(KY) - SUM(SS)) AS ZC
+				, SUM(GZ) AS GZ, SUM(CJ) AS CJ, SUM(KY) AS KY, SUM(SS) AS SS
+			FROM (
+					SELECT Balance1 AS Balance
+							, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN Balance1 ELSE 0.00 END
+							, CJ = CASE WHEN L.DangerLevel = '次级' THEN Balance1 ELSE 0.00 END
+							, KY = CASE WHEN L.DangerLevel = '可疑' THEN Balance1 ELSE 0.00 END
+							, SS = CASE WHEN L.DangerLevel = '损失' THEN Balance1 ELSE 0.00 END
+					FROM ImportPublic P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+					WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+						AND P.BusinessType LIKE '%贴现%'
+				) AS X1
+
+			UNION ALL
+			SELECT 106 AS Id, '个人经营性贷款' AS Name
 				, (SUM(Balance) - SUM(GZ) - SUM(CJ) - SUM(KY) - SUM(SS)) AS ZC
 				, SUM(GZ) AS GZ, SUM(CJ) AS CJ, SUM(KY) AS KY, SUM(SS) AS SS
 			FROM (
