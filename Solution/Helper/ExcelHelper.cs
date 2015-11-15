@@ -1125,6 +1125,58 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateGF1403_111(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating GF1403_111");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				int rowStartAt = 8;
+				for (int i = 0; i < dataTable.Rows.Count && i < 10; i++) {
+					((Range)theSheet.Cells[rowStartAt + i, 3]).Value2 = dataTable.Rows[i]["CustomerName"];
+					((Range)theSheet.Cells[rowStartAt + i, 4]).Value2 = dataTable.Rows[i]["IdCode"];
+					((Range)theSheet.Cells[rowStartAt + i, 5]).Value2 = dataTable.Rows[i]["Balance"];
+					((Range)theSheet.Cells[rowStartAt + i, 6]).Value2 = dataTable.Rows[i]["Balance"];
+					((Range)theSheet.Cells[rowStartAt + i, 8]).Value2 = dataTable.Rows[i]["ZC"];
+					((Range)theSheet.Cells[rowStartAt + i, 9]).Value2 = dataTable.Rows[i]["GZ"];
+					((Range)theSheet.Cells[rowStartAt + i, 10]).Value2 = dataTable.Rows[i]["CJ"];
+					((Range)theSheet.Cells[rowStartAt + i, 11]).Value2 = dataTable.Rows[i]["KY"];
+					((Range)theSheet.Cells[rowStartAt + i, 12]).Value2 = dataTable.Rows[i]["SS"];
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		private static int GetColumnHeaderRow(Worksheet sheet, string firstColumnName, int maxRow) {
 			int row = 0;
 			while (++row <= maxRow) {

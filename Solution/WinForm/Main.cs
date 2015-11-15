@@ -429,9 +429,14 @@ namespace Reporting
 			ShowSelectColumnButton();
 
 			var dao = new SqlDbHelper();
+			var lastSelectValue = "";
+			var lastSelectValue2 = "";
 			if (IsMonthly()) {
 				this.lblExportDate.Text = "数据月份：";
 				var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
+				if (this.cmbReportMonth.SelectedIndex >= 0) {
+					lastSelectValue = this.cmbReportMonth.Text;
+				}
 				this.cmbReportMonth.Items.Clear();
 				if (table != null) {
 					foreach (DataRow row in table.Rows) {
@@ -440,6 +445,9 @@ namespace Reporting
 							value += " *";
 						}
 						this.cmbReportMonth.Items.Add(value);
+						if (!string.IsNullOrEmpty(lastSelectValue) && value.Equals(lastSelectValue)) {
+							this.cmbReportMonth.Text = value;
+						}
 					}
 
 					// Select the latest one by default
@@ -453,6 +461,12 @@ namespace Reporting
 			else {
 				this.lblExportDate.Text = "数据日期：";
 				var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import ORDER BY ImportDate DESC");
+				if (this.cmbReportMonth.SelectedIndex >= 0) {
+					lastSelectValue = this.cmbReportMonth.Text;
+				}
+				if (this.cmbReportMonth2.SelectedIndex >= 0) {
+					lastSelectValue2 = this.cmbReportMonth2.Text;
+				}
 				this.cmbReportMonth.Items.Clear();
 				this.cmbReportMonth2.Items.Clear();
 				if (table != null) {
@@ -460,6 +474,12 @@ namespace Reporting
 						var value = ((DateTime)row[0]).ToString("yyyy-MM-dd");
 						this.cmbReportMonth.Items.Add(value);
 						this.cmbReportMonth2.Items.Add(value);
+						if (!string.IsNullOrEmpty(lastSelectValue) && value.Equals(lastSelectValue)) {
+							this.cmbReportMonth.Text = value;
+						}
+						if (!string.IsNullOrEmpty(lastSelectValue2) && value.Equals(lastSelectValue2)) {
+							this.cmbReportMonth2.Text = value;
+						}
 					}
 
 					// Select the latest one by default

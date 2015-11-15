@@ -95,6 +95,9 @@ namespace Reporting
 				case XEnum.ReportType.F_GF1304_081_S:
 					result = new GF1304_081(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.F_GF1403_111_S:
+					result = new GF1403_111(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;
