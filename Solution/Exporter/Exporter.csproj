@@ -64,7 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseReport.cs" />
+    <Compile Include="SF6402_131.cs" />
     <Compile Include="GF1900_151.cs" />
+    <Compile Include="SF6302_131.cs" />
     <Compile Include="GF1403_111.cs" />
     <Compile Include="GF1103_121.cs" />
     <Compile Include="GF1302_081.cs" />

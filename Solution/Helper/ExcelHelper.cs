@@ -756,6 +756,7 @@ namespace Reporting
 				for (int j = 1; j <= 6; j++) {
 					((Range)theSheet.Cells[29, 2 + j]).Value2 = dataTable.Rows[20]["Balance" + j.ToString()];
 				}
+				((Range)theSheet.Cells[29, 9]).Value2 = dataTable.Rows[20]["Balance6"];
 
 				// 3. 贷款当年累计发放户数
 				// 4. 贷款当年累计申请户数
@@ -763,6 +764,8 @@ namespace Reporting
 					((Range)theSheet.Cells[30, 2 + j]).Value2 = dataTable2.Rows[0]["Count" + j.ToString()];
 					((Range)theSheet.Cells[31, 2 + j]).Value2 = dataTable2.Rows[0]["Count" + j.ToString()];
 				}
+				((Range)theSheet.Cells[30, 9]).Value2 = dataTable2.Rows[0]["Count6"];
+				((Range)theSheet.Cells[31, 9]).Value2 = dataTable2.Rows[0]["Count6"];
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate);
 
@@ -1195,6 +1198,101 @@ namespace Reporting
 					for (int j = 0; j < 5; j++) {
 						((Range)theSheet.Cells[rowStartAt + i, 14 + j]).Value2 = dataTable.Rows[i][2 + j];
 					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
+		public static string PopulateSF6302_131(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating SF6302_131");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				int rowStartAt = 6;
+				for (int i = 0; i < dataTable.Rows.Count; i++) {
+					for (int j = 0; j < 6; j++) {
+						((Range)theSheet.Cells[rowStartAt + i, 3 + j]).Value2 = dataTable.Rows[i][1 + j];
+					}
+					((Range)theSheet.Cells[rowStartAt + i, 9]).Value2 = dataTable.Rows[i]["F"];
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
+		public static string PopulateSF6402_131(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating SF6402_131");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				// 1.1 - 1.20
+				int rowStartAt = 7;
+				for (int i = 0; i < 20; i++) {
+					for (int j = 1; j <= 6; j++) {
+						((Range)theSheet.Cells[rowStartAt + i, 2 + j]).Value2 = dataTable.Rows[i]["Balance" + j.ToString()];
+					}
+					((Range)theSheet.Cells[rowStartAt + i, 9]).Value2 = dataTable.Rows[i]["Balance6"];
 				}
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate);
