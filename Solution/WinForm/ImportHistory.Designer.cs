@@ -112,11 +112,13 @@
 			this.ClientSize = new System.Drawing.Size(684, 562);
 			this.Controls.Add(this.panelData);
 			this.Controls.Add(this.panelCommand);
+			this.KeyPreview = true;
 			this.MinimumSize = new System.Drawing.Size(400, 300);
 			this.Name = "frmImportHistory";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "数据导入查询";
 			this.Load += new System.EventHandler(this.frmImportHistory_Load);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmImportHistory_KeyDown);
 			this.panelCommand.ResumeLayout(false);
 			this.panelCommand.PerformLayout();
 			this.panelData.ResumeLayout(false);
