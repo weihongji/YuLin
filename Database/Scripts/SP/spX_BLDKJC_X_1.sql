@@ -139,7 +139,6 @@ BEGIN
 	) AS X
 
 	/* Privates */
-
 	IF DAY(@asOfDate + 1) = 1 BEGIN --Last day of the month
 		INSERT INTO #PrivateToday
 		SELECT SUM(Balance) AS Balance, SUM(GZ) AS GZ, SUM(CJ) AS CJ, SUM(KY) AS KY, SUM(SS) AS SS
@@ -210,6 +209,7 @@ BEGIN
 			AND CustomerType = '∂‘ÀΩ'
 	) AS X
 
+	/* Final Temporary table */
 	SELECT Id, Category
 		, Today = CAST(ROUND(ISNULL(Today/10000, 0), 2) AS decimal(10, 2))
 		, LastTenDays = CAST(ROUND(ISNULL(LastTenDays/10000, 0), 2) AS decimal(10, 2))
@@ -248,6 +248,7 @@ BEGIN
 		FROM #PrivateToday T, #PrivateLastTenDays D, #PrivateLastMonth M, #PrivateYearStart Y
 	) AS X
 
+	/* Result to output */
 	SELECT Id, Category, Today, DiffLastTenDays = Today - LastTenDays, DiffLastMonth = Today - LastMonth, DiffYearStart = Today - YearStart
 	FROM #Final
 	UNION ALL
