@@ -985,6 +985,11 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (33, 40, 1, 'SF6302', 4, 10, 13)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (34, 41, 1, 'SF6402', 4, 28, 31)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (35, 42, 1, 'SF6700', 5, 89, 92)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (36, 3, 1, '附表1', 4, 27, 27)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (37, 3, 2, '附表2', 4, 19, 19)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (38, 3, 3, '附表3', 4, 43, 43)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (39, 3, 4, '附表4', 4, 16, 16)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (40, 3, 5, '附表5', 6, 19, 19)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -1463,4 +1468,41 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (35, 20, '逾期91-180天')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (35, 21, '逾期181-360天')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (35, 22, '逾期361天以上')
+	
+	/* 榆林地区不良贷款监测旬报 - 附表1 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (36, 1, '类别')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (36, 2, '本期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (36, 3, '比上旬增减')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (36, 4, '比上月增减')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (36, 5, '比年初增减')
+	
+	/* 榆林地区不良贷款监测旬报 - 附表2 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (37, 1, '类别')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (37, 2, '本期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (37, 3, '比上旬增减')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (37, 4, '比上月增减')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (37, 5, '比年初增减')
+	
+	/* 榆林地区不良贷款监测旬报 - 附表3 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (38, 1, '类别')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (38, 2, '本期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (38, 3, '比上旬增减')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (38, 4, '比上月增减')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (38, 5, '比年初增减')
+	
+	/* 榆林地区不良贷款监测旬报 - 附表4 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 1, '序号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 2, '户名')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 3, '不良贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 4, '比上月增减')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 5, '比年初增减')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 6, '不良余额占本行全部不良的比重')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 7, '贷款发放日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 8, '贷款金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 9, '担保方式')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 10, '抵质押物')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 11, '抵质押物当前价值')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 12, '保证人')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 13, '保证人净资产')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (39, 14, '保证人对外保证总余额')
 END

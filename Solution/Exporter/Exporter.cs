@@ -107,6 +107,9 @@ namespace Reporting
 				case XEnum.ReportType.F_SF6402_131_S:
 					result = new SF6402_131(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.X_BLDKJC_X:
+					result = new X_BLDKJC_X(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;

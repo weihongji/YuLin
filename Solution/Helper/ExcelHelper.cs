@@ -1321,6 +1321,69 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateX_BLDKJC_X_1(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating X_BLDKJC_X_1");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+
+				int excelRow = 7;
+				for (int i = 0; i < dataTable.Rows.Count; i++) {
+					for (int j = 0; j < 4; j++) {
+						if (excelRow >= 24) {
+							((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = ((decimal)dataTable.Rows[i][2 + j]/100);
+						}
+						else {
+							((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = dataTable.Rows[i][2 + j];
+						}
+					}
+					if (excelRow == 8) { // 关注类贷款余额 starts
+						excelRow = 10;
+					}
+					else if (excelRow == 11) { // 法人类不良贷款余额 starts
+						excelRow = 17;
+					}
+					else if (excelRow == 19) { // 个人类不良贷款余额 starts
+						excelRow = 21;
+					}
+					else {
+						excelRow++;
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		private static int GetColumnHeaderRow(Worksheet sheet, string firstColumnName, int maxRow) {
 			int row = 0;
 			while (++row <= maxRow) {

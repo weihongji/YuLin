@@ -12,13 +12,7 @@ BEGIN
 	--DECLARE @asOfDate as smalldatetime = '20151104'
 
 	DECLARE @asOfDateYesterday as smalldatetime = @asOfDate - 1
-	DECLARE @asOfDateLastMonth as smalldatetime
-	IF DAY(@asOfDate + 1) = 1 BEGIN -- Last day of month
-		SET @asOfDateLastMonth = @asOfDate - DAY(@asOfDate) -- Last day of previous month
-	END
-	ELSE BEGIN
-		SET @asOfDateLastMonth = DATEADD(MONTH, -1, @asOfDate)
-	END
+	DECLARE @asOfDateLastMonth as smalldatetime = @asOfDate - DAY(@asOfDate) -- Last day of previous month
 
 	DECLARE @importIdToday int
 	DECLARE @importIdYesterday int

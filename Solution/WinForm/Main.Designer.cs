@@ -248,7 +248,6 @@
 			this.menuReport_X_BLDKJC_X.Name = "menuReport_X_BLDKJC_X";
 			this.menuReport_X_BLDKJC_X.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_BLDKJC_X.Text = "榆林地区不良贷款监测旬报";
-			this.menuReport_X_BLDKJC_X.Visible = false;
 			this.menuReport_X_BLDKJC_X.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_ZXQYZJXQ_S
