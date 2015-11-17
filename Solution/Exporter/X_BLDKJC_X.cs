@@ -31,6 +31,9 @@ namespace Reporting
 				else if (sheet.Name.Equals("附表2")) {
 					PopulateSheet2(filePath, sheet);
 				}
+				else if (sheet.Name.Equals("附表3")) {
+					PopulateSheet3(filePath, sheet);
+				}
 			}
 
 			ExcelHelper.ActivateSheet(filePath);
@@ -55,6 +58,16 @@ namespace Reporting
 			Logger.Debug("Running " + sql);
 			var table = dao.ExecuteDataTable(sql);
 			result = ExcelHelper.PopulateX_BLDKJC_X_2(filePath, sheet, this.AsOfDate, table);
+			return result;
+		}
+
+		private string PopulateSheet3(string filePath, TargetTableSheet sheet) {
+			var result = "";
+			var dao = new SqlDbHelper();
+			var sql = string.Format("EXEC spX_BLDKJC_X_3 '{0}'", this.AsOfDate.ToString("yyyyMMdd"));
+			Logger.Debug("Running " + sql);
+			var table = dao.ExecuteDataTable(sql);
+			result = ExcelHelper.PopulateX_BLDKJC_X_3(filePath, sheet, this.AsOfDate, table);
 			return result;
 		}
 	}

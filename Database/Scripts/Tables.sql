@@ -370,6 +370,14 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DirectionMix
 	) ON [PRIMARY]
 END
 
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Shell_01')) BEGIN
+	CREATE TABLE dbo.Shell_01(
+		Id int NOT NULL,
+		Name nvarchar(100) NULL,
+		Amount decimal(15, 2) NULL
+	) ON [PRIMARY]
+END
+
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('SourceTable')) BEGIN
 	CREATE TABLE dbo.SourceTable(
 		Id int NOT NULL,
