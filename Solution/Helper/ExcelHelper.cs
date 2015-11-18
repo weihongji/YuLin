@@ -1488,6 +1488,53 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateX_BLDKJC_X_4(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating X_BLDKJC_X_4");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[sheet.Index];
+
+				int excelRow = 6;
+				for (int i = 0; i < dataTable.Rows.Count; i++) {
+					for (int j = 0; j < 8; j++) {
+						((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = dataTable.Rows[i][1 + j];
+					}
+					excelRow++;
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		private static int GetColumnHeaderRow(Worksheet sheet, string firstColumnName, int maxRow) {
 			int row = 0;
 			while (++row <= maxRow) {
