@@ -148,4 +148,5 @@ BEGIN
 		LEFT JOIN DanBaoFangShi D ON X.DanBaoName = D.Name
 	ORDER BY BLBalance DESC, IdCode
 
+	DROP TABLE #Top10
 END
