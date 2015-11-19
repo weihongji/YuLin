@@ -744,9 +744,9 @@ namespace Reporting
 				excelOpened = true;
 				theSheet = (Worksheet)theExcelBook.Sheets[1];
 
-				// 1.1 - 1.20
+				// 1.1 - 1.21
 				int rowStartAt = 7;
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0; i < 21; i++) {
 					for (int j = 1; j <= 6; j++) {
 						((Range)theSheet.Cells[rowStartAt + i, 2 + j]).Value2 = dataTable.Rows[i]["Balance" + j.ToString()];
 					}
@@ -754,9 +754,9 @@ namespace Reporting
 				}
 				// 2. 贷款当年累计发放额
 				for (int j = 1; j <= 6; j++) {
-					((Range)theSheet.Cells[29, 2 + j]).Value2 = dataTable.Rows[20]["Balance" + j.ToString()];
+					((Range)theSheet.Cells[29, 2 + j]).Value2 = dataTable.Rows[21]["Balance" + j.ToString()];
 				}
-				((Range)theSheet.Cells[29, 9]).Value2 = dataTable.Rows[20]["Balance6"];
+				((Range)theSheet.Cells[29, 9]).Value2 = dataTable.Rows[21]["Balance6"];
 
 				// 3. 贷款当年累计发放户数
 				// 4. 贷款当年累计申请户数
@@ -1085,7 +1085,7 @@ namespace Reporting
 				int excelRow = 8;
 				int lastDirectionId = 0;
 				for (int i = 0; i < 97; i++) {
-					if ((int)dataTable.Rows[i]["DirectionId"] != lastDirectionId) {
+					if ((int)dataTable.Rows[i]["DirectionId"] > 0 && (int)dataTable.Rows[i]["DirectionId"] != lastDirectionId) {
 						excelRow += 1; // 此行用公式计算, 跳过
 						lastDirectionId = (int)dataTable.Rows[i]["DirectionId"];
 					}
@@ -1504,7 +1504,7 @@ namespace Reporting
 				int excelRow = 6;
 				for (int i = 0; i < dataTable.Rows.Count; i++) {
 					for (int j = 0; j < 8; j++) {
-						((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = dataTable.Rows[i][1 + j];
+						((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = dataTable.Rows[i][j];
 					}
 					excelRow++;
 				}

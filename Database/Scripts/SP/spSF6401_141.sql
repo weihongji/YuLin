@@ -50,6 +50,19 @@ BEGIN
 				) AS B ON D.Name = B.Direction1
 			WHERE D.Id <= 20
 			UNION ALL
+			SELECT 21 AS Id, '买断式转贴现' AS Name, Balance1 = SUM(Balance1), Balance2 = SUM(Balance2), Balance3 = SUM(Balance3), Balance4 = SUM(Balance4), Balance5 = SUM(Balance5), Balance6 = SUM(Balance6)
+			FROM (
+					SELECT Balance1 = CASE WHEN ScopeName = '大型企业' THEN Balance1 ELSE 0.00 END
+						, Balance2 = CASE WHEN ScopeName = '中型企业' THEN Balance1 ELSE 0.00 END
+						, Balance3 = CASE WHEN ScopeName = '小型企业' THEN Balance1 ELSE 0.00 END
+						, Balance4 = CASE WHEN ScopeName = '微型企业' THEN Balance1 ELSE 0.00 END
+						, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1< 500 THEN Balance1 ELSE 0.00 END
+						, Balance6 = 0.00
+					FROM ImportPublic
+					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
+						AND BusinessType LIKE '%转贴现%'
+				) AS X
+			UNION ALL
 			SELECT 101 AS Id, '贷款当年累计发放额' AS Name, Balance1 = SUM(Balance1), Balance2 = SUM(Balance2), Balance3 = SUM(Balance3), Balance4 = SUM(Balance4), Balance5 = SUM(Balance5), Balance6 = SUM(Balance6)
 			FROM (
 					SELECT Balance1 = CASE WHEN ScopeName = '大型企业' THEN Balance1 ELSE 0.00 END
@@ -61,7 +74,7 @@ BEGIN
 					FROM ImportPublic
 					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
 						AND LoanStartDate BETWEEN @yearStart AND @yearEnd
-					UNION
+					UNION ALL
 					SELECT Balance1 = 0.00, Balance2 = 0.00, Balance3 = 0.00, Balance4 = 0.00, Balance5 = 0.00, LoanBalance AS Balance6
 					FROM ImportPrivate
 					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'

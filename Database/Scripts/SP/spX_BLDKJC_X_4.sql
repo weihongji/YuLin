@@ -34,15 +34,33 @@ BEGIN
 	WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 		AND W.DangerLevel IN ('次级', '可疑', '损失')
 
-	IF OBJECT_ID('tempdb..#Top10') IS NOT NULL BEGIN
-		DROP TABLE #Top10
-	END
-
-	SELECT TOP 10 CustomerType, CustomerName, IdCode = ISNULL(IdCode, ''), BLBalance = CAST(ROUND(ISNULL(Balance, 0), 2) AS decimal(10, 2))
-	INTO #Top10
+	SELECT TOP 10 CustomerName
+		, Balance = CAST(ROUND(ISNULL(Balance, 0), 2) AS decimal(10, 2))
+		, DiffLastMonth = CAST(ROUND(ISNULL(Balance, 0) - ISNULL(MBalance, 0.0), 2) AS decimal(10, 2))
+		, DiffYearStart = CAST(ROUND(ISNULL(Balance, 0) - ISNULL(YBalance, 0.0), 2) AS decimal(10, 2))
+		, Ratio = CASE WHEN ISNULL(@totalBL, 0) = 0 THEN 0.00 ELSE CAST(ROUND(ISNULL(Balance/@totalBL, 0), 4) AS decimal(10, 4)) END
+		, LoanStartDate
+		, LoanAmount
+		, D.Category
 	FROM (
-			SELECT TOP 10 CustomerType = '对公', P.CustomerName, P.OrgCode AS IdCode
+			SELECT TOP 10 P.CustomerName, IdCode = P.OrgCode, DanBaoName = MAX(P.VouchTypeName)
 				, Balance = SUM(L.CapitalAmount)/10000
+				, LoanAmount = SUM(L.LoanAmount)/10000
+				, LoanStartDate = MIN(L.LoanStartDate)
+				, MBalance = (
+					SELECT Balance = SUM(L1.CapitalAmount)/10000
+					FROM ImportLoan L1
+						INNER JOIN ImportPublic P1 ON L1.LoanAccount = P1.LoanAccount AND P1.ImportId = L1.ImportId
+					WHERE L1.ImportId = @importIdLastMonth AND L1.DangerLevel IN ('次级', '可疑', '损失')
+						AND ISNULL(P1.OrgCode, '') = ISNULL(P.OrgCode, '') AND P1.CustomerName = P.CustomerName
+				)
+				, YBalance = (
+					SELECT Balance = SUM(L1.CapitalAmount)/10000
+					FROM ImportLoan L1
+						INNER JOIN ImportPublic P1 ON L1.LoanAccount = P1.LoanAccount AND P1.ImportId = L1.ImportId
+					WHERE L1.ImportId = @importIdYearStart AND L1.DangerLevel IN ('次级', '可疑', '损失')
+						AND ISNULL(P1.OrgCode, '') = ISNULL(P.OrgCode, '') AND P1.CustomerName = P.CustomerName
+				)
 			FROM ImportLoan L
 				INNER JOIN ImportLoan   W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
@@ -50,9 +68,27 @@ BEGIN
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 			GROUP BY P.CustomerName, P.OrgCode
 			ORDER BY Balance DESC
+
 			UNION ALL
-			SELECT TOP 10 CustomerType = '对私', P.CustomerName, P.IdCardNo AS IdCode
+
+			SELECT TOP 10 P.CustomerName, IdCode = P.IdCardNo, DanBaoName = MAX(P.DanBaoFangShi)
 				, Balance = SUM(L.CapitalAmount)/10000
+				, LoanAmount = SUM(L.LoanAmount)/10000
+				, LoanStartDate = MIN(L.LoanStartDate)
+				, MBalance = (
+					SELECT Balance = SUM(L1.CapitalAmount)/10000
+					FROM ImportLoan L1
+						INNER JOIN ImportPrivate P1 ON L1.LoanAccount = P1.LoanAccount AND P1.ImportId = L1.ImportId
+					WHERE L1.ImportId = @importIdLastMonth AND L1.DangerLevel IN ('次级', '可疑', '损失')
+						AND ISNULL(P1.IdCardNo, '') = ISNULL(P.IdCardNo, '') AND P1.CustomerName = P.CustomerName
+				)
+				, YBalance = (
+					SELECT Balance = SUM(L1.CapitalAmount)/10000
+					FROM ImportLoan L1
+						INNER JOIN ImportPrivate P1 ON L1.LoanAccount = P1.LoanAccount AND P1.ImportId = L1.ImportId
+					WHERE L1.ImportId = @importIdYearStart AND L1.DangerLevel IN ('次级', '可疑', '损失')
+						AND ISNULL(P1.IdCardNo, '') = ISNULL(P.IdCardNo, '') AND P1.CustomerName = P.CustomerName
+				)
 			FROM ImportLoan L
 				INNER JOIN ImportLoan    W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
@@ -61,92 +97,7 @@ BEGIN
 			GROUP BY P.CustomerName, P.IdCardNo
 			ORDER BY Balance DESC
 		) AS X
+		LEFT JOIN DanBaoFangShi D ON X.DanBaoName = D.Name
 	ORDER BY Balance DESC, IdCode
 
-	SELECT IdCode, CustomerName, BLBalance, DiffLastMonth, DiffYearStart
-		, BLRatio = CASE WHEN ISNULL(@totalBL, 0) = 0 THEN 0.00 ELSE CAST(ROUND(ISNULL(BLBalance/@totalBL, 0), 4) AS decimal(10, 4)) END
-		, LoanStartDate
-		, TotalBalance = CAST(ROUND(ISNULL(TotalBalance, 0), 2) AS decimal(10, 2))
-		, DanBao = D.Category
-	FROM (
-			--Publics
-			SELECT T.IdCode, T.CustomerName, T.BLBalance
-				, DiffLastMonth = T.BLBalance - ISNULL(M.Balance, 0.0)
-				, DiffYearStart = T.BLBalance - ISNULL(Y.Balance, 0.0)
-				, P.LoanStartDate
-				, A.TotalBalance
-				, DanBaoName = P.VouchTypeName
-			FROM #Top10 T
-				LEFT JOIN (
-					SELECT T1.CustomerName, T1.IdCode
-						, LoanAccount = (SELECT TOP 1 LoanAccount FROM ImportPublic P1 WHERE P1.ImportId = @importIdWJFL AND ISNULL(P1.OrgCode, '') = T1.IdCode AND P1.CustomerName = T1.CustomerName AND P1.LoanStartDate = MIN(L.LoanStartDate) ORDER BY P1.Id)
-						, TotalBalance = SUM(L.CapitalAmount)/10000
-					FROM ImportLoan L
-						INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-						INNER JOIN #Top10 T1 ON ISNULL(P.OrgCode, '') = T1.IdCode AND P.CustomerName = T1.CustomerName
-					WHERE L.ImportId = @importId
-					GROUP BY T1.CustomerName, T1.IdCode
-				) AS A ON T.CustomerName = A.CustomerName AND T.IdCode = A.IdCode
-				INNER JOIN ImportPublic P ON A.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-				LEFT JOIN (
-					SELECT T1.CustomerName, T1.IdCode, Balance = CAST(ROUND(ISNULL(SUM(L.CapitalAmount)/10000, 0), 2) AS decimal(10, 2))
-					FROM ImportLoan L
-						INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId
-						INNER JOIN #Top10 T1 ON ISNULL(P.OrgCode, '') = T1.IdCode AND P.CustomerName = T1.CustomerName
-					WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
-					GROUP BY T1.CustomerName, T1.IdCode
-				) M ON T.CustomerName = M.CustomerName AND T.IdCode = M.IdCode
-				LEFT JOIN (
-					SELECT T1.CustomerName, T1.IdCode, Balance = CAST(ROUND(ISNULL(SUM(L.CapitalAmount)/10000, 0), 2) AS decimal(10, 2))
-					FROM ImportLoan L
-						INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId
-						INNER JOIN #Top10 T1 ON ISNULL(P.OrgCode, '') = T1.IdCode AND P.CustomerName = T1.CustomerName
-					WHERE L.ImportId = @importIdYearStart AND L.DangerLevel IN ('次级', '可疑', '损失')
-					GROUP BY T1.CustomerName, T1.IdCode
-				) Y ON T.CustomerName = M.CustomerName AND T.IdCode = M.IdCode
-			WHERE T.CustomerType = '对公'
-	
-			UNION ALL
-
-			--Privates
-			SELECT T.IdCode, T.CustomerName, T.BLBalance
-				, DiffLastMonth = T.BLBalance - ISNULL(M.Balance, 0.0)
-				, DiffYearStart = T.BLBalance - ISNULL(Y.Balance, 0.0)
-				, P.ContractStartDate
-				, A.TotalBalance
-				, P.DanBaoFangShi
-			FROM #Top10 T
-				LEFT JOIN (
-					SELECT T1.CustomerName, T1.IdCode
-						, LoanAccount = (SELECT TOP 1 LoanAccount FROM ImportPrivate P1 WHERE P1.ImportId = @importIdWJFL AND ISNULL(P1.IdCardNo, '') = T1.IdCode AND P1.CustomerName = T1.CustomerName AND P1.ContractStartDate = MIN(L.LoanStartDate) ORDER BY P1.Id)
-						, TotalBalance = SUM(L.CapitalAmount)/10000
-					FROM ImportLoan L
-						INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-						INNER JOIN #Top10 T1 ON ISNULL(P.IdCardNo, '') = T1.IdCode AND P.CustomerName = T1.CustomerName
-					WHERE L.ImportId = @importId
-					GROUP BY T1.CustomerName, T1.IdCode
-				) AS A ON T.CustomerName = A.CustomerName AND T.IdCode = A.IdCode
-				INNER JOIN ImportPrivate P ON A.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-				LEFT JOIN (
-					SELECT T1.CustomerName, T1.IdCode, Balance = CAST(ROUND(ISNULL(SUM(L.CapitalAmount)/10000, 0), 2) AS decimal(10, 2))
-					FROM ImportLoan L
-						INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId
-						INNER JOIN #Top10 T1 ON ISNULL(P.IdCardNo, '') = T1.IdCode AND P.CustomerName = T1.CustomerName
-					WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
-					GROUP BY T1.CustomerName, T1.IdCode
-				) M ON T.CustomerName = M.CustomerName AND T.IdCode = M.IdCode
-				LEFT JOIN (
-					SELECT T1.CustomerName, T1.IdCode, Balance = CAST(ROUND(ISNULL(SUM(L.CapitalAmount)/10000, 0), 2) AS decimal(10, 2))
-					FROM ImportLoan L
-						INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId
-						INNER JOIN #Top10 T1 ON ISNULL(P.IdCardNo, '') = T1.IdCode AND P.CustomerName = T1.CustomerName
-					WHERE L.ImportId = @importIdYearStart AND L.DangerLevel IN ('次级', '可疑', '损失')
-					GROUP BY T1.CustomerName, T1.IdCode
-				) Y ON T.CustomerName = M.CustomerName AND T.IdCode = M.IdCode
-			WHERE T.CustomerType = '对私'
-		) AS X
-		LEFT JOIN DanBaoFangShi D ON X.DanBaoName = D.Name
-	ORDER BY BLBalance DESC, IdCode
-
-	DROP TABLE #Top10
 END

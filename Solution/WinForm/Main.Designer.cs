@@ -1037,7 +1037,7 @@
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(138, 21);
 			this.label14.TabIndex = 1;
-			this.label14.Text = "系统版本：1.0.0.5";
+			this.label14.Text = "系统版本：1.0.0.6";
 			// 
 			// label8
 			// 

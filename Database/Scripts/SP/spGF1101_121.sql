@@ -123,7 +123,7 @@ BEGIN
 							, SS = CASE WHEN L.DangerLevel = '损失' THEN Balance1 ELSE 0.00 END
 					FROM ImportPublic P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 					WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
-						AND P.BusinessType LIKE '%贴现%'
+						AND P.BusinessType LIKE '%转贴现%'
 				) AS X1
 
 			UNION ALL
