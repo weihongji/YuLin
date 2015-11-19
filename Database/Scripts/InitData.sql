@@ -1,3 +1,7 @@
+IF NOT EXISTS(SELECT * FROM Globals) BEGIN
+	INSERT INTO Globals (DBSchemaLevel, FixedDataLevel, SystemVersion)
+	VALUES (1, 1, '1.0.0.6')
+END
 IF NOT EXISTS(SELECT * FROM Org) BEGIN
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050001', '榆林分行公司业务部', '公司部', '营业部')
 	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050101', '望湖路支行', '望湖路', '榆林分行望湖路支行')

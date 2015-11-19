@@ -1,3 +1,7 @@
+IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Globals')) BEGIN
+	DROP TABLE Globals
+END
+
 IF EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Org')) BEGIN
 	DROP TABLE Org
 END

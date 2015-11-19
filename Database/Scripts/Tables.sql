@@ -1,4 +1,12 @@
 
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Globals')) BEGIN
+	CREATE TABLE dbo.Globals(
+		DBSchemaLevel int NOT NULL,
+		FixedDataLevel int NOT NULL,
+		SystemVersion varchar(20) NOT NULL
+	) ON [PRIMARY]
+END
+
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Import')) BEGIN
 	CREATE TABLE dbo.Import(
 		Id int IDENTITY(1,1) NOT NULL,
