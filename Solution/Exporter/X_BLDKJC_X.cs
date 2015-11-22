@@ -24,24 +24,29 @@ namespace Reporting
 			var report = TargetTable.GetById(XEnum.ReportType.X_BLDKJC_X);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
+			var result = string.Empty;
 			foreach (var sheet in report.Sheets) {
 				if (sheet.Name.Equals("附表1")) {
-					PopulateSheet1(filePath, sheet);
+					result = PopulateSheet1(filePath, sheet);
 				}
 				else if (sheet.Name.Equals("附表2")) {
-					PopulateSheet2(filePath, sheet);
+					result = PopulateSheet2(filePath, sheet);
 				}
 				else if (sheet.Name.Equals("附表3")) {
-					PopulateSheet3(filePath, sheet);
+					result = PopulateSheet3(filePath, sheet);
 				}
 				else if (sheet.Name.Equals("附表4")) {
-					PopulateSheet4(filePath, sheet);
+					result = PopulateSheet4(filePath, sheet);
+				}
+
+				if (!string.IsNullOrEmpty(result)) {
+					break;
 				}
 			}
 
 			ExcelHelper.ActivateSheet(filePath);
 
-			return string.Empty;
+			return result;
 		}
 
 		private string PopulateSheet1(string filePath, TargetTableSheet sheet) {

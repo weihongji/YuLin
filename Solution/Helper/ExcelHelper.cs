@@ -359,7 +359,11 @@ namespace Reporting
 
 				bool dummyHeader = false;
 				int dummyHeaderRows = 0;
-				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D || sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D) {
+				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D
+						|| sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D
+						|| sheet.TableId == (int)XEnum.ReportType.X_CSHSX_M && sheet.Index == 3
+					)
+				{
 					dummyHeader = true;
 					dummyHeaderRows = 1;
 				}
@@ -388,6 +392,9 @@ namespace Reporting
 				}
 
 				var columnCount = sheet.Columns.Count;
+				if (sheet.TableId == (int)XEnum.ReportType.X_CSHSX_M && sheet.Index == 3) {
+					columnCount = 27;
+				}
 
 				//Totals
 				int dataRowFrom = sheet.RowsBeforeHeader + 2 - dummyHeaderRows;
@@ -395,7 +402,11 @@ namespace Reporting
 				int footerRowTo = footerRowFrom + (sheet.FooterEndRow - sheet.FooterStartRow);
 
 				// Copy the footer back
-				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D || sheet.TableId == (int)XEnum.ReportType.X_ZXQYZJXQ_S) {
+				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D
+						|| sheet.TableId == (int)XEnum.ReportType.X_ZXQYZJXQ_S
+						|| sheet.TableId == (int)XEnum.ReportType.X_CSHSX_M && sheet.Index == 3
+					)
+				{
 					if (sheet.FooterStartRow > 0) {
 						theSheetTemplate.Activate();
 						oRange = (Range)theSheetTemplate.get_Range(string.Format("{0}:{1}", sheet.FooterStartRow, sheet.FooterEndRow));
@@ -406,6 +417,10 @@ namespace Reporting
 						oRange = theSheet.get_Range(string.Format("{0}:{0}", footerRowFrom));
 						oRange.Select();
 						oRange.Insert();
+					}
+					if (sheet.TableId == (int)XEnum.ReportType.X_CSHSX_M && sheet.Index == 3) {
+						oRange = theSheet.get_Range("A7:A7");
+						oRange.Select();
 					}
 				}
 
@@ -562,6 +577,12 @@ namespace Reporting
 
 					((Range)theSheet.Cells[1, 1]).Select();
 				}
+				else if (sheet.TableId == (int)XEnum.ReportType.X_CSHSX_M && sheet.Index == 3) {
+					//绘制数据部分的表格线
+					int dataRowStartIndex = sheet.RowsBeforeHeader + 1 + 1;
+					Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
+					dataRange.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Black);
+				}
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate, asOfDate2);
 
@@ -602,7 +623,11 @@ namespace Reporting
 			for (int i = 1; i <= sheet.RowsBeforeHeader; i++) {
 				for (int j = 1; j <= columnCount; j++) {
 					var cell = ((Range)theSheet.Cells[i, j]);
-					string val = cell.Value2;
+					string val = "";
+					try {
+						val = cell.Value2;
+					}
+					catch {}
 					if (!string.IsNullOrWhiteSpace(val)) {
 						if (asOfDate2.Year > 2001) {
 							if (val.IndexOf("year2") >= 0) {
@@ -1338,7 +1363,7 @@ namespace Reporting
 				for (int i = 0; i < dataTable.Rows.Count; i++) {
 					for (int j = 0; j < 4; j++) {
 						if (excelRow >= 24) {
-							((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = ((decimal)dataTable.Rows[i][2 + j]/100);
+							((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = ((decimal)dataTable.Rows[i][2 + j] / 100);
 						}
 						else {
 							((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = dataTable.Rows[i][2 + j];
@@ -1507,6 +1532,185 @@ namespace Reporting
 						((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = dataTable.Rows[i][j];
 					}
 					excelRow++;
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
+		public static string PopulateX_CSHSX_M_1(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating X_CSHSX_M_1");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[sheet.Index];
+
+				int excelRow = 5;
+				for (int i = 0; i < dataTable.Rows.Count; i++) {
+					for (int j = 0; j < 18; j++) {
+						((Range)theSheet.Cells[excelRow, 3 + j]).Value2 = dataTable.Rows[i][2 + j];
+					}
+					excelRow++;
+					if (excelRow == 6) { // 1.按贷款担保方式
+						excelRow = 7;
+					}
+					else if (excelRow == 11) { // 2.按贷款逾期情况
+						excelRow = 12;
+					}
+					else if (excelRow == 15) { // 3.按贷款对象
+						excelRow = 16;
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
+		public static string PopulateX_CSHSX_M_2(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating X_CSHSX_M_2");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[sheet.Index];
+
+				int rowStartAt = 7;
+				for (int i = 0; i < dataTable.Rows.Count; i++) {
+					int excelColumn = 2;
+					for (int j = 0; j < 12; j++) {
+						if (j == 7) { // 借款开始日
+							((Range)theSheet.Cells[rowStartAt + i, excelColumn]).Value2 = string.Format("{0}至{1}", ((DateTime)dataTable.Rows[i][j]).ToString("yyyy年MM月dd日"), ((DateTime)dataTable.Rows[i][j + 1]).ToString("yyyy年MM月dd日"));
+							j++; // 跳过借款到期日
+						}
+						else {
+							((Range)theSheet.Cells[rowStartAt + i, excelColumn]).Value2 = dataTable.Rows[i][j];
+						}
+						excelColumn++;
+						if (excelColumn == 6) { // 现金流覆盖情况（如是平台，填报）
+							excelColumn = 7;
+						}
+						else if (excelColumn == 10) { // 如为房地产及其他固定资产贷款
+							excelColumn = 12;
+						}
+						else if (excelColumn == 14) { // 担保情况, N-S列
+							excelColumn = 20;
+						}
+					}
+				}
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
+		public static string PopulateX_CSHSX_M_4(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
+			logger.Debug("Populating X_CSHSX_M_4");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[sheet.Index];
+
+				int rowStartAt = 7;
+				for (int i = 0; i < dataTable.Rows.Count; i++) {
+					int excelColumn = 2;
+					for (int j = 0; j < dataTable.Columns.Count; j++) {
+						if (j == 6) { // 借款开始日
+							((Range)theSheet.Cells[rowStartAt + i, excelColumn]).Value2 = string.Format("{0}至{1}", ((DateTime)dataTable.Rows[i][j]).ToString("yyyy年MM月dd日"), ((DateTime)dataTable.Rows[i][j + 1]).ToString("yyyy年MM月dd日"));
+							j++; // 跳过借款到期日
+						}
+						else {
+							((Range)theSheet.Cells[rowStartAt + i, excelColumn]).Value2 = dataTable.Rows[i][j];
+						}
+						excelColumn++;
+						if (excelColumn == 8) { // 首付比例
+							excelColumn = 10;
+						}
+						else if (excelColumn == 12) { // 担保情况, L-Q列
+							excelColumn = 18;
+						}
+					}
 				}
 
 				SubstituteReportHeader(theSheet, sheet, asOfDate);

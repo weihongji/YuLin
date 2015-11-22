@@ -110,6 +110,9 @@ namespace Reporting
 				case XEnum.ReportType.X_BLDKJC_X:
 					result = new X_BLDKJC_X(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.X_CSHSX_M:
+					result = new X_CSHSX_M(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;

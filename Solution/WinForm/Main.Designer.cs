@@ -262,7 +262,6 @@
 			this.menuReport_X_CSHSX_M.Name = "menuReport_X_CSHSX_M";
 			this.menuReport_X_CSHSX_M.Size = new System.Drawing.Size(292, 22);
 			this.menuReport_X_CSHSX_M.Text = "城商行授信情况统计表";
-			this.menuReport_X_CSHSX_M.Visible = false;
 			this.menuReport_X_CSHSX_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_FXDKBH_D
@@ -1037,7 +1036,7 @@
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(138, 21);
 			this.label14.TabIndex = 1;
-			this.label14.Text = "系统版本：1.0.0.6";
+			this.label14.Text = "系统版本：1.0.0.7";
 			// 
 			// label8
 			// 
