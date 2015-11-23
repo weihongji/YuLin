@@ -118,8 +118,8 @@
 			this.btnExport = new System.Windows.Forms.Button();
 			this.lblReportTitle = new System.Windows.Forms.Label();
 			this.panelAbout = new System.Windows.Forms.Panel();
-			this.label16 = new System.Windows.Forms.Label();
-			this.label14 = new System.Windows.Forms.Label();
+			this.lblReleaseDate = new System.Windows.Forms.Label();
+			this.lblVersion = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -1009,8 +1009,8 @@
 			// 
 			// panelAbout
 			// 
-			this.panelAbout.Controls.Add(this.label16);
-			this.panelAbout.Controls.Add(this.label14);
+			this.panelAbout.Controls.Add(this.lblReleaseDate);
+			this.panelAbout.Controls.Add(this.lblVersion);
 			this.panelAbout.Controls.Add(this.label8);
 			this.panelAbout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panelAbout.Location = new System.Drawing.Point(0, 0);
@@ -1018,25 +1018,25 @@
 			this.panelAbout.Size = new System.Drawing.Size(694, 583);
 			this.panelAbout.TabIndex = 3;
 			// 
-			// label16
+			// lblReleaseDate
 			// 
-			this.label16.AutoSize = true;
-			this.label16.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label16.Location = new System.Drawing.Point(219, 323);
-			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(176, 21);
-			this.label16.TabIndex = 1;
-			this.label16.Text = "发布日期：2015年11月";
+			this.lblReleaseDate.AutoSize = true;
+			this.lblReleaseDate.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.lblReleaseDate.Location = new System.Drawing.Point(219, 323);
+			this.lblReleaseDate.Name = "lblReleaseDate";
+			this.lblReleaseDate.Size = new System.Drawing.Size(176, 21);
+			this.lblReleaseDate.TabIndex = 1;
+			this.lblReleaseDate.Text = "发布日期：2015年11月";
 			// 
-			// label14
+			// lblVersion
 			// 
-			this.label14.AutoSize = true;
-			this.label14.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label14.Location = new System.Drawing.Point(219, 289);
-			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(138, 21);
-			this.label14.TabIndex = 1;
-			this.label14.Text = "系统版本：1.0.0.7";
+			this.lblVersion.AutoSize = true;
+			this.lblVersion.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.lblVersion.Location = new System.Drawing.Point(219, 289);
+			this.lblVersion.Name = "lblVersion";
+			this.lblVersion.Size = new System.Drawing.Size(138, 21);
+			this.lblVersion.TabIndex = 1;
+			this.lblVersion.Text = "系统版本：1.0.0.1";
 			// 
 			// label8
 			// 
@@ -1178,8 +1178,8 @@
 		private System.Windows.Forms.TextBox txtImportDate;
 		private System.Windows.Forms.MonthCalendar calendarImport;
 		private System.Windows.Forms.Panel panelAbout;
-		private System.Windows.Forms.Label label16;
-		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.Label lblReleaseDate;
+		private System.Windows.Forms.Label lblVersion;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.ToolStripMenuItem menuSystem_About;
 		private System.Windows.Forms.ToolStripMenuItem menuImport;

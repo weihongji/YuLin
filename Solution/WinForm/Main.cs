@@ -6,6 +6,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -62,7 +63,7 @@ namespace Reporting
 		}
 
 		private void Main_Load(object sender, EventArgs e) {
- 			this.calendarImport.Left = 206;
+			this.calendarImport.Left = 206;
 			this.calendarImport.Visible = false;
 			this.btnSelectColumns.Visible = false;
 
@@ -75,6 +76,16 @@ namespace Reporting
 			}
 			else {
 				menuSystem_About_Click(null, null);
+			}
+			var version = new Version(Application.ProductVersion);
+			if (version != null) {
+				this.lblVersion.Text = string.Format("系统版本：{0}", version);
+			}
+			object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+			if (attributes.Length > 0) {
+				AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+				if (titleAttribute.Title != "")
+					this.lblReleaseDate.Text = string.Format("发布日期：{0}", titleAttribute.Title);
 			}
 		}
 
