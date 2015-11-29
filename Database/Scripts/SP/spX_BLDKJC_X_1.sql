@@ -78,7 +78,7 @@ BEGIN
 				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 			FROM ImportLoan
-			WHERE ImportId = @importIdToday AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE ImportId = @importIdToday AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 				AND CustomerType = '对公'
 		) AS X
 	END
@@ -93,7 +93,7 @@ BEGIN
 				, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 			FROM ImportLoan L
 				LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
-			WHERE L.ImportId = @importIdToday AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importIdToday AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 				AND L.CustomerType = '对公'
 		) AS X
 	END
@@ -108,7 +108,7 @@ BEGIN
 			, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 		FROM ImportLoan L
 			LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
-		WHERE L.ImportId = @importIdLastTenDays AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE L.ImportId = @importIdLastTenDays AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND L.CustomerType = '对公'
 	) AS X
 
@@ -121,7 +121,7 @@ BEGIN
 			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
-		WHERE ImportId = @importIdLastMonth AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE ImportId = @importIdLastMonth AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND CustomerType = '对公'
 	) AS X
 
@@ -134,7 +134,7 @@ BEGIN
 			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
-		WHERE ImportId = @importIdYearStart AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE ImportId = @importIdYearStart AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND CustomerType = '对公'
 	) AS X
 
@@ -149,7 +149,7 @@ BEGIN
 				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 			FROM ImportLoan
-			WHERE ImportId = @importIdToday AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE ImportId = @importIdToday AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 				AND CustomerType = '对私'
 		) AS X
 	END
@@ -164,7 +164,7 @@ BEGIN
 				, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 			FROM ImportLoan L
 				LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
-			WHERE L.ImportId = @importIdToday AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importIdToday AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 				AND L.CustomerType = '对私'
 		) AS X
 	END
@@ -179,7 +179,7 @@ BEGIN
 			, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 		FROM ImportLoan L
 			LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
-		WHERE L.ImportId = @importIdLastTenDays AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE L.ImportId = @importIdLastTenDays AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND L.CustomerType = '对私'
 	) AS X
 
@@ -192,7 +192,7 @@ BEGIN
 			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
-		WHERE ImportId = @importIdLastMonth AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE ImportId = @importIdLastMonth AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND CustomerType = '对私'
 	) AS X
 
@@ -205,16 +205,16 @@ BEGIN
 			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
-		WHERE ImportId = @importIdYearStart AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE ImportId = @importIdYearStart AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND CustomerType = '对私'
 	) AS X
 
 	/* Final Temporary table */
 	SELECT Id, Category
-		, Today = CAST(ROUND(ISNULL(Today/10000, 0), 2) AS decimal(10, 2))
-		, LastTenDays = CAST(ROUND(ISNULL(LastTenDays/10000, 0), 2) AS decimal(10, 2))
-		, LastMonth = CAST(ROUND(ISNULL(LastMonth/10000, 0), 2) AS decimal(10, 2))
-		, YearStart = CAST(ROUND(ISNULL(YearStart/10000, 0), 2) AS decimal(10, 2))
+		, Today = CAST(ROUND(ISNULL(Today/10000, 0), 2) AS money)
+		, LastTenDays = CAST(ROUND(ISNULL(LastTenDays/10000, 0), 2) AS money)
+		, LastMonth = CAST(ROUND(ISNULL(LastMonth/10000, 0), 2) AS money)
+		, YearStart = CAST(ROUND(ISNULL(YearStart/10000, 0), 2) AS money)
 	INTO #Final
 	FROM (
 		SELECT 1 AS Id, 'Public' AS Category, T.Balance AS Today, D.Balance AS LastTenDays, M.Balance AS LastMonth, Y.Balance AS YearStart
@@ -253,10 +253,10 @@ BEGIN
 	FROM #Final
 	UNION ALL
 	SELECT Id, Category
-		, RatioToday = CAST(ROUND(ISNULL(RatioToday*100, 0), 2) AS decimal(10, 2)) --乘以100只是为了变成decimal(10, 2)，输出到excel之前回除以100
-		, DiffRatioLastTenDays = CAST(ROUND(ISNULL((RatioToday - RatioLastTenDays)*100, 0), 2) AS decimal(10, 2))
-		, DiffRatioLastMonth = CAST(ROUND(ISNULL((RatioToday - RatioLastMonth)*100, 0), 2) AS decimal(10, 2))
-		, DiffRatioYearStart = CAST(ROUND(ISNULL((RatioToday - RatioYearStart)*100, 0), 2) AS decimal(10, 2))
+		, RatioToday = CAST(ROUND(ISNULL(RatioToday*100, 0), 2) AS money) --乘以100只是为了变成money，输出到excel之前回除以100
+		, DiffRatioLastTenDays = CAST(ROUND(ISNULL((RatioToday - RatioLastTenDays)*100, 0), 2) AS money)
+		, DiffRatioLastMonth = CAST(ROUND(ISNULL((RatioToday - RatioLastMonth)*100, 0), 2) AS money)
+		, DiffRatioYearStart = CAST(ROUND(ISNULL((RatioToday - RatioYearStart)*100, 0), 2) AS money)
 	FROM (
 		-- 不良贷款率
 		SELECT 101 AS Id, 'BL_Ratio' AS Category, RatioToday = CASE WHEN T.Today <> 0 THEN R.Today/T.Today ELSE 0.00 END

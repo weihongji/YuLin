@@ -24,7 +24,7 @@ namespace Reporting
 				Logger.Debug(msg);
 				return msg;
 			}
-			var fileName = string.Format("榆林分行{0}月末风险贷款情况表 - {1}.xls", this.AsOfDate.Month, import.WJFLSubmitDate == null ? "初" : "终");
+			var fileName = string.Format("榆林分行{0}月末风险贷款情况表 - {1}.xls", this.AsOfDate.Month, import.WJFLDate == null ? "初" : "终");
 			Logger.Debug("Generating " + fileName);
 
 			var report = TargetTable.GetById(XEnum.ReportType.X_WJFL_M);

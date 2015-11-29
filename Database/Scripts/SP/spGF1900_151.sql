@@ -15,11 +15,11 @@ BEGIN
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
 	SELECT D.Id, D.Name
-		, ZC = CAST(ROUND(ISNULL(SUM(Balance) - SUM(GZ) - SUM(CJ) - SUM(KY) - SUM(SS), 0), 2) AS decimal(10, 2))
-		, GZ = CAST(ROUND(ISNULL(SUM(GZ), 0), 2) AS decimal(10, 2))
-		, CJ = CAST(ROUND(ISNULL(SUM(CJ), 0), 2) AS decimal(10, 2))
-		, KY = CAST(ROUND(ISNULL(SUM(KY), 0), 2) AS decimal(10, 2))
-		, SS = CAST(ROUND(ISNULL(SUM(SS), 0), 2) AS decimal(10, 2))
+		, ZC = CAST(ROUND(ISNULL(SUM(Balance) - SUM(GZ) - SUM(CJ) - SUM(KY) - SUM(SS), 0), 2) AS money)
+		, GZ = CAST(ROUND(ISNULL(SUM(GZ), 0), 2) AS money)
+		, CJ = CAST(ROUND(ISNULL(SUM(CJ), 0), 2) AS money)
+		, KY = CAST(ROUND(ISNULL(SUM(KY), 0), 2) AS money)
+		, SS = CAST(ROUND(ISNULL(SUM(SS), 0), 2) AS money)
 	FROM DirectionMix D
 		LEFT JOIN (
 			SELECT Direction1 = ISNULL(Direction1, '')

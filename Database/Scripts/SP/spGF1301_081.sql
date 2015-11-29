@@ -20,9 +20,9 @@ BEGIN
 	END
 
 	SELECT TOP 10 CustomerName, IdCode
-		, Balance = CAST(ROUND(ISNULL(Balance, 0), 2) AS decimal(10, 2))
-		, OweCapital = CAST(ROUND(ISNULL(OweCapital, 0), 2) AS decimal(10, 2))
-		, OweInterest = CAST(ROUND(ISNULL(OweInterestAmount, 0), 2) AS decimal(10, 2))
+		, Balance = CAST(ROUND(ISNULL(Balance, 0), 2) AS money)
+		, OweCapital = CAST(ROUND(ISNULL(OweCapital, 0), 2) AS money)
+		, OweInterest = CAST(ROUND(ISNULL(OweInterestAmount, 0), 2) AS money)
 		, OverdueDays = CASE WHEN OverdueDays > OweInterestDays THEN OverdueDays ELSE OweInterestDays END
 	FROM (
 			SELECT TOP 10 P.CustomerName, P.OrgCode AS IdCode

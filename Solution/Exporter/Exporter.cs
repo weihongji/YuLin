@@ -31,8 +31,8 @@ namespace Reporting
 			this.AsOfDate = asOfDate;
 
 			var dao = new SqlDbHelper();
-			var countobject = dao.ExecuteScalar(string.Format("SELECT State FROM Import WHERE ImportDate = '{0}'", asOfDate.ToString("yyyyMMdd")));
-			if (countobject == null) {
+			var import = dao.ExecuteScalar(string.Format("SELECT 1 FROM Import WHERE ImportDate = '{0}'", asOfDate.ToString("yyyyMMdd")));
+			if (import == null) {
 				return string.Format("{0}的数据还没导入系统", asOfDate.ToString("M月d日"));
 			}
 

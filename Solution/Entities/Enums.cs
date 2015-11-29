@@ -60,12 +60,5 @@ namespace Reporting
 			C_XZDKMX_D = 62,		// 新增贷款明细表
 			C_JQDKMX_D = 63,		// 结清贷款明细表
 		}
-
-		public enum ImportState
-		{
-			Initial = 0,
-			Imported = 1, // All sourc tables imported, but Danger Leve in Loan and OrgNo in Private haven't been assigned.
-			Complete = 2
-		}
 	}
 }

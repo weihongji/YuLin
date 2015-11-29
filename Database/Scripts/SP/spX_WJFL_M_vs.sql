@@ -27,17 +27,17 @@ BEGIN
 		Sorting int,
 		CustomerScale nvarchar(20),
 		BL_Increase_Count int,
-		BL_Increase_Amount decimal(15, 2),
+		BL_Increase_Amount money,
 		BL_Decrease_Count int,
-		BL_Decrease_Amount decimal(15, 2),
+		BL_Decrease_Amount money,
 		YQ_Increase_Count int,
-		YQ_Increase_Amount decimal(15, 2),
+		YQ_Increase_Amount money,
 		YQ_Decrease_Count int,
-		YQ_Decrease_Amount decimal(15, 2),
+		YQ_Decrease_Amount money,
 		FY_Increase_Count int,
-		FY_Increase_Amount decimal(15, 2),
+		FY_Increase_Amount money,
 		FY_Decrease_Count int,
-		FY_Decrease_Amount decimal(15, 2),
+		FY_Decrease_Amount money,
 	)
 
 	INSERT INTO #Result (Sorting, CustomerScale

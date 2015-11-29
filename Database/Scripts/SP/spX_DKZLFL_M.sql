@@ -21,13 +21,13 @@ BEGIN
 	CREATE TABLE #Result(
 		Sorting int,
 		SubjectName nvarchar(50),
-		Balance0 decimal(15, 2),
-		Balance1 decimal(15, 2),
-		Balance2 decimal(15, 2),
-		Balance3 decimal(15, 2),
-		Balance4 decimal(15, 2),
-		Balance5 decimal(15, 2),
-		Balance6 decimal(15, 2)
+		Balance0 money,
+		Balance1 money,
+		Balance2 money,
+		Balance3 money,
+		Balance4 money,
+		Balance5 money,
+		Balance6 money
 	)
 
 	INSERT INTO #Result (Sorting, Balance0, Balance1, Balance2, Balance3, Balance4, Balance5, Balance6, SubjectName)
@@ -50,13 +50,13 @@ BEGIN
 	END
 	CREATE TABLE #ResultSingle(
 		Category nvarchar(50),
-		Total decimal(15, 2),
-		G1 decimal(15, 2),
-		G2 decimal(15, 2),
-		G3 decimal(15, 2),
-		CJ decimal(15, 2),
-		KY decimal(15, 2),
-		SS decimal(15, 2)
+		Total money,
+		G1 money,
+		G2 money,
+		G3 money,
+		CJ money,
+		KY money,
+		SS money
 	)
 
 	INSERT INTO #ResultSingle
@@ -71,7 +71,7 @@ BEGIN
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
 		WHERE ImportId = @importId
-			AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 	) AS X1
 	GROUP BY CustomerType
 
@@ -106,7 +106,7 @@ BEGIN
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan L INNER JOIN ImportPublic P ON L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
 		WHERE L.ImportId = @importId
-			AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
 	) AS X1
 
@@ -129,7 +129,7 @@ BEGIN
 				, SS = CASE WHEN L.DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan L INNER JOIN ImportPrivate P ON L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
 		WHERE L.ImportId = @importId
-			AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 	) AS X1
 	GROUP BY ProductName
 
@@ -157,13 +157,13 @@ BEGIN
 	) AS X
 	WHERE R.SubjectName = '个人经营贷款'
 
-	SELECT Balance0 = CAST(ROUND(ISNULL(Balance0/10000, 0), 2) AS decimal(10, 2))
-		, Balance1 = CAST(ROUND(ISNULL(Balance1/10000, 0), 2) AS decimal(10, 2))
-		, Balance2 = CAST(ROUND(ISNULL(Balance2/10000, 0), 2) AS decimal(10, 2))
-		, Balance3 = CAST(ROUND(ISNULL(Balance3/10000, 0), 2) AS decimal(10, 2))
-		, Balance4 = CAST(ROUND(ISNULL(Balance4/10000, 0), 2) AS decimal(10, 2))
-		, Balance5 = CAST(ROUND(ISNULL(Balance5/10000, 0), 2) AS decimal(10, 2))
-		, Balance6 = CAST(ROUND(ISNULL(Balance6/10000, 0), 2) AS decimal(10, 2))
+	SELECT Balance0 = CAST(ROUND(ISNULL(Balance0/10000, 0), 2) AS money)
+		, Balance1 = CAST(ROUND(ISNULL(Balance1/10000, 0), 2) AS money)
+		, Balance2 = CAST(ROUND(ISNULL(Balance2/10000, 0), 2) AS money)
+		, Balance3 = CAST(ROUND(ISNULL(Balance3/10000, 0), 2) AS money)
+		, Balance4 = CAST(ROUND(ISNULL(Balance4/10000, 0), 2) AS money)
+		, Balance5 = CAST(ROUND(ISNULL(Balance5/10000, 0), 2) AS money)
+		, Balance6 = CAST(ROUND(ISNULL(Balance6/10000, 0), 2) AS money)
 	FROM #Result
 	ORDER BY Sorting
 

@@ -11,7 +11,9 @@ echo Creating stored functions...
 cd SF
 sqlcmd -S .\SQL2012 -d YuLin -i sfGetDangerLevel.sql
 sqlcmd -S .\SQL2012 -d YuLin -i sfGetImportIdWJFL.sql
-sqlcmd -S .\SQL2012 -d YuLin -i sfGetOrgNo.sql
+sqlcmd -S .\SQL2012 -d YuLin -i sfGetImportStatus.sql
+sqlcmd -S .\SQL2012 -d YuLin -i sfGetLoanBalance.sql
+sqlcmd -S .\SQL2012 -d YuLin -i sfGetOrgId.sql
 echo Done
 
 echo Creating stored procedures...

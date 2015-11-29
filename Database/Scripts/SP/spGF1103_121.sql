@@ -15,11 +15,11 @@ BEGIN
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
 	SELECT DirectionId, Id, Name AS Direction2
-		, CAST(ROUND(ISNULL(ZC, 0), 2) AS decimal(10, 2)) AS ZC
-		, CAST(ROUND(ISNULL(GZ, 0), 2) AS decimal(10, 2)) AS GZ
-		, CAST(ROUND(ISNULL(CJ, 0), 2) AS decimal(10, 2)) AS CJ
-		, CAST(ROUND(ISNULL(KY, 0), 2) AS decimal(10, 2)) AS KY
-		, CAST(ROUND(ISNULL(SS, 0), 2) AS decimal(10, 2)) AS SS
+		, CAST(ROUND(ISNULL(ZC, 0), 2) AS money) AS ZC
+		, CAST(ROUND(ISNULL(GZ, 0), 2) AS money) AS GZ
+		, CAST(ROUND(ISNULL(CJ, 0), 2) AS money) AS CJ
+		, CAST(ROUND(ISNULL(KY, 0), 2) AS money) AS KY
+		, CAST(ROUND(ISNULL(SS, 0), 2) AS money) AS SS
 	FROM (
 			SELECT DirectionId, Id, MIN(Name) AS Name
 				, SUM(ZC) AS ZC, SUM(GZ) AS GZ, SUM(CJ) AS CJ, SUM(KY) AS KY, SUM(SS) AS SS

@@ -22,17 +22,17 @@ BEGIN
 		DROP TABLE #Top20
 	END
 
-	SELECT TOP 20 Id = MAX(Id), CustomerName, TotalBalance = CAST(SUM(CapitalAmount)/10000 AS decimal(15, 2))
+	SELECT TOP 20 Id = MAX(Id), CustomerName, TotalBalance = CAST(SUM(CapitalAmount)/10000 AS money)
 	INTO #Top20
 	FROM ImportLoan L
 	WHERE ImportId = @importId
-		AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 		AND CustomerType = '对公'
 		AND EXISTS(SELECT * FROM ImportPublic P WHERE P.LoanAccount = L.LoanAccount AND P.ImportId = @importId) --Exclude 陕西恒盛塬实业集团有限公司
 	GROUP BY CustomerName
 	ORDER BY TotalBalance DESC
 
-	SELECT P.OrgName2, T.CustomerName, D.Name AS Direction, P.IsINRZ, LoanAmount = CAST(L.LoanAmount/10000 AS decimal(15, 2)), T.TotalBalance, P.BusinessType, L.LoanStartDate, L.LoanEndDate, P.VouchTypeName, L.DangerLevel, DangerLevelLM = LM.DangerLevel
+	SELECT P.OrgName2, T.CustomerName, D.Name AS Direction, P.IsINRZ, LoanAmount = CAST(L.LoanAmount/10000 AS money), T.TotalBalance, P.BusinessType, L.LoanStartDate, L.LoanEndDate, P.VouchTypeName, L.DangerLevel, DangerLevelLM = LM.DangerLevel
 	FROM #Top20 T
 		INNER JOIN ImportLoan L ON T.Id = L.Id
 		INNER JOIN ImportPublic P ON P.LoanAccount = L.LoanAccount AND P.ImportId = @importId

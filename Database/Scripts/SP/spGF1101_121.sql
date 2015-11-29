@@ -15,11 +15,11 @@ BEGIN
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
 	SELECT Id, Name AS Direction
-		, CAST(ROUND(ISNULL(ZC, 0), 2) AS decimal(10, 2)) AS ZC
-		, CAST(ROUND(ISNULL(GZ, 0), 2) AS decimal(10, 2)) AS GZ
-		, CAST(ROUND(ISNULL(CJ, 0), 2) AS decimal(10, 2)) AS CJ
-		, CAST(ROUND(ISNULL(KY, 0), 2) AS decimal(10, 2)) AS KY
-		, CAST(ROUND(ISNULL(SS, 0), 2) AS decimal(10, 2)) AS SS
+		, CAST(ROUND(ISNULL(ZC, 0), 2) AS money) AS ZC
+		, CAST(ROUND(ISNULL(GZ, 0), 2) AS money) AS GZ
+		, CAST(ROUND(ISNULL(CJ, 0), 2) AS money) AS CJ
+		, CAST(ROUND(ISNULL(KY, 0), 2) AS money) AS KY
+		, CAST(ROUND(ISNULL(SS, 0), 2) AS money) AS SS
 	FROM (
 			SELECT D.Id, D.Name, B.ZC, B.GZ, B.CJ, B.KY, B.SS FROM Direction D
 				LEFT JOIN (
@@ -179,7 +179,7 @@ BEGIN
 										LEFT JOIN ImportPrivate PV ON PV.LoanAccount = L.LoanAccount AND PV.ImportId = L.ImportId
 										LEFT JOIN ImportPublic PB ON PB.LoanAccount = L.LoanAccount AND PB.ImportId = L.ImportId
 									WHERE L.ImportId = @importId
-										AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+										AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 								) AS X1
 						) AS X2
 					WHERE FinalDays > 0

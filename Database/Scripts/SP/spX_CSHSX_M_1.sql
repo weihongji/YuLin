@@ -24,12 +24,12 @@ BEGIN
 	CREATE TABLE #Today(
 		Id int,
 		Name nvarchar(50),
-		Total decimal(15, 2),
-		ZC decimal(15, 2),
-		GZ decimal(15, 2),
-		CJ decimal(15, 2),
-		KY decimal(15, 2),
-		SS decimal(15, 2)
+		Total money,
+		ZC money,
+		GZ money,
+		CJ money,
+		KY money,
+		SS money
 	)
 	SELECT * INTO #LastMonth FROM #Today WHERE 1=2
 	SELECT * INTO #YearStart FROM #Today WHERE 1=2

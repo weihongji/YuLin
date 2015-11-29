@@ -15,12 +15,12 @@ BEGIN
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
 	SELECT TOP 10 CustomerName, IdCode
-		, Balance = CAST(ROUND(ISNULL(Balance, 0), 2) AS decimal(10, 2))
-		, ZC = CAST(ROUND(ISNULL(Balance - GZ - CJ - KY - SS, 0), 2) AS decimal(10, 2))
-		, GZ = CAST(ROUND(ISNULL(GZ, 0), 2) AS decimal(10, 2))
-		, CJ = CAST(ROUND(ISNULL(CJ, 0), 2) AS decimal(10, 2))
-		, KY = CAST(ROUND(ISNULL(KY, 0), 2) AS decimal(10, 2))
-		, SS = CAST(ROUND(ISNULL(SS, 0), 2) AS decimal(10, 2))
+		, Balance = CAST(ROUND(ISNULL(Balance, 0), 2) AS money)
+		, ZC = CAST(ROUND(ISNULL(Balance - GZ - CJ - KY - SS, 0), 2) AS money)
+		, GZ = CAST(ROUND(ISNULL(GZ, 0), 2) AS money)
+		, CJ = CAST(ROUND(ISNULL(CJ, 0), 2) AS money)
+		, KY = CAST(ROUND(ISNULL(KY, 0), 2) AS money)
+		, SS = CAST(ROUND(ISNULL(SS, 0), 2) AS money)
 	FROM (
 			SELECT TOP 10 CustomerName, IdCode
 				, Balance = SUM(Balance), GZ = SUM(GZ), CJ = SUM(CJ), KY = SUM(KY), SS = SUM(SS)

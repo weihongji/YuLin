@@ -21,14 +21,14 @@ BEGIN
 	CREATE TABLE #Result(
 		Sorting int,
 		SubjectName nvarchar(50),
-		Balance1 decimal(15, 2),
-		Balance2 decimal(15, 2),
-		Balance3 decimal(15, 2),
-		Balance4 decimal(15, 2),
-		Balance5 decimal(15, 2),
-		Balance6 decimal(15, 2),
-		Balance7 decimal(15, 2),
-		Balance8 decimal(15, 2)
+		Balance1 money,
+		Balance2 money,
+		Balance3 money,
+		Balance4 money,
+		Balance5 money,
+		Balance6 money,
+		Balance7 money,
+		Balance8 money
 	)
 
 	INSERT INTO #Result (Sorting, Balance1, Balance2, Balance3, Balance4, Balance5, Balance6, Balance7, Balance8, SubjectName)
@@ -67,12 +67,12 @@ BEGIN
 	END
 	CREATE TABLE #ResultSingle(
 		Category nvarchar(50),
-		A decimal(15, 2),
-		B decimal(15, 2),
-		C decimal(15, 2),
-		D decimal(15, 2),
-		E decimal(15, 2),
-		F decimal(15, 2)
+		A money,
+		B money,
+		C money,
+		D money,
+		E money,
+		F money
 	)
 
 	INSERT INTO #ResultSingle

@@ -17,10 +17,10 @@ BEGIN
 
 	SELECT OrgName, Total_Amount
 		, YQ_Count, YQ_Amount, YQ_Amount/Total_Amount AS YQ_Percentage
-		, BLDK_Count, BLDK_Amount, BLDK_Amount/Total_Amount AS BLDK_Percentage
+		, BL_Count, BL_Amount, BL_Amount/Total_Amount AS BL_Percentage
 		, ZQX_Count, ZQX_Amount, ZQX_Amount/Total_Amount AS ZQX_Percentage
 		, Total_Interest
-		, Y_B_Count = YQ_Count + BLDK_Count, Y_B_Amount = YQ_Amount + BLDK_Amount, Y_B_Percentage = (YQ_Amount + BLDK_Amount)/Total_Amount
+		, Y_B_Count = YBTotal_Count, Y_B_Amount = YBTotal_Amount, Y_B_Percentage = YBTotal_Amount/Total_Amount
 	FROM #Result
 
 	DROP TABLE #Result

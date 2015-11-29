@@ -36,7 +36,7 @@ BEGIN
 		SET @asOfDate2 = @asOfDateWJFL
 	END
 	SELECT TOP 1 @importIdWJFL = Id, @asOfDateWJFL = ImportDate FROM Import
-	WHERE ImportDate <= @asOfDate1 AND [State] = 2
+	WHERE ImportDate <= @asOfDate1 AND WJFLDate IS NOT NULL
 	ORDER BY ImportDate DESC
 
 	DECLARE @importId1 int
@@ -61,7 +61,7 @@ BEGIN
 		LEFT JOIN ImportNonAccrual NA ON L.LoanAccount = NA.LoanAccount AND NA.ImportId = L.ImportId
 		LEFT JOIN ImportOverdue OD ON L.LoanAccount = OD.LoanAccount AND OD.ImportId = L.ImportId
 	WHERE L.ImportId = @importIdWJFL
-		AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 
 	UPDATE #ResultWJFL SET OverdueDays = OweInterestDays WHERE OverdueDays = 0 AND OweInterestDays > 0 AND CustomerType LIKE '%房%'
 	UPDATE #ResultWJFL SET CustomerType =
@@ -83,7 +83,7 @@ BEGIN
 			(
 				SELECT Id, LoanAccount, CapitalAmount, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 				FROM ImportLoan
-				WHERE OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 					AND ImportId = @importId1
 					AND LoanState = '非应计'
 			) AS L1
@@ -91,7 +91,7 @@ BEGIN
 			(
 				SELECT Id, LoanAccount, CapitalAmount, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 				FROM ImportLoan
-				WHERE OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 					AND ImportId = @importId2
 					AND LoanState = '非应计'
 			) AS L2 ON L1.LoanAccount = L2.LoanAccount
@@ -103,7 +103,7 @@ BEGIN
 			(
 				SELECT Id, LoanAccount, CapitalAmount, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 				FROM ImportLoan
-				WHERE OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 					AND ImportId = @importId1
 					AND LoanState IN ('逾期', '部分逾期')
 			) AS L1
@@ -111,7 +111,7 @@ BEGIN
 			(
 				SELECT Id, LoanAccount, CapitalAmount, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 				FROM ImportLoan
-				WHERE OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 					AND ImportId = @importId2
 					AND LoanState IN ('逾期', '部分逾期')
 			) AS L2 ON L1.LoanAccount = L2.LoanAccount
@@ -123,7 +123,7 @@ BEGIN
 			(
 				SELECT Id, LoanAccount, CapitalAmount, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 				FROM ImportLoan
-				WHERE OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 					AND ImportId = @importId1
 					AND LoanState = '正常' AND OweYingShouInterest + OweCuiShouInterest != 0
 			) AS L1
@@ -131,7 +131,7 @@ BEGIN
 			(
 				SELECT Id, LoanAccount, CapitalAmount, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
 				FROM ImportLoan
-				WHERE OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 					AND ImportId = @importId2
 					AND LoanState = '正常' AND OweYingShouInterest + OweCuiShouInterest != 0
 			) AS L2 ON L1.LoanAccount = L2.LoanAccount
@@ -153,20 +153,20 @@ BEGIN
 		, OweInterestDays = CASE WHEN L2.Id IS NOT NULL THEN R.OweInterestDays ELSE 0 END
 		, OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
 		, BusinessType = R.CustomerType
-		, L.OrgNo, L.LoanCatalog, L.LoanAccount, L.CustomerNo, L.CustomerType, L.CurrencyType, L.LoanAmount, L.OweCapital, L.OweYingShouInterest, L.OweCuiShouInterest, L.DueBillNo, L.ZhiHuanZhuanRang, L.HeXiaoFlag
+		, L.OrgId, L.LoanCatalog, L.LoanAccount, L.CustomerNo, L.CustomerType, L.CurrencyType, L.LoanAmount, L.OweCapital, L.OweYingShouInterest, L.OweCuiShouInterest, L.DueBillNo, L.ZhiHuanZhuanRang, L.HeXiaoFlag
 		, LoanState = ISNULL(L2.LoanState, '结清')
 		, L.LoanType, L.LoanTypeName, L.Direction, L.ZhuanLieYuQi, L.ZhuanLieFYJ, L.InterestEndDate, L.LiLvType, L.LiLvSymbol, L.LiLvJiaJianMa, L.YuQiLiLvYiJu, L.YuQiLiLvType, L.YuQiLiLvSymbol, L.YuQiLiLvJiaJianMa, L.LiLvYiJu, L.ContractInterestRatio, L.ContractOverdueInterestRate, L.ChargeAccount
 	INTO #Result
 	FROM ImportLoan L
-		INNER JOIN Org O ON L.OrgNo = O.Number
+		INNER JOIN Org O ON L.OrgId = O.Id
 		LEFT JOIN #ResultWJFL R ON L.LoanAccount = R.LoanAccount
 		LEFT JOIN ImportLoan L2 ON L.LoanAccount = L2.LoanAccount AND L2.ImportId = @importId2
 	WHERE L.Id IN (SELECT Id FROM #LoanId WHERE Id > 0)
 
-	UPDATE R SET SubIndex = (SELECT COUNT(*) FROM #Result I WHERE I.OrgNo = R.OrgNo AND I.Id<=R.Id) FROM #Result R
+	UPDATE R SET SubIndex = (SELECT COUNT(*) FROM #Result I WHERE I.OrgId = R.OrgId AND I.Id<=R.Id) FROM #Result R
 
 	DECLARE @sql nvarchar(2000)
-	SET @sql='SELECT ' + @columns + ' FROM #Result ORDER BY OrgNo, Id'
+	SET @sql='SELECT ' + @columns + ' FROM #Result ORDER BY OrgId, Id'
 	EXEC sp_executesql @sql
 
 	DROP TABLE #Result

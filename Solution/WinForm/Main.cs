@@ -444,7 +444,7 @@ namespace Reporting
 			var lastSelectValue2 = "";
 			if (IsMonthly()) {
 				this.lblExportDate.Text = "数据月份：";
-				var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
+				var table = dao.ExecuteDataTable("SELECT ImportDate, dbo.sfGetImportStatus(ImportDate) AS status FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
 				if (this.cmbReportMonth.SelectedIndex >= 0) {
 					lastSelectValue = this.cmbReportMonth.Text;
 				}
@@ -452,7 +452,7 @@ namespace Reporting
 				if (table != null) {
 					foreach (DataRow row in table.Rows) {
 						var value = ((DateTime)row[0]).ToString("yyyy-MM");
-						if ((short)row[1] != (short)XEnum.ImportState.Complete) {
+						if (!((string)row[1]).StartsWith("1111111")) {
 							value += " *";
 						}
 						this.cmbReportMonth.Items.Add(value);
@@ -471,7 +471,7 @@ namespace Reporting
 			}
 			else {
 				this.lblExportDate.Text = "数据日期：";
-				var table = dao.ExecuteDataTable("SELECT ImportDate, State FROM Import ORDER BY ImportDate DESC");
+				var table = dao.ExecuteDataTable("SELECT ImportDate FROM Import ORDER BY ImportDate DESC");
 				if (this.cmbReportMonth.SelectedIndex >= 0) {
 					lastSelectValue = this.cmbReportMonth.Text;
 				}

@@ -46,7 +46,6 @@ namespace Reporting
 		}
 
 		public static TargetTable GetById(int Id) {
-			var list = new List<TargetTable>();
 			var table = dao.ExecuteDataTable("SELECT * FROM TargetTable WHERE Id = " + Id);
 			if (table.Rows.Count > 0) {
 				return new TargetTable((DataRow)table.Rows[0]);

@@ -50,7 +50,6 @@ namespace Reporting
 		}
 
 		public static TargetTableSheet GetById(int Id) {
-			var list = new List<TargetTableSheet>();
 			var table = dao.ExecuteDataTable("SELECT * FROM TargetTableSheet WHERE Id = " + Id);
 			if (table.Rows.Count > 0) {
 				return new TargetTableSheet((DataRow)table.Rows[0]);

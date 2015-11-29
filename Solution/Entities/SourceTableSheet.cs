@@ -48,7 +48,6 @@ namespace Reporting
 		}
 
 		public static SourceTableSheet GetById(int Id) {
-			var list = new List<SourceTableSheet>();
 			var table = dao.ExecuteDataTable("SELECT * FROM SourceTableSheet WHERE Id = " + Id);
 			if (table.Rows.Count > 0) {
 				return new SourceTableSheet((DataRow)table.Rows[0]);

@@ -12,13 +12,9 @@ namespace Reporting
 		private static Logger logger = Logger.GetLogger("ExcelHelper");
 
 		public static void ProcessCopiedItem(string filePath, XEnum.ImportItemType itemType) {
-			logger.Debug("Removing rows about column header row for " + filePath.Substring(filePath.LastIndexOf('\\') + 1));
+			logger.Debug("Processing copied file: " + filePath.Substring(filePath.LastIndexOf('\\') + 1));
 			var table = SourceTable.GetById((int)itemType);
 			var sheets = table.Sheets;
-			if (sheets.All(x => x.RowsBeforeHeader == 0)) {
-				logger.Debug("No sheet need to remove rows");
-				return;
-			}
 
 			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
 			theExcelApp.DisplayAlerts = false;
@@ -30,23 +26,47 @@ namespace Reporting
 				theExcelBook = theExcelApp.Workbooks.Open(filePath);
 				excelOpened = true;
 				foreach (var sheetEntity in sheets) {
-					if (sheetEntity.RowsBeforeHeader == 0) {
-						continue;
-					}
 					theSheet = (Worksheet)theExcelBook.Sheets[sheetEntity.Index];
 					theSheet.Activate();
+
+					//Remove rows above the column header row
 					if (sheetEntity.Id == 1) { // 贷款欠款查询
 						if (((Range)theSheet.Cells[1, 1]).Value2 == "机构号码") {
 							sheetEntity.RowsBeforeHeader = 0;
-							continue;
 						}
 					}
-					var range = (Range)theSheet.get_Range("1:" + sheetEntity.RowsBeforeHeader.ToString());
-					range.Select();
-					logger.DebugFormat("Removing {0} rows from sheet: {1}", sheetEntity.RowsBeforeHeader, theSheet.Name);
-					range.Delete(XlDeleteShiftDirection.xlShiftUp);
 
+					//修改RowsBeforeHeader，以适应变化多端的客户表结构
+					if (itemType == XEnum.ImportItemType.Public) {
+						for (int i = 1; i <= 5; i++) {
+							var cell = ((Range)theSheet.Cells[i, 1]);
+							string val = cell.Value2;
+							if (val != null && val.Equals("分行名称")) {
+								sheetEntity.RowsBeforeHeader = i - 1;
+								break;
+							}
+						}
+					}
 					if (itemType == XEnum.ImportItemType.Private) {
+						for (int i = 1; i <= 5; i++) {
+							var cell = ((Range)theSheet.Cells[i, 1]);
+							string val = cell.Value2;
+							if (val != null && val.Equals("二级分行")) {
+								sheetEntity.RowsBeforeHeader = i - 1;
+								break;
+							}
+						}
+					}
+					if (sheetEntity.RowsBeforeHeader > 0) {
+						var range = (Range)theSheet.get_Range("1:" + sheetEntity.RowsBeforeHeader.ToString());
+						range.Select();
+						logger.DebugFormat("Removing {0} rows from sheet: {1}", sheetEntity.RowsBeforeHeader, theSheet.Name);
+						range.Delete(XlDeleteShiftDirection.xlShiftUp);
+					}
+
+					// Fix column header names
+					if (itemType == XEnum.ImportItemType.Private) {
+						logger.DebugFormat("Fixing direction columns headers for {0}", theSheet.Name);
 						int direction = 0;
 						for (int i = 1; i < 100; i++) {
 							var cell = ((Range)theSheet.Cells[1, i]);
@@ -68,7 +88,7 @@ namespace Reporting
 				}
 
 				theExcelBook.Save();
-				logger.Debug("Remove done");
+				logger.Debug("Processing done");
 			}
 			catch (Exception ex) {
 				logger.Error(ex);

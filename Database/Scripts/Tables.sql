@@ -1,9 +1,95 @@
-
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Globals')) BEGIN
 	CREATE TABLE dbo.Globals(
+		SystemVersion varchar(20) NOT NULL,
 		DBSchemaLevel int NOT NULL,
-		FixedDataLevel int NOT NULL,
-		SystemVersion varchar(20) NOT NULL
+		FixedDataLevel int NOT NULL
+	) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Serial')) BEGIN
+	CREATE TABLE dbo.Serial(
+		Id int NOT NULL,
+		CONSTRAINT PK_Serial PRIMARY KEY CLUSTERED (Id ASC)
+	) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Org')) BEGIN
+	CREATE TABLE dbo.Org(
+		Id int NOT NULL,
+		OrgNo varchar(50) NOT NULL,
+		Name nvarchar(100) NOT NULL,
+		Alias1 nvarchar(100) NULL,
+		Alias2 nvarchar(100) NULL,
+		CONSTRAINT PK_Org PRIMARY KEY CLUSTERED
+		(
+			Id ASC
+		)
+	) ON [PRIMARY]
+	
+	CREATE NONCLUSTERED INDEX IX_Org_OrgNo ON dbo.Org(OrgNo ASC) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('OrgOffset')) BEGIN
+	CREATE TABLE dbo.OrgOffset(
+		Id int IDENTITY(1,1) NOT NULL,
+		OrgId int NOT NULL,
+		Offset money NOT NULL,
+		StartDate smalldatetime NOT NULL,
+		EndDate smalldatetime NOT NULL,
+		Comment nvarchar(50) NULL,
+		DateStamp datetime NOT NULL CONSTRAINT DF_OrgOffset_DateStamp DEFAULT (getdate()),
+		CONSTRAINT PK_OrgOffset PRIMARY KEY CLUSTERED
+		(
+			Id ASC
+		)
+	) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DanBaoFangShi')) BEGIN
+	CREATE TABLE dbo.DanBaoFangShi(
+		Name nvarchar(100) NOT NULL,
+		Category nvarchar(50) NULL
+		CONSTRAINT PK_DanBaoFangShi PRIMARY KEY CLUSTERED
+		(
+			Name ASC
+		)
+	) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction')) BEGIN
+	CREATE TABLE dbo.Direction(
+		Id int NOT NULL,
+		Name nvarchar(100) NOT NULL
+		CONSTRAINT PK_Direction PRIMARY KEY CLUSTERED
+		(
+			Id ASC
+		)
+	) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction2')) BEGIN
+	CREATE TABLE dbo.Direction2(
+		UniqueId int NOT NULL IDENTITY(1,1),
+		Id int NOT NULL,
+		DirectionId int NOT NULL,
+		Name nvarchar(100) NOT NULL
+		CONSTRAINT PK_Direction2 PRIMARY KEY CLUSTERED (UniqueId ASC)
+	) ON [PRIMARY]
+
+	ALTER TABLE dbo.Direction2  WITH NOCHECK ADD CONSTRAINT FK_Direction2_Direction FOREIGN KEY(DirectionId)
+	REFERENCES dbo.Direction (Id)
+	ALTER TABLE dbo.Direction2 CHECK CONSTRAINT FK_Direction2_Direction
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DirectionMix')) BEGIN
+	CREATE TABLE dbo.DirectionMix(
+		Id int NOT NULL,
+		Name nvarchar(100) NOT NULL,
+		Code varchar(10) NULL,
+		CONSTRAINT PK_DirectionMix PRIMARY KEY CLUSTERED
+		(
+			Id ASC
+		)
 	) ON [PRIMARY]
 END
 
@@ -11,8 +97,8 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Import')) BE
 	CREATE TABLE dbo.Import(
 		Id int IDENTITY(1,1) NOT NULL,
 		ImportDate smalldatetime NOT NULL,
-		[State] smallint NOT NULL CONSTRAINT DF_Import_State DEFAULT (0),
-		WJFLSubmitDate datetime NULL,
+		WJFLDate datetime NULL,
+		WJFLSFDate datetime NULL,
 		DateStamp datetime NOT NULL CONSTRAINT DF_Import_DateStamp DEFAULT (getdate()),
 		ModifyDate datetime NULL,
 		CONSTRAINT PK_Import PRIMARY KEY CLUSTERED (Id ASC)
@@ -27,7 +113,6 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportItem')
 		FilePath varchar(255) NOT NULL,
 		DateStamp datetime NOT NULL CONSTRAINT DF_ImportItem_DateStamp DEFAULT (getdate()),
 		ModifyDate datetime NULL,
-		WJFLSubmitDate datetime NULL,
 		CONSTRAINT PK_ImportItem PRIMARY KEY CLUSTERED (Id ASC)
 	) ON [PRIMARY]
 
@@ -41,6 +126,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportLoan')
 	CREATE TABLE dbo.ImportLoan(
 		Id int IDENTITY(1,1) NOT NULL,
 		ImportId int NOT NULL,
+		OrgId int NULL,
 		DangerLevel nvarchar(20) NULL,
 		OrgNo varchar(50) NOT NULL,
 		LoanCatalog nvarchar(100) NULL,
@@ -98,14 +184,14 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPrivat
 	CREATE TABLE dbo.ImportPrivate(
 		Id int IDENTITY(1,1) NOT NULL,
 		ImportId int NOT NULL,
-		OrgNo varchar(50) NULL,
+		OrgId int NULL,
 		LoanAccount varchar(50) NULL,
 		OrgName nvarchar(100) NULL,
 		OrgName2 nvarchar(100) NULL,
 		ProductName nvarchar(100) NULL,
 		ProductType nvarchar(100) NULL,
 		LoanMonths int NULL,
-		ZongHeShouXinEDu decimal(15, 6) NULL,
+		ZongHeShouXinEDu money NULL,
 		DangerLevel nvarchar(50) NULL,
 		RepaymentMethod nvarchar(100) NULL,
 		CustomerName nvarchar(20) NULL,
@@ -115,16 +201,16 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPrivat
 		ContractEndDate smalldatetime NULL,
 		InterestRatio decimal(8, 5) NULL,
 		DanBaoFangShi nvarchar(100) NULL,
-		LoanBalance decimal(15, 6) NULL,
+		LoanBalance money NULL,
 		Direction1 nvarchar(100) NULL,
 		Direction2 nvarchar(100) NULL,
 		Direction3 nvarchar(100) NULL,
 		Direction4 nvarchar(100) NULL,
 		CapitalOverdueDays smallint NULL,
 		InterestOverdueDays smallint NULL,
-		OweInterestAmount decimal(10, 4) NULL,
-		OverdueBalance decimal(15, 4) NULL,
-		NonAccrualBalance decimal(15, 4) NULL,
+		OweInterestAmount money NULL,
+		OverdueBalance money NULL,
+		NonAccrualBalance money NULL,
 		CONSTRAINT PK_ImportPrivate PRIMARY KEY CLUSTERED
 		(
 			Id ASC
@@ -138,6 +224,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPrivat
 
 	CREATE NONCLUSTERED INDEX IX_ImportPrivate_ImportId ON dbo.ImportPrivate(ImportId ASC) ON [PRIMARY]
 	CREATE NONCLUSTERED INDEX IX_ImportPrivate_LoanAccount ON dbo.ImportPrivate(LoanAccount ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportPrivate_OrgId ON dbo.ImportPrivate(OrgId ASC) ON [PRIMARY]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPublic')) BEGIN
@@ -145,7 +232,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPublic
 		Id int IDENTITY(1,1) NOT NULL,
 		ImportId int NOT NULL,
 		PublicType int NOT NULL,
-		OrgNo varchar(50) NULL,
+		OrgId int NULL,
 		OrgName nvarchar(100) NULL,
 		OrgName2 nvarchar(100) NULL,
 		CustomerNo varchar(50) NULL,
@@ -169,7 +256,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPublic
 		OccurType nvarchar(100) NULL,
 		BusinessType nvarchar(50) NULL,
 		SubjectNo nvarchar(100) NULL,
-		Balance decimal(15, 6) NULL,
+		Balance money NULL,
 		ClassifyResult nvarchar(50) NULL,
 		CreditLevel nvarchar(50) NULL,
 		MyBankIndType nvarchar(100) NULL,
@@ -178,14 +265,14 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPublic
 		ScopeName nvarchar(100) NULL,
 		OverdueDays smallint NULL,
 		OweInterestDays smallint NULL,
-		Balance1 decimal(15, 6) NULL,
+		Balance1 money NULL,
 		ActualBusinessRate decimal(8, 5) NULL,
 		RateFloat decimal(8, 5) NULL,
 		VouchTypeName nvarchar(100) NULL,
 		BailRatio decimal(8, 5) NULL,
-		NormalBalance decimal(15, 6) NULL,
-		OverdueBalance decimal(15, 6) NULL,
-		BadBalance decimal(15, 6) NULL,
+		NormalBalance money NULL,
+		OverdueBalance money NULL,
+		BadBalance money NULL,
 		LoanAccount varchar(50) NULL,
 		IsAgricultureCredit nvarchar(50) NULL,
 		IsINRZ nvarchar(50) NULL,
@@ -201,6 +288,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportPublic
 	ALTER TABLE dbo.ImportPublic CHECK CONSTRAINT FK_ImportPublic_ImportItem
 	CREATE NONCLUSTERED INDEX IX_ImportPublic_ImportId ON dbo.ImportPublic(ImportId ASC) ON [PRIMARY]
 	CREATE NONCLUSTERED INDEX IX_ImportPublic_LoanAccount ON dbo.ImportPublic(LoanAccount ASC) ON [PRIMARY]
+	CREATE NONCLUSTERED INDEX IX_ImportPublic_OrgId ON dbo.ImportPublic(OrgId ASC) ON [PRIMARY]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportNonAccrual')) BEGIN
@@ -209,9 +297,9 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportNonAcc
 		ImportId int NOT NULL,
 		OrgName nvarchar(100) NULL,
 		CustomerName nvarchar(100) NULL,
-		LoanBalance decimal(15, 6) NULL,
+		LoanBalance money NULL,
 		DangerLevel nvarchar(50) NULL,
-		OweInterestAmount decimal(10, 4) NULL,
+		OweInterestAmount money NULL,
 		LoanStartDate smalldatetime NULL,
 		LoanEndDate smalldatetime NULL,
 		OverdueDays smallint NULL,
@@ -248,8 +336,8 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportOverdu
 		LoanType nvarchar(50) NULL,
 		LoanStartDate smalldatetime NULL,
 		LoanEndDate smalldatetime NULL,
-		CapitalOverdueBalance decimal(15, 4) NULL,
-		InterestBalance decimal(10, 4) NULL,
+		CapitalOverdueBalance money NULL,
+		InterestBalance money NULL,
 		DanBaoFangShi nvarchar(100) NULL,
 		CONSTRAINT PK_ImportOverdue PRIMARY KEY CLUSTERED
 		(
@@ -271,12 +359,12 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWNei'
 		ImportId int NOT NULL,
 		SubjectCode varchar(10) NOT NULL,
 		SubjectName nvarchar(100) NULL,
-		LastDebitBalance decimal(15,2) NULL,
-		LastCreditBalance decimal(15,2) NULL,
-		CurrentDebitChange decimal(15,2) NULL,
-		CurrentCreditChange decimal(15,2) NULL,
-		CurrentDebitBalance decimal(15,2) NULL,
-		CurrentCreditBalance decimal(15,2) NULL,
+		LastDebitBalance money NULL,
+		LastCreditBalance money NULL,
+		CurrentDebitChange money NULL,
+		CurrentCreditChange money NULL,
+		CurrentDebitBalance money NULL,
+		CurrentCreditBalance money NULL,
 		CONSTRAINT PK_ImportYWNei PRIMARY KEY CLUSTERED
 		(
 			Id ASC
@@ -297,12 +385,12 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWWai'
 		ImportId int NOT NULL,
 		SubjectCode varchar(10) NOT NULL,
 		SubjectName nvarchar(100) NULL,
-		LastDebitBalance decimal(15,2) NULL,
-		LastCreditBalance decimal(15,2) NULL,
-		CurrentDebitChange decimal(15,2) NULL,
-		CurrentCreditChange decimal(15,2) NULL,
-		CurrentDebitBalance decimal(15,2) NULL,
-		CurrentCreditBalance decimal(15,2) NULL,
+		LastDebitBalance money NULL,
+		LastCreditBalance money NULL,
+		CurrentDebitChange money NULL,
+		CurrentCreditChange money NULL,
+		CurrentDebitBalance money NULL,
+		CurrentCreditBalance money NULL,
 		CONSTRAINT PK_ImportYWWai PRIMARY KEY CLUSTERED
 		(
 			Id ASC
@@ -317,72 +405,11 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportYWWai'
 	CREATE NONCLUSTERED INDEX IX_ImportYWWai_ImportId ON dbo.ImportYWWai(ImportId ASC) ON [PRIMARY]
 END
 
-IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Org')) BEGIN
-	CREATE TABLE dbo.Org(
-		Number varchar(50) NOT NULL,
-		Name nvarchar(100) NOT NULL,
-		Alias1 nvarchar(100) NULL,
-		Alias2 nvarchar(100) NULL,
-		CONSTRAINT PK_Org PRIMARY KEY CLUSTERED
-		(
-			Number ASC
-		)
-	) ON [PRIMARY]
-END
-
-IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DanBaoFangShi')) BEGIN
-	CREATE TABLE dbo.DanBaoFangShi(
-		Name nvarchar(100) NOT NULL,
-		Category nvarchar(50) NULL
-		CONSTRAINT PK_DanBaoFangShi PRIMARY KEY CLUSTERED
-		(
-			Name ASC
-		)
-	) ON [PRIMARY]
-END
-
-IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction')) BEGIN
-	CREATE TABLE dbo.Direction(
-		Id int NOT NULL,
-		Name nvarchar(100) NOT NULL
-		CONSTRAINT PK_Direction PRIMARY KEY CLUSTERED
-		(
-			Id ASC
-		)
-	) ON [PRIMARY]
-END
-
-IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Direction2')) BEGIN
-	CREATE TABLE dbo.Direction2(
-		UniqueId int NOT NULL IDENTITY(1,1),
-		Id int NOT NULL,
-		DirectionId int NOT NULL,
-		Name nvarchar(100) NOT NULL
-		CONSTRAINT PK_Direction2 PRIMARY KEY CLUSTERED (UniqueId ASC)
-	) ON [PRIMARY]
-
-	ALTER TABLE dbo.Direction2  WITH NOCHECK ADD CONSTRAINT FK_Direction2_Direction FOREIGN KEY(DirectionId)
-	REFERENCES dbo.Direction (Id)
-	ALTER TABLE dbo.Direction2 CHECK CONSTRAINT FK_Direction2_Direction
-END
-
-IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('DirectionMix')) BEGIN
-	CREATE TABLE dbo.DirectionMix(
-		Id int NOT NULL,
-		Name nvarchar(100) NOT NULL,
-		Code varchar(10) NULL,
-		CONSTRAINT PK_DirectionMix PRIMARY KEY CLUSTERED
-		(
-			Id ASC
-		)
-	) ON [PRIMARY]
-END
-
 IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('Shell_01')) BEGIN
 	CREATE TABLE dbo.Shell_01(
 		Id int NOT NULL,
 		Name nvarchar(100) NULL,
-		Amount decimal(15, 2) NULL
+		Amount money NULL
 	) ON [PRIMARY]
 END
 

@@ -53,15 +53,15 @@ BEGIN
 		, YQ_M_Amount	= T.YQ_Amount - M.YQ_Amount
 
 		-- BLDK
-		, BLDK_Count	= T.BLDK_Count
-		, BLDK_Amount	= T.BLDK_Amount
-		, BLDK_Percentage = T.BLDK_Amount/T.Total_Amount
+		, BL_Count	= T.BL_Count
+		, BL_Amount	= T.BL_Amount
+		, BL_Percentage = T.BL_Amount/T.Total_Amount
 
-		, BLDK_Y_Count	= T.BLDK_Count  - Y.BLDK_Count
-		, BLDK_Y_Amount	= T.BLDK_Amount - Y.BLDK_Amount
+		, BL_Y_Count	= T.BL_Count  - Y.BL_Count
+		, BL_Y_Amount	= T.BL_Amount - Y.BL_Amount
 
-		, BLDK_M_Count	= T.BLDK_Count  - M.BLDK_Count
-		, BLDK_M_Amount	= T.BLDK_Amount - M.BLDK_Amount
+		, BL_M_Count	= T.BL_Count  - M.BL_Count
+		, BL_M_Amount	= T.BL_Amount - M.BL_Amount
 
 		-- ZQX
 		, ZQX_Count	= T.ZQX_Count
@@ -75,22 +75,24 @@ BEGIN
 		, ZQX_M_Amount	= T.ZQX_Amount - M.ZQX_Amount
 
 		-- YQ + BLDK
-		, YQ_BL_Count	= T.YQ_Count  + T.BLDK_Count
-		, YQ_BL_Amount	= T.YQ_Amount + T.BLDK_Amount
-		, YQ_BL_Percentage = (T.YQ_Amount + T.BLDK_Amount)/T.Total_Amount
+		, YBTotal_Count	= T.YBTotal_Count
+		, YBTotal_Amount	= T.YBTotal_Amount
+		, YBTotal_Percentage = T.YBTotal_Amount/T.Total_Amount
 
-		, YQ_BL_Y_Count	= T.YQ_Count  + T.BLDK_Count   - (Y.YQ_Count  + Y.BLDK_Count)
-		, YQ_BL_Y_Amount= T.YQ_Amount + T.BLDK_Amount  - (Y.YQ_Amount + Y.BLDK_Amount)
+		, YBTotal_Y_Count	= T.YBTotal_Count  - Y.YBTotal_Count
+		, YBTotal_Y_Amount	= T.YBTotal_Amount - Y.YBTotal_Amount
 
-		, YQ_BL_M_Count	= T.YQ_Count  + T.BLDK_Count   - (M.YQ_Count  + M.BLDK_Count)
-		, YQ_BL_M_Amount= T.YQ_Amount + T.BLDK_Amount  - (M.YQ_Amount + M.BLDK_Amount)
+		, YBTotal_M_Count	= T.YBTotal_Count  - M.YBTotal_Count
+		, YBTotal_M_Amount	= T.YBTotal_Amount - M.YBTotal_Amount
 
 		, Total_Interest = T.Total_Interest
 		, Total_Interest_Y = T.Total_Interest - Y.Total_Interest
 		, Total_Interest_M = T.Total_Interest - M.Total_Interest
 	FROM #ResultToday T
-		LEFT JOIN #ResultYesterday Y ON Y.OrgNo = T.OrgNo
-		LEFT JOIN #ResultLastMonth M ON M.OrgNo = T.OrgNo
+		LEFT JOIN #ResultYesterday Y ON Y.OrgId = T.OrgId
+		LEFT JOIN #ResultLastMonth M ON M.OrgId = T.OrgId
+		INNER JOIN Org O ON T.OrgId = O.Id
+	ORDER BY O.OrgNo, O.Id
 
 	DROP TABLE #ResultToday
 	DROP TABLE #ResultYesterday

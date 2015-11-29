@@ -15,12 +15,12 @@ BEGIN
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
 	SELECT Id
-		, A = CAST(ROUND(ISNULL(SUM(A), 0), 2) AS decimal(10, 2))
-		, B = CAST(ROUND(ISNULL(SUM(B), 0), 2) AS decimal(10, 2))
-		, C = CAST(ROUND(ISNULL(SUM(C), 0), 2) AS decimal(10, 2))
-		, D = CAST(ROUND(ISNULL(SUM(D), 0), 2) AS decimal(10, 2))
-		, E = CAST(ROUND(ISNULL(SUM(E), 0), 2) AS decimal(10, 2))
-		, F = CAST(ROUND(ISNULL(SUM(F), 0), 2) AS decimal(10, 2))
+		, A = CAST(ROUND(ISNULL(SUM(A), 0), 2) AS money)
+		, B = CAST(ROUND(ISNULL(SUM(B), 0), 2) AS money)
+		, C = CAST(ROUND(ISNULL(SUM(C), 0), 2) AS money)
+		, D = CAST(ROUND(ISNULL(SUM(D), 0), 2) AS money)
+		, E = CAST(ROUND(ISNULL(SUM(E), 0), 2) AS money)
+		, F = CAST(ROUND(ISNULL(SUM(F), 0), 2) AS money)
 	FROM (
 			SELECT Id = 1, Category = 'песц'
 			UNION ALL

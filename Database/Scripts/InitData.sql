@@ -1,35 +1,49 @@
 IF NOT EXISTS(SELECT * FROM Globals) BEGIN
-	INSERT INTO Globals (DBSchemaLevel, FixedDataLevel, SystemVersion)
-	VALUES (1, 1, '1.0.0.6')
+	INSERT INTO Globals (SystemVersion, DBSchemaLevel, FixedDataLevel)
+	VALUES ('1.0.0.6', 1, 1)
 END
+
+IF NOT EXISTS(SELECT * FROM Serial) BEGIN
+	DECLARE @i int = 1
+	WHILE @i <= 100 BEGIN
+		INSERT INTO Serial (Id) VALUES (@i)
+		SET @i += 1
+	END
+END
+
 IF NOT EXISTS(SELECT * FROM Org) BEGIN
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050001', '榆林分行公司业务部', '公司部', '营业部')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050101', '望湖路支行', '望湖路', '榆林分行望湖路支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050201', '榆阳西路支行', '榆阳西路', '榆林分行榆阳西路支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050301', '世纪广场支行', '世纪广场', '榆林分行世纪广场支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050401', '榆林保宁路支行', '保宁路', '榆林分行保宁路支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050501', '榆林开发区支行', '开发区', '榆林分行开发区支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050601', '神木县支行', '神木支行', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050701', '府谷县支行', '府谷支行', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050801', '横山县支行', '横山支行', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806050901', '榆林银沙路支行', '银沙路', '榆林分行银沙路支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051001', '靖边县支行', '靖边支行', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051101', '榆林肤施路支行', '肤施路', '榆林分行肤施路支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051201', '神木县大柳塔支行', '神木大柳塔', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051301', '府谷县河滨路支行', '府谷河滨路', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051401', '定边县支行', '定边支行', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051501', '神木县东兴街支行', '神木东兴街', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051601', '榆林青山路社区支行', '青山路', '榆林分行青山路社区支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051701', '榆林上郡路支行', '上郡路', '榆林分行上郡路支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051801', '靖边县长城路小微支行', '靖边长城路', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806051901', '榆林北大街社区支行', '北大街', '榆林分行北大街社区支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052001', '榆林金沙路社区支行', '金沙路', '榆林分行金沙路社区支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052101', '横山县北大街小微支行', '横山北大街', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052201', '府谷县河滨公园小微支行', '府谷河滨公园', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052301', '神木县麟州路小微支行', '神木麟州路', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052401', '神木县锦界工业园小微支行', '神木锦界工业园', NULL)
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806052601', '榆林明珠大道支行', '明珠大', '榆林分行明珠大道支行')
-	INSERT INTO Org(Number, Name, Alias1, Alias2) VALUES ('806057777', '806057777', '806057777', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (1 ,'806050001', '榆林分行公司业务部', '公司部', '公司业务部')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (2 ,'806050001', '榆林分行营业部', '营业部', '分行营业部')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (3 ,'806050101', '望湖路支行', '望湖路', '榆林分行望湖路支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (4 ,'806050201', '榆阳西路支行', '榆阳西路', '榆林分行榆阳西路支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (5 ,'806050301', '世纪广场支行', '世纪广场', '榆林分行世纪广场支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (6 ,'806050401', '榆林保宁路支行', '保宁路', '榆林分行保宁路支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (7 ,'806050501', '榆林开发区支行', '开发区', '榆林分行开发区支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (8 ,'806050601', '神木县支行', '神木支行', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (9 ,'806050701', '府谷县支行', '府谷支行', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (10,'806050801', '横山县支行', '横山支行', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (11,'806050901', '榆林银沙路支行', '银沙路', '榆林分行银沙路支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (12,'806051001', '靖边县支行', '靖边支行', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (13,'806051101', '榆林肤施路支行', '肤施路', '榆林分行肤施路支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (14,'806051201', '神木县大柳塔支行', '神木大柳塔', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (15,'806051301', '府谷县河滨路支行', '府谷河滨路', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (16,'806051401', '定边县支行', '定边支行', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (17,'806051501', '神木县东兴街支行', '神木东兴街', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (18,'806051601', '榆林青山路社区支行', '青山路', '榆林分行青山路社区支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (19,'806051701', '榆林上郡路支行', '上郡路', '榆林分行上郡路支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (20,'806051801', '靖边县长城路小微支行', '靖边长城路', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (21,'806051901', '榆林北大街社区支行', '北大街', '榆林分行北大街社区支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (22,'806052001', '榆林金沙路社区支行', '金沙路', '榆林分行金沙路社区支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (23,'806052101', '横山县北大街小微支行', '横山北大街', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (24,'806052201', '府谷县河滨公园小微支行', '府谷河滨公园', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (25,'806052301', '神木县麟州路小微支行', '神木麟州路', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (26,'806052401', '神木县锦界工业园小微支行', '神木锦界工业园', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (27,'806052601', '榆林明珠大道支行', '明珠大道', '榆林分行明珠大道支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (28,'806057777', '806057777', '806057777', NULL)
+END
+
+IF NOT EXISTS(SELECT * FROM OrgOffset) BEGIN
+	INSERT INTO OrgOffset(OrgId, Offset, StartDate, EndDate, Comment) VALUES (16, 4938.00, '20010101', '20501213', '定边支行, 单位：万元')
 END
 
 IF NOT EXISTS(SELECT * FROM DanBaoFangShi) BEGIN
@@ -608,11 +622,11 @@ END
 IF NOT EXISTS(SELECT * FROM SourceTableSheet) BEGIN
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (1, 1, 1, '贷款欠款查询', 4, '')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (2, 2, 1, '表内', 1, '')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (3, 3, 1, '个人', 2, '')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (3, 3, 1, 'UNKNOWN', 2, '')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (4, 4, 1, '非应计贷款明细表', 7, '本页小计')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (5, 5, 1, '逾期贷款明细表', 8, '本页小计')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (6, 2, 2, '表外', 0, '')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (7, 2, 3, '委贷', 0, '')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (6, 2, 2, '表外', 1, '')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (7, 2, 3, '委贷', 1, '')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (8, 6, 1, '业务状况表（表内）', 8, '10')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (9, 7, 1, '业务状况表（表外）', 8, '09')
 END

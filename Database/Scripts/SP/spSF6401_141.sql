@@ -17,12 +17,12 @@ BEGIN
 	SET @yearEnd = CONVERT(varchar(4), @asOfDate, 112) + '1231'
 
 	SELECT Id, Name AS Direction
-		, CAST(ROUND(ISNULL(Balance1, 0), 2) AS decimal(10, 2)) AS Balance1
-		, CAST(ROUND(ISNULL(Balance2, 0), 2) AS decimal(10, 2)) AS Balance2
-		, CAST(ROUND(ISNULL(Balance3, 0), 2) AS decimal(10, 2)) AS Balance3
-		, CAST(ROUND(ISNULL(Balance4, 0), 2) AS decimal(10, 2)) AS Balance4
-		, CAST(ROUND(ISNULL(Balance5, 0), 2) AS decimal(10, 2)) AS Balance5
-		, CAST(ROUND(ISNULL(Balance6, 0), 2) AS decimal(10, 2)) AS Balance6
+		, CAST(ROUND(ISNULL(Balance1, 0), 2) AS money) AS Balance1
+		, CAST(ROUND(ISNULL(Balance2, 0), 2) AS money) AS Balance2
+		, CAST(ROUND(ISNULL(Balance3, 0), 2) AS money) AS Balance3
+		, CAST(ROUND(ISNULL(Balance4, 0), 2) AS money) AS Balance4
+		, CAST(ROUND(ISNULL(Balance5, 0), 2) AS money) AS Balance5
+		, CAST(ROUND(ISNULL(Balance6, 0), 2) AS money) AS Balance6
 	FROM (
 			SELECT D.Id, D.Name, B.Balance1, B.Balance2, B.Balance3, B.Balance4, B.Balance5, B.Balance6
 			FROM Direction D

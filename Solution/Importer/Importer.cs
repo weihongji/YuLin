@@ -78,10 +78,8 @@ namespace Reporting
 			}
 			logger.DebugFormat("Source files copy done", importFolder);
 
-			if (IsAllCopied(importId)) {
+			if (IsAllCopied(asOfDate)) {
 				logger.Debug("All copied");
-				ChangeImportState(importId, XEnum.ImportState.Imported);
-
 				result = CompleteImport(importId, importFolder);
 			}
 
@@ -154,8 +152,8 @@ namespace Reporting
 					return result;
 				}
 
-				logger.Debug("Updating WJFLSubmitDate field for import #" + import.Id.ToString());
-				dao.ExecuteNonQuery("UPDATE Import SET WJFLSubmitDate = GETDATE() WHERE Id = " + import.Id.ToString());
+				logger.Debug("Updating WJFLDate field for import #" + import.Id.ToString());
+				dao.ExecuteNonQuery("UPDATE Import SET WJFLDate = GETDATE() WHERE Id = " + import.Id.ToString());
 				logger.Debug("Updated");
 			}
 			catch (Exception ex) {
@@ -189,11 +187,14 @@ namespace Reporting
 					}
 					readRows++;
 					sql.Clear();
-					sql.AppendLine("SELECT Id FROM ImportLoan");
-					sql.AppendLine("WHERE OrgNo = dbo.sfGetOrgNo('{0}')");
+					//替换掉下面两行，解决五级分类中营业部与公司部混乱的问题
+					//sql.AppendLine("SELECT Id FROM ImportLoan");
+					//sql.AppendLine("WHERE OrgId = dbo.sfGetOrgId('{0}')");
+					sql.AppendLine("SELECT L.Id FROM ImportLoan L INNER JOIN Org O ON L.OrgId = O.Id");
+					sql.AppendLine("WHERE O.OrgNo = (SELECT OrgNo FROM Org WHERE Id = dbo.sfGetOrgId('{0}'))");
 					sql.AppendLine("	AND CustomerName = '{1}'");
 					sql.AppendLine("	AND CapitalAmount = {2}");
-					if (!string.IsNullOrEmpty(DataUtility.GetValue(reader, 0))) {
+					if (!string.IsNullOrEmpty(DataUtility.GetValue(reader, 3))) {
 						sql.AppendLine("	AND LoanStartDate = '{3}'");
 					}
 					if (!string.IsNullOrEmpty(DataUtility.GetValue(reader, 4))) {
@@ -422,7 +423,8 @@ namespace Reporting
 			}
 			logger.Debug("Getting source table");
 			var sourceTable = SourceTable.GetById(itemType);
-			var dataRowEnding = sourceTable.Sheets[sheetIndex - 1].DataRowEndingFlag;
+			var sheetEntry = sourceTable.Sheets[sheetIndex - 1];
+			var dataRowEnding = sheetEntry.DataRowEndingFlag;
 			logger.DebugFormat("Ending is {0}", dataRowEnding == "" ? "empty string" : dataRowEnding);
 
 			var oleOpened = false;
@@ -435,6 +437,22 @@ namespace Reporting
 
 				DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 				string sheet1 = dt.Rows[(sheetIndex - 1) * 2][2].ToString();
+				if (!IsSheetMatched(sheet1, sheetEntry.Name)) {
+					logger.WarnFormat("Sheet \"{0}\" is not found at index {1}. This may be caused by extra sheets added. Searching in all sheets...", sheetEntry.Name, sheetIndex);
+					for (int i = 0; i < dt.Rows.Count; i++) {
+						sheet1 = dt.Rows[i][2].ToString();
+						if (IsSheetMatched(sheet1, sheetEntry.Name)) {
+							logger.WarnFormat("Got sheet \"{0}\"", sheet1.Substring(0, sheet1.Length - 1));
+							break;
+						}
+					}
+				}
+				if (!IsSheetMatched(sheet1, sheetEntry.Name)) {
+					var msg = string.Format("没有找到工作表\"{0}\"", sheetEntry.Name);
+					logger.Error(msg);
+					return msg;
+				}
+
 				logger.Debug("Importing sheet " + sheet1.Substring(0, sheet1.Length - 1));
 
 				var sql = new StringBuilder();
@@ -523,6 +541,16 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		private bool IsSheetMatched(string actual, string expected) {
+			if (string.IsNullOrEmpty(actual) || string.IsNullOrEmpty(expected)) {
+				return false;
+			}
+			if (expected.Equals("UNKNOWN")) {
+				return true;
+			}
+			return actual.EndsWith("$") && actual.StartsWith(expected);
+		}
+
 		private string GetTableSuffix(XEnum.ImportItemType itemType) {
 			var suffix = itemType.ToString();
 			var startAt = suffix.LastIndexOf('.');
@@ -550,20 +578,14 @@ namespace Reporting
 			return sql;
 		}
 
-		private bool IsAllCopied(int importId) {
+		private bool IsAllCopied(DateTime asOfDate) {
 			var dao = new SqlDbHelper();
-			var count = (int)dao.ExecuteScalar(string.Format("SELECT COUNT(*) FROM ImportItem WHERE ImportId = {0}", importId));
-			return count == 7;
+			var importedItems = (string)dao.ExecuteScalar(string.Format("SELECT dbo.sfGetImportStatus('{0}')", asOfDate.ToString("yyyyMMdd")));
+			return importedItems.StartsWith("1111111");
 		}
 
 		public string CompleteImport(int importId, string importFolder) {
-			var result = AssignOrgNo(importId);
-			if (!String.IsNullOrEmpty(result)) {
-				logger.Error(result);
-				return result;
-			}
-
-			result = AssignLoanAccount(importId);
+			var result = AssignOrgId(importId);
 			if (!String.IsNullOrEmpty(result)) {
 				logger.Error(result);
 				return result;
@@ -575,39 +597,74 @@ namespace Reporting
 				return result;
 			}
 
-			logger.Debug("Changing import state to Complete");
-			ChangeImportState(importId, XEnum.ImportState.Complete);
 			logger.Debug("Import to database done");
 
 			return string.Empty;
 		}
 
-		private string AssignOrgNo(int importId) {
+		private string AssignOrgId(int importId) {
 			try {
-				logger.Debug("Assigning OrgNo column to Private");
-				var sql = new StringBuilder();
-				sql.AppendLine("UPDATE ImportPrivate");
-				sql.AppendLine("SET OrgNo = (");
-				sql.AppendLine("	SELECT TOP 1 Number FROM Org O");
-				sql.AppendLine("	WHERE ImportPrivate.OrgName2 IN (O.Name, O.Alias1, O.Alias2)");
-				sql.AppendLine("		OR REPLACE(ImportPrivate.OrgName2, '榆林分行', '') IN (O.Name, O.Alias1, O.Alias2)");
-				sql.AppendLine(")");
-				sql.AppendLine("WHERE ImportId = {0} AND OrgNo IS NULL");
 				var dao = new SqlDbHelper();
-				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
-				logger.Debug("Done");
+				var sql = new StringBuilder();
+				int count = 0;
 
-				logger.Debug("Assigning OrgNo column to Public");
+				logger.Debug("Assigning OrgId column to Private");
+				sql.AppendLine("UPDATE ImportPrivate");
+				sql.AppendLine("SET OrgId = dbo.sfGetOrgId(OrgName2)");
+				sql.AppendLine("WHERE ImportId = {0} AND OrgId IS NULL");
+				count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.DebugFormat("Done ({0} affected)", count);
+
+				logger.Debug("Assigning OrgId column to Public");
 				sql.Clear();
 				sql.AppendLine("UPDATE ImportPublic");
-				sql.AppendLine("SET OrgNo = (");
-				sql.AppendLine("	SELECT TOP 1 Number FROM Org O");
-				sql.AppendLine("	WHERE ImportPublic.OrgName2 IN (O.Name, O.Alias1, O.Alias2)");
-				sql.AppendLine("		OR REPLACE(ImportPublic.OrgName2, '榆林分行', '') IN (O.Name, O.Alias1, O.Alias2)");
-				sql.AppendLine(")");
-				sql.AppendLine("WHERE ImportId = {0} AND OrgNo IS NULL");
-				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
-				logger.Debug("Done");
+				sql.AppendLine("SET OrgId = dbo.sfGetOrgId(OrgName2)");
+				sql.AppendLine("WHERE ImportId = {0} AND OrgId IS NULL");
+				count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.DebugFormat("Done ({0} affected)", count);
+
+				var result = AssignLoanAccount(importId);
+				if (!String.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
+
+				// Run this section after OrgId assigned to ImportPublic and ImportPrivate
+				// And after LoanAccount assigned to ImportPrivate
+				logger.Debug("Assigning OrgId column to Loan");
+				sql.Clear();
+				sql.AppendLine("UPDATE L");
+				sql.AppendLine("SET OrgId = ISNULL(P.OrgId, R.OrgId)");
+				sql.AppendLine("FROM ImportLoan L");
+				sql.AppendLine("	LEFT JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId");
+				sql.AppendLine("	LEFT JOIN ImportPrivate R ON L.LoanAccount = R.LoanAccount AND R.ImportId = L.ImportId");
+				sql.AppendLine("WHERE L.ImportId = {0} AND L.OrgId IS NULL");
+				sql.AppendLine("	AND (P.OrgId IS NOT NULL OR R.OrgId IS NOT NULL)");
+				count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.DebugFormat("Done to update from Public & Private. ({0} affected)", count);
+
+				sql.Clear();
+				sql.AppendLine("UPDATE ImportLoan SET OrgId = 1");
+				sql.AppendLine("WHERE ImportId = {0} AND OrgId IS NULL");
+				sql.AppendLine("	AND OrgNo = '806050001' AND CustomerType='对公'");
+				count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.DebugFormat("806050001-public done ({0} affected)", count);
+
+				sql.Clear();
+				sql.AppendLine("UPDATE ImportLoan SET OrgId = 1");
+				sql.AppendLine("WHERE ImportId = {0} AND OrgId IS NULL");
+				sql.AppendLine("	AND OrgNo = '806050001' AND CustomerType='对私'");
+				count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.DebugFormat("806050001-private done ({0} affected)", count);
+
+				sql.Clear();
+				sql.AppendLine("UPDATE L");
+				sql.AppendLine("SET OrgId = O.Id");
+				sql.AppendLine("FROM ImportLoan L");
+				sql.AppendLine("	INNER JOIN Org O ON L.OrgNo = O.OrgNo");
+				sql.AppendLine("WHERE L.ImportId = {0} AND L.OrgId IS NULL");
+				count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.DebugFormat("Done ({0} affected)", count);
 			}
 			catch (Exception ex) {
 				return ex.Message;
@@ -615,19 +672,20 @@ namespace Reporting
 			return string.Empty;
 		}
 
-		// Run this function after OrgNo is assigned
+		// Run this function after OrgId is assigned
 		private string AssignLoanAccount(int importId) {
 			try {
 				logger.Debug("Assigning LoanAccount column to Private");
 				var sql = new StringBuilder();
 				sql.AppendLine("UPDATE P SET LoanAccount = L.LoanAccount");
 				sql.AppendLine("FROM ImportPrivate P");
-				sql.AppendLine("	INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND L.CustomerType = '对私'");
-				sql.AppendLine("		AND P.OrgNo = L.OrgNo AND P.CustomerName = L.CustomerName AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate");
+				sql.AppendLine("	INNER JOIN Org O ON P.OrgId = O.Id");
+				sql.AppendLine("	INNER JOIN ImportLoan L ON P.ImportId = L.ImportId");
+				sql.AppendLine("		AND O.OrgNo = L.OrgNo AND P.CustomerName = L.CustomerName AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate");
 				sql.AppendLine("WHERE P.ImportId = {0} AND P.LoanAccount IS NULL");
 				var dao = new SqlDbHelper();
-				dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
-				logger.Debug("Done");
+				var count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.DebugFormat("Done ({0} affected)", count);
 			}
 			catch (Exception ex) {
 				return ex.Message;
@@ -648,16 +706,6 @@ namespace Reporting
 				return ex.Message; ;
 			}
 			return string.Empty;
-		}
-
-		private XEnum.ImportState ChangeImportState(int importId, XEnum.ImportState toState) {
-
-			var sql = new StringBuilder();
-			sql.AppendLine("UPDATE Import SET State = {1} WHERE Id = {0} AND State < {1}");
-			sql.AppendLine("SELECT State FROM Import WHERE Id = {0}");
-			var dao = new SqlDbHelper();
-			var state = (short)dao.ExecuteScalar(string.Format(sql.ToString(), importId, (int)toState));
-			return (XEnum.ImportState)state;
 		}
 		#endregion
 	}

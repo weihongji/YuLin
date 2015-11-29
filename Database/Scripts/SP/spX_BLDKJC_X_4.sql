@@ -27,18 +27,18 @@ BEGIN
 
 	--SELECT @importId, @importIdWJFL, @importIdLastMonth, @importIdYearStart
 
-	DECLARE @totalBL decimal(10, 2)
+	DECLARE @totalBL money
 	SELECT @totalBL = SUM(L.CapitalAmount)/10000
 	FROM ImportLoan L
 		INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
-	WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+	WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 		AND W.DangerLevel IN ('次级', '可疑', '损失')
 
 	SELECT TOP 10 CustomerName
-		, Balance = CAST(ROUND(ISNULL(Balance, 0), 2) AS decimal(10, 2))
-		, DiffLastMonth = CAST(ROUND(ISNULL(Balance, 0) - ISNULL(MBalance, 0.0), 2) AS decimal(10, 2))
-		, DiffYearStart = CAST(ROUND(ISNULL(Balance, 0) - ISNULL(YBalance, 0.0), 2) AS decimal(10, 2))
-		, Ratio = CASE WHEN ISNULL(@totalBL, 0) = 0 THEN 0.00 ELSE CAST(ROUND(ISNULL(Balance/@totalBL, 0), 4) AS decimal(10, 4)) END
+		, Balance = CAST(ROUND(ISNULL(Balance, 0), 2) AS money)
+		, DiffLastMonth = CAST(ROUND(ISNULL(Balance, 0) - ISNULL(MBalance, 0.0), 2) AS money)
+		, DiffYearStart = CAST(ROUND(ISNULL(Balance, 0) - ISNULL(YBalance, 0.0), 2) AS money)
+		, Ratio = CASE WHEN ISNULL(@totalBL, 0) = 0 THEN 0.00 ELSE CAST(ROUND(ISNULL(Balance/@totalBL, 0), 4) AS money) END
 		, LoanStartDate
 		, LoanAmount
 		, D.Category
@@ -64,7 +64,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan   W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 			GROUP BY P.CustomerName, P.OrgCode
 			ORDER BY Balance DESC
@@ -92,7 +92,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan    W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 			GROUP BY P.CustomerName, P.IdCardNo
 			ORDER BY Balance DESC

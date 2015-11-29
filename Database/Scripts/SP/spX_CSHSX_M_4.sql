@@ -18,13 +18,13 @@ BEGIN
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 	SELECT @importIdLastMonth = Id FROM Import WHERE ImportDate = @asOfDateLastMonth
 
-	SELECT TOP 20 P.OrgName2, P.CustomerName, D.Name AS Direction, LoanAmount = CAST(P.LoanBalance AS decimal(15, 2)), LoanBalance = CAST(P.LoanBalance AS decimal(15, 2)), P.ProductName, L.LoanStartDate, L.LoanEndDate, P.DanBaoFangShi, L.DangerLevel, DangerLevelLM = LM.DangerLevel
+	SELECT TOP 20 P.OrgName2, P.CustomerName, D.Name AS Direction, LoanAmount = CAST(P.LoanBalance AS money), LoanBalance = CAST(P.LoanBalance AS money), P.ProductName, L.LoanStartDate, L.LoanEndDate, P.DanBaoFangShi, L.DangerLevel, DangerLevelLM = LM.DangerLevel
 	FROM ImportLoan L
 		INNER JOIN ImportPrivate P ON P.LoanAccount = L.LoanAccount AND P.ImportId = @importId
 		LEFT JOIN ImportLoan LM ON LM.ImportId = @importIdLastMonth AND LM.LoanAccount = L.LoanAccount
 		LEFT JOIN Direction D ON D.Name = P.Direction1
 	WHERE L.ImportId = @importId
-		AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 		AND L.CustomerType = '对私'
 	ORDER BY P.LoanBalance DESC
 

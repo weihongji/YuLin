@@ -10,8 +10,8 @@ namespace Reporting
 	{
 		public int Id { get; set; }
 		public DateTime ImportDate { get; set; }
-		public DateTime? WJFLSubmitDate { get; set; }
-		public XEnum.ImportState State { get; set; }
+		public DateTime? WJFLDate { get; set; }
+		public DateTime? WJFLSFDate { get; set; }
 
 		private List<ImportItem> _items;
 
@@ -21,8 +21,11 @@ namespace Reporting
 		public Import(DataRow row) {
 			this.Id = (int)row["Id"];
 			this.ImportDate = (DateTime)row["ImportDate"];
-			if (row["WJFLSubmitDate"] != DBNull.Value) {
-				this.WJFLSubmitDate = (DateTime)row["WJFLSubmitDate"];
+			if (row["WJFLDate"] != DBNull.Value) {
+				this.WJFLDate = (DateTime)row["WJFLDate"];
+			}
+			if (row["WJFLSFDate"] != DBNull.Value) {
+				this.WJFLSFDate = (DateTime)row["WJFLSFDate"];
 			}
 		}
 
@@ -45,7 +48,6 @@ namespace Reporting
 		}
 
 		public static Import GetById(int Id) {
-			var list = new List<Import>();
 			var table = dao.ExecuteDataTable("SELECT * FROM Import WHERE Id = " + Id);
 			if (table.Rows.Count > 0) {
 				return new Import((DataRow)table.Rows[0]);

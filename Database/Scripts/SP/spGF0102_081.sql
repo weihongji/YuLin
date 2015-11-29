@@ -12,16 +12,16 @@ BEGIN
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
-	DECLARE @total as decimal(15, 2)
+	DECLARE @total as money
 
-	SELECT @total = CAST(ROUND(SUM(CurrentDebitBalance)/10000, 2) AS decimal(10, 2)) FROM ImportYWNei
+	SELECT @total = CAST(ROUND(SUM(CurrentDebitBalance)/10000, 2) AS money) FROM ImportYWNei
 	WHERE ImportId = @importId
 		AND SubjectCode BETWEEN '1301' AND '1382'
 
 	
-	SELECT DangerLevel, CAST(ROUND(SUM(CapitalAmount)/10000, 2) AS decimal(10, 2)) as Amount INTO #Result FROM ImportLoan
+	SELECT DangerLevel, CAST(ROUND(SUM(CapitalAmount)/10000, 2) AS money) as Amount INTO #Result FROM ImportLoan
 	WHERE ImportId = @importId
-		AND OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 	GROUP BY DangerLevel
 
 	SELECT Total = @total

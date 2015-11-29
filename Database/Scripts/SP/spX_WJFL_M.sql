@@ -58,7 +58,7 @@ BEGIN
 			, CustomerName
 			, IdCardNo
 			, DangerLevel
-			, CapitalAmount = CAST(ROUND(CapitalAmount/10000, 2) AS decimal(10, 2))
+			, CapitalAmount = CAST(ROUND(CapitalAmount/10000, 2) AS money)
 			, CustomerType
 			, LoanType
 			, OverdueDays

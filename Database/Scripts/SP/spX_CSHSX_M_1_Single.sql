@@ -21,12 +21,12 @@ BEGIN
 	CREATE TABLE #Result(
 		Id int,
 		Name nvarchar(50),
-		Total decimal(15, 2),
-		ZC decimal(15, 2),
-		GZ decimal(15, 2),
-		CJ decimal(15, 2),
-		KY decimal(15, 2),
-		SS decimal(15, 2)
+		Total money,
+		ZC money,
+		GZ money,
+		CJ money,
+		KY money,
+		SS money
 	)
 
 	INSERT INTO #Result (Id, Total, ZC, GZ, CJ, KY, SS, Name)
@@ -61,12 +61,12 @@ BEGIN
 	END
 	CREATE TABLE #ResultSingle(
 		Name nvarchar(50),
-		Total decimal(15, 2),
-		ZC decimal(15, 2),
-		GZ decimal(15, 2),
-		CJ decimal(15, 2),
-		KY decimal(15, 2),
-		SS decimal(15, 2)
+		Total money,
+		ZC money,
+		GZ money,
+		CJ money,
+		KY money,
+		SS money
 	)
 	
 	INSERT INTO #ResultSingle(Name, Total, ZC, GZ, CJ, KY, SS)
@@ -79,23 +79,34 @@ BEGIN
 		, SS = SUM(SS)
 	FROM (
 		SELECT DanBao = D.Category
-			, Balance = L.CapitalAmount
-			, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
-			, CJ = CASE WHEN L.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
-			, KY = CASE WHEN L.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
-			, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
-		FROM ImportLoan L
-			LEFT JOIN ImportPublic  PB ON L.LoanAccount = PB.LoanAccount AND PB.ImportId = L.ImportId
-			LEFT JOIN ImportPrivate PV ON L.LoanAccount = PV.LoanAccount AND PV.ImportId = L.ImportId
-			LEFT JOIN DanBaoFangShi D  ON D.Name = ISNULL(PV.DanBaoFangShi, PB.VouchTypeName)		
-		WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			, Balance = P.Balance1
+			, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.Balance1 ELSE 0.00 END
+			, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.Balance1 ELSE 0.00 END
+			, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
+			, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
+		FROM ImportPublic P
+			LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+			LEFT JOIN DanBaoFangShi D ON D.Name = P.VouchTypeName
+		WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+		UNION ALL
+		SELECT DanBao = D.Category
+			, Balance = P.LoanBalance
+			, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.LoanBalance ELSE 0.00 END
+			, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.LoanBalance ELSE 0.00 END
+			, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
+			, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
+		FROM ImportPrivate P
+			LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+			LEFT JOIN DanBaoFangShi D ON D.Name = P.DanBaoFangShi
+		WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
 	) AS X
 	GROUP BY DanBao
 
 	/* 贷款合计 */
-	UPDATE R SET Total = X.Total, ZC = X.ZC, GZ = X.GZ, CJ = X.CJ, KY = X.KY, SS = X.SS
+	UPDATE #Result SET Total = ISNULL(dbo.sfGetLoanBalance(@asOfDate, 0)/10000, 0) WHERE Id = 1
+	UPDATE R SET ZC = R.Total - X.GZ - X.CJ - X.KY - X.SS, GZ = X.GZ, CJ = X.CJ, KY = X.KY, SS = X.SS
 	FROM #Result R, (
-		SELECT Total = SUM(Total), ZC = SUM(ZC), GZ = SUM(GZ), CJ = SUM(CJ), KY = SUM(KY), SS = SUM(SS) FROM #ResultSingle
+		SELECT GZ = SUM(GZ), CJ = SUM(CJ), KY = SUM(KY), SS = SUM(SS) FROM #ResultSingle
 	) AS X
 	WHERE R.Id = 1
 
@@ -122,15 +133,15 @@ BEGIN
 			, KY = SUM(KY)
 			, SS = SUM(SS)
 		FROM (
-				SELECT Balance = L.CapitalAmount
-					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
-					, CJ = CASE WHEN L.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
-					, KY = CASE WHEN L.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
-					, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
-					LEFT JOIN ImportPublic  PB ON L.LoanAccount = PB.LoanAccount AND PB.ImportId = L.ImportId
-				WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
-					AND PB.PublicType = 1 AND PB.BusinessType LIKE '%贴现%'
+				SELECT Balance = P.Balance1
+					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.Balance1 ELSE 0.00 END
+					, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.Balance1 ELSE 0.00 END
+					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
+					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
+				FROM ImportPublic P
+					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+					AND P.BusinessType LIKE '%贴现%'
 			) AS X1
 		) AS X
 	WHERE R.Id = 5
@@ -170,25 +181,36 @@ BEGIN
 	FROM (
 		SELECT DaysLevel =
 				CASE
-					WHEN OverdueDays <=   0 AND OweInterestDays <=   0 THEN '0'
-					WHEN OverdueDays <=  90 AND OweInterestDays <=  90 THEN '1-90'
+					WHEN OverdueDays <= 0 AND OweInterestDays <= 0 THEN '0'
+					WHEN OverdueDays <= 90 AND OweInterestDays <= 90 THEN '1-90'
 					WHEN OverdueDays <= 360 AND OweInterestDays <= 360 THEN '91-360'
 					ELSE '361+'
 				END
 			, Balance, GZ, CJ, KY, SS
 		FROM (
-			SELECT OverdueDays = CASE WHEN L.LoanEndDate < @asOfDate AND L.CapitalAmount > 0 THEN DATEDIFF(day, L.LoanEndDate, @asOfDate) ELSE 0 END
-				, OweInterestDays = ISNULL(PV.InterestOverdueDays, PB.OweInterestDays)
-				, Balance = L.CapitalAmount
-				, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
-				, CJ = CASE WHEN L.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
-				, KY = CASE WHEN L.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
-				, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
-			FROM ImportLoan L
-				LEFT JOIN ImportPublic  PB ON L.LoanAccount = PB.LoanAccount AND PB.ImportId = L.ImportId
-				LEFT JOIN ImportPrivate PV ON L.LoanAccount = PV.LoanAccount AND PV.ImportId = L.ImportId
-				LEFT JOIN DanBaoFangShi D  ON D.Name = ISNULL(PV.DanBaoFangShi, PB.VouchTypeName)		
-			WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			SELECT OverdueDays = CASE WHEN P.LoanEndDate < @asOfDate AND P.Balance1 > 0 THEN DATEDIFF(day, P.LoanEndDate, @asOfDate) ELSE 0 END
+				, OweInterestDays = P.OweInterestDays
+				, Balance = P.Balance1
+				, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.Balance1 ELSE 0.00 END
+				, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.Balance1 ELSE 0.00 END
+				, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
+				, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
+			FROM ImportPublic P
+				LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				LEFT JOIN DanBaoFangShi D ON D.Name = P.VouchTypeName
+			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+			UNION ALL
+			SELECT OverdueDays = CASE WHEN P.ContractStartDate < @asOfDate AND P.LoanBalance > 0 THEN DATEDIFF(day, P.ContractEndDate, @asOfDate) ELSE 0 END
+				, OweInterestDays = P.InterestOverdueDays
+				, Balance = P.LoanBalance
+				, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.LoanBalance ELSE 0.00 END
+				, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.LoanBalance ELSE 0.00 END
+				, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
+				, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
+			FROM ImportPrivate P
+				LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				LEFT JOIN DanBaoFangShi D ON D.Name = DanBaoFangShi
+			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
 		) AS X
 	) AS X
 	GROUP BY DaysLevel
@@ -211,21 +233,21 @@ BEGIN
 	/* 3.1公司类贷款 */
 	UPDATE R SET Total = X.Total, ZC = X.ZC, GZ = X.GZ, CJ = X.CJ, KY = X.KY, SS = X.SS
 	FROM #Result R, (
-		SELECT Total = SUM(Balance)
-			, ZC = SUM(Balance) - SUM(GZ) - SUM(CJ) - SUM(KY) - SUM(SS)
+		SELECT Total = ISNULL(dbo.sfGetLoanBalance(@asOfDate, 1)/10000, 0)
+			, ZC = ISNULL(dbo.sfGetLoanBalance(@asOfDate, 1)/10000, 0) - SUM(GZ) - SUM(CJ) - SUM(KY) - SUM(SS)
 			, GZ = SUM(GZ)
 			, CJ = SUM(CJ)
 			, KY = SUM(KY)
 			, SS = SUM(SS)
 		FROM (
-				SELECT Balance = L.CapitalAmount
-					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
-					, CJ = CASE WHEN L.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
-					, KY = CASE WHEN L.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
-					, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
-				WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
-					AND L.CustomerType = '对公'
+				SELECT Balance = P.Balance1
+					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.Balance1 ELSE 0.00 END
+					, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.Balance1 ELSE 0.00 END
+					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
+					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
+				FROM ImportPublic P
+					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
 			) AS X1
 		) AS X
 	WHERE R.Id = 9
@@ -240,16 +262,16 @@ BEGIN
 			, KY = SUM(KY)
 			, SS = SUM(SS)
 		FROM (
-				SELECT Balance = L.CapitalAmount
-					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
-					, CJ = CASE WHEN L.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
-					, KY = CASE WHEN L.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
-					, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
-					INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId
-				WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
-					AND L.CustomerType = '对公'
-					AND P.BusinessType = '房地产开发贷款'
+				SELECT Balance = P.Balance1
+					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.Balance1 ELSE 0.00 END
+					, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.Balance1 ELSE 0.00 END
+					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
+					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
+				FROM ImportPublic P
+					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+					--AND P.BusinessType = '房地产开发贷款'
+					AND P.IndustryType1 = '房地产业'
 			) AS X1
 		) AS X
 	WHERE R.Id = 10
@@ -264,15 +286,14 @@ BEGIN
 			, KY = SUM(KY)
 			, SS = SUM(SS)
 		FROM (
-				SELECT Balance = L.CapitalAmount
-					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
-					, CJ = CASE WHEN L.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
-					, KY = CASE WHEN L.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
-					, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
-					INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId
-				WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
-					AND L.CustomerType = '对私'
+				SELECT Balance = P.LoanBalance
+					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.LoanBalance ELSE 0.00 END
+					, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.LoanBalance ELSE 0.00 END
+					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
+					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
+				FROM ImportPrivate P
+					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
 					AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 			) AS X1
 		) AS X
@@ -288,15 +309,14 @@ BEGIN
 			, KY = SUM(KY)
 			, SS = SUM(SS)
 		FROM (
-				SELECT Balance = L.CapitalAmount
-					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
-					, CJ = CASE WHEN L.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
-					, KY = CASE WHEN L.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
-					, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
-					INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId
-				WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
-					AND L.CustomerType = '对私'
+				SELECT Balance = P.LoanBalance
+					, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.LoanBalance ELSE 0.00 END
+					, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.LoanBalance ELSE 0.00 END
+					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
+					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
+				FROM ImportPrivate P
+					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
 					AND P.ProductName LIKE '%房%'
 			) AS X1
 		) AS X
@@ -313,32 +333,32 @@ BEGIN
 		, (SELECT * FROM #Result WHERE Id = 11) AS R1
 		, (SELECT * FROM #Result WHERE Id = 12) AS R2
 		, (
-			SELECT Total = SUM(Balance)
-				, ZC = SUM(Balance) - SUM(GZ) - SUM(CJ) - SUM(KY) - SUM(SS)
+			SELECT Total = ISNULL(dbo.sfGetLoanBalance(@asOfDate, 2)/10000, 0)
+				, ZC = ISNULL(dbo.sfGetLoanBalance(@asOfDate, 2)/10000, 0) - SUM(GZ) - SUM(CJ) - SUM(KY) - SUM(SS)
 				, GZ = SUM(GZ)
 				, CJ = SUM(CJ)
 				, KY = SUM(KY)
 				, SS = SUM(SS)
 			FROM (
-					SELECT Balance = L.CapitalAmount
-						, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
-						, CJ = CASE WHEN L.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
-						, KY = CASE WHEN L.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
-						, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
-					FROM ImportLoan L
-					WHERE L.ImportId = @importId AND L.OrgNo NOT IN (SELECT Number FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
-						AND L.CustomerType = '对私'
+					SELECT Balance = P.LoanBalance
+						, GZ = CASE WHEN L.DangerLevel LIKE '关%' THEN P.LoanBalance ELSE 0.00 END
+						, CJ = CASE WHEN L.DangerLevel = '次级' THEN P.LoanBalance ELSE 0.00 END
+						, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
+						, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
+					FROM ImportPrivate P
+						LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+					WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
 				) AS X1
 			) AS X
 	WHERE R.Id = 13
 
 	UPDATE #Result
-	SET Total = ISNULL(Total, 0)/10000
-		, ZC = ISNULL(ZC, 0)/10000
-		, GZ = ISNULL(GZ, 0)/10000
-		, CJ = ISNULL(CJ, 0)/10000
-		, KY = ISNULL(KY, 0)/10000
-		, SS = ISNULL(SS, 0)/10000
+	SET Total = ISNULL(Total, 0)
+		, ZC = ISNULL(ZC, 0)
+		, GZ = ISNULL(GZ, 0)
+		, CJ = ISNULL(CJ, 0)
+		, KY = ISNULL(KY, 0)
+		, SS = ISNULL(SS, 0)
 	
 	SELECT * FROM #Result ORDER BY Id
 

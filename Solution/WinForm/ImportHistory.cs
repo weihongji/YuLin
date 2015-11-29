@@ -39,7 +39,8 @@ namespace Reporting
 			sql.AppendLine("SELECT ImportDate AS [数据日期]");
 			sql.AppendLine("	, Id AS [编号]");
 			sql.AppendLine("	, DateStamp AS [导入时间]");
-			sql.AppendLine("	, WJFLSubmitDate AS [五级分类修正]");
+			sql.AppendLine("	, WJFLDate AS [五级分类（榆林）]");
+			sql.AppendLine("	, WJFLSFDate AS [五级分类（神府）]");
 			sql.AppendLine("FROM Import");
 			sql.AppendLine("ORDER BY ImportDate");
 			var table = dao.ExecuteDataTable(sql.ToString());
@@ -47,7 +48,6 @@ namespace Reporting
 			this.dataGridView1.Columns[0].DefaultCellStyle.Format = "yyyy-MM-dd";
 
 			this.dataGridView1.Columns[1].Width = 60;
-			//this.dataGridView1.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
 			this.dataGridView1.Columns[1].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 			this.dataGridView1.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 	
@@ -56,6 +56,11 @@ namespace Reporting
 
 			this.dataGridView1.Columns[3].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
 			this.dataGridView1.Columns[3].Width = 140;
+			this.dataGridView1.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+			this.dataGridView1.Columns[4].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
+			this.dataGridView1.Columns[4].Width = 140;
+			this.dataGridView1.Columns[4].SortMode = DataGridViewColumnSortMode.NotSortable;
 		}
 	}
 }

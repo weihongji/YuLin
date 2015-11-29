@@ -36,7 +36,7 @@ BEGIN
 	ELSE BEGIN
 		SELECT @customerScale = (CASE WHEN LEN(P.Direction1) > 0 THEN '2' ELSE '3' END)
 			, @oweInterestDays = InterestOverdueDays
-		FROM ImportPrivate P INNER JOIN ImportLoan L ON P.CustomerName = L.CustomerName AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate AND P.OrgNo = L.OrgNo AND P.ImportId = @importId
+		FROM ImportPrivate P INNER JOIN ImportLoan L ON P.CustomerName = L.CustomerName AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate AND P.OrgId = L.OrgId AND P.ImportId = @importId
 		WHERE L.Id = @importLoanId
 	END
 
@@ -56,8 +56,7 @@ BEGIN
 		END
 		ELSE BEGIN
 			SELECT @danbaofangshi = P.DanBaoFangShi
-			FROM ImportPrivate P INNER JOIN ImportLoan L
-				ON P.CustomerName = L.CustomerName AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate AND P.OrgNo = L.OrgNo AND P.ImportId = L.ImportId
+			FROM ImportPrivate P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount AND P.ImportId = L.ImportId
 			WHERE P.ImportId = @importId
 		END
 		SELECT @danbaofangshi = Category FROM DanBaoFangShi WHERE Name = @danbaofangshi

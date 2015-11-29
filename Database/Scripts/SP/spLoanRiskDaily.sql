@@ -9,51 +9,64 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	--DECLARE @asOfDate smalldatetime = '20151031'
+
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 	DECLARE @importIdWJFL int = dbo.sfGetImportIdWJFL(@asOfDate)
 
-	SELECT OrgNo, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number, SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) AS OweInterest INTO #Total FROM ImportLoan
+	SELECT OrgId, SUM(CapitalAmount) AS Amount, SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) AS OweInterest INTO #Total FROM ImportLoan
 	WHERE ImportId = @importId
-	GROUP BY OrgNo
+	GROUP BY OrgId
 
-	SELECT OrgNo, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #YQ FROM ImportLoan
+	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #YB FROM ImportLoan
 	WHERE ImportId = @importId
-		AND LoanState IN ('逾期', '部分逾期')
-	GROUP BY OrgNo
+		AND LoanState IN ('逾期', '部分逾期', '非应计') AND LoanTypeName != '委托贷款'
+	GROUP BY OrgId
 
-	SELECT OrgNo, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #BLDK FROM ImportLoan
+	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #BL FROM ImportLoan
 	WHERE ImportId = @importId
-		AND LoanAccount IN (
-			SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdWJFL AND DangerLevel IN ('次级', '可疑', '损失')
-		)
-	GROUP BY OrgNo
+		AND LoanState IN ('逾期', '部分逾期', '非应计') AND LoanTypeName != '委托贷款'
+		AND DangerLevel IN ('次级', '可疑', '损失')
+	GROUP BY OrgId
 
-	SELECT OrgNo, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #ZQX FROM ImportLoan
+	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #ZQX FROM ImportLoan
 	WHERE ImportId = @importId
 			AND LoanState = '正常'
 			AND OweYingShouInterest + OweCuiShouInterest != 0
-	GROUP BY OrgNo
+	GROUP BY OrgId
 
-	SELECT O.Number AS OrgNo, O.Alias1 AS OrgName, ISNULL(T.Number, 0) AS Total_Count, CAST(ROUND(ISNULL(T.Amount/10000, 0), 2) AS decimal(10, 2)) AS Total_Amount, CAST(ROUND(ISNULL(T.OweInterest/10000, 0), 2) AS decimal(10, 2)) AS Total_Interest
-		, ISNULL(Y.Number, 0) AS YQ_Count, CAST(ROUND(ISNULL(Y.Amount/10000, 0), 2) AS decimal(10, 2)) AS YQ_Amount
-		, ISNULL(B.Number, 0) AS BLDK_Count, CAST(ROUND(ISNULL(B.Amount/10000, 0), 2) AS decimal(10, 2)) AS BLDK_Amount
-		, ISNULL(Z.Number, 0) AS ZQX_Count, CAST(ROUND(ISNULL(Z.Amount/10000, 0), 2) AS decimal(10, 2)) AS ZQX_Amount
+	SELECT O.Id AS OrgId, O.Alias1 AS OrgName, CAST(ROUND(ISNULL(T.Amount, 0)/10000, 2) AS money) AS Total_Amount, CAST(ROUND(ISNULL(T.OweInterest, 0)/10000, 2) AS money) AS Total_Interest
+		, ISNULL(Y.Number, 0) - ISNULL(B.Number, 0) AS YQ_Count, CAST(ROUND((ISNULL(Y.Amount, 0)-ISNULL(B.Amount, 0))/10000, 2) AS money) AS YQ_Amount
+		, ISNULL(B.Number, 0) AS BL_Count, CAST(ROUND(ISNULL(B.Amount, 0)/10000, 2) AS money) AS BL_Amount
+		, ISNULL(Z.Number, 0) AS ZQX_Count, CAST(ROUND(ISNULL(Z.Amount, 0)/10000, 2) AS money) AS ZQX_Amount
+		, ISNULL(Y.Number, 0) AS YBTotal_Count, CAST(ROUND(ISNULL(Y.Amount, 0)/10000, 2) AS money) AS YBTotal_Amount
 	INTO #Result
 	FROM Org O
-		LEFT JOIN #Total T ON O.Number = T.OrgNo
-		LEFT JOIN #YQ    Y ON O.Number = Y.OrgNo
-		LEFT JOIN #BLDK  B ON O.Number = B.OrgNo
-		LEFT JOIN #ZQX   Z ON O.Number = Z.OrgNo
-	WHERE Y.Number > 0 OR B.Number > 0 OR Z.Number > 0
+		LEFT JOIN #Total T ON O.Id = T.OrgId
+		LEFT JOIN #YB    Y ON O.Id = Y.OrgId
+		LEFT JOIN #BL    B ON O.Id = B.OrgId
+		LEFT JOIN #ZQX   Z ON O.Id = Z.OrgId
+	WHERE T.Amount > 0
 		AND NOT(O.Name LIKE '%神木%' OR O.Name LIKE '%府谷%')
+		AND O.OrgNo != '806057777'
+
+	-- Offset
+	UPDATE R SET R.Total_Amount += F.Offset
+	FROM #Result R INNER JOIN OrgOffset F ON R.OrgId = F.OrgId
+	WHERE @asOfDate BETWEEN F.StartDate AND F.EndDate
 
 	IF NOT EXISTS(SELECT * FROM sys.tables WHERE name = 'Shell_LoanRisk') BEGIN
 		SELECT * INTO Shell_LoanRisk FROM #Result WHERE 1 = 2
 	END
 
-	IF @asOfDate > '2015-01-01' BEGIN
-		SELECT * FROM #Result
+	IF @asOfDate > '2001-01-01' BEGIN
+		SELECT R.* FROM #Result R INNER JOIN Org O ON R.OrgId = O.Id ORDER BY O.OrgNo, O.Id
 	END
-END
 
+	DROP TABLE #Total
+	DROP TABLE #YB
+	DROP TABLE #BL
+	DROP TABLE #ZQX
+	DROP TABLE #Result
+END
