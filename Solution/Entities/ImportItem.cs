@@ -19,7 +19,7 @@ namespace Reporting
 		public ImportItem(DataRow row) {
 			this.Id = (int)row["Id"];
 			this.ImportId = (int)row["ImportId"];
-			this.ItemType = (XEnum.ImportItemType)((int)row["ImportId"]);
+			this.ItemType = (XEnum.ImportItemType)((short)row["ItemType"]);
 			this.FilePath = (string)row["FilePath"];
 		}
 	}

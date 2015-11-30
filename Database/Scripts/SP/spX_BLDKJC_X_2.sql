@@ -41,6 +41,8 @@ BEGIN
 	DECLARE @HengShan_1 money, @HengShan_2 money, @HengShan_3 money, @HengShan_4 money
 	DECLARE @JingBian_1 money, @JingBian_2 money, @JingBian_3 money, @JingBian_4 money
 	DECLARE @DingBian_1 money, @DingBian_2 money, @DingBian_3 money, @DingBian_4 money
+	DECLARE @ShenMu_1 money, @ShenMu_2 money, @ShenMu_3 money, @ShenMu_4 money
+	DECLARE @FuGu_1 money, @FuGu_2 money, @FuGu_3 money, @FuGu_4 money
 
 	/* Today */
 	IF DAY(@asOfDate + 1) = 1 BEGIN --Last day of the month
@@ -63,6 +65,16 @@ BEGIN
 		FROM ImportLoan
 		WHERE ImportId = @importIdToday AND DangerLevel IN ('次级', '可疑', '损失')
 			AND OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
+
+		SELECT @ShenMu_1 = SUM(CapitalAmount)
+		FROM ImportLoanSF
+		WHERE ImportId = @importIdToday AND DangerLevel IN ('次级', '可疑', '损失')
+			AND OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
+
+		SELECT @FuGu_1 = SUM(CapitalAmount)
+		FROM ImportLoanSF
+		WHERE ImportId = @importIdToday AND DangerLevel IN ('次级', '可疑', '损失')
+			AND OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
 	END
 	ELSE BEGIN
 		SELECT @NoShenFu_1 = SUM(L.CapitalAmount)
@@ -84,6 +96,16 @@ BEGIN
 		FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 		WHERE L.ImportId = @importIdToday AND W.DangerLevel IN ('次级', '可疑', '损失')
 			AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
+
+		SELECT @ShenMu_1 = SUM(L.CapitalAmount)
+		FROM ImportLoanSF L INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+		WHERE L.ImportId = @importIdToday AND W.DangerLevel IN ('次级', '可疑', '损失')
+			AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
+
+		SELECT @FuGu_1 = SUM(L.CapitalAmount)
+		FROM ImportLoanSF L INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+		WHERE L.ImportId = @importIdToday AND W.DangerLevel IN ('次级', '可疑', '损失')
+			AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
 	END
 
 	/* LastTenDays */
@@ -107,6 +129,16 @@ BEGIN
 	WHERE L.ImportId = @importIdLastTenDays AND W.DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
 
+	SELECT @ShenMu_2 = SUM(L.CapitalAmount)
+	FROM ImportLoanSF L INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+	WHERE L.ImportId = @importIdLastTenDays AND W.DangerLevel IN ('次级', '可疑', '损失')
+		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
+
+	SELECT @FuGu_2 = SUM(L.CapitalAmount)
+	FROM ImportLoanSF L INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+	WHERE L.ImportId = @importIdLastTenDays AND W.DangerLevel IN ('次级', '可疑', '损失')
+		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
+
 	/* LastMonth */
 	SELECT @NoShenFu_3 = SUM(L.CapitalAmount)
 	FROM ImportLoan L
@@ -127,6 +159,16 @@ BEGIN
 	FROM ImportLoan L
 	WHERE L.ImportId = @importIdLastMonth AND DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
+
+	SELECT @ShenMu_3 = SUM(L.CapitalAmount)
+	FROM ImportLoanSF L
+	WHERE L.ImportId = @importIdLastMonth AND DangerLevel IN ('次级', '可疑', '损失')
+		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
+
+	SELECT @FuGu_3 = SUM(L.CapitalAmount)
+	FROM ImportLoanSF L
+	WHERE L.ImportId = @importIdLastMonth AND DangerLevel IN ('次级', '可疑', '损失')
+		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
 
 	/* YearStart */
 	SELECT @NoShenFu_4 = SUM(L.CapitalAmount)
@@ -149,28 +191,50 @@ BEGIN
 	WHERE L.ImportId = @importIdYearStart AND DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
 
+	SELECT @ShenMu_4 = SUM(L.CapitalAmount)
+	FROM ImportLoanSF L
+	WHERE L.ImportId = @importIdYearStart AND DangerLevel IN ('次级', '可疑', '损失')
+		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
+
+	SELECT @FuGu_4 = SUM(L.CapitalAmount)
+	FROM ImportLoanSF L
+	WHERE L.ImportId = @importIdYearStart AND DangerLevel IN ('次级', '可疑', '损失')
+		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
+
 	/* Result to output */
 	SELECT Id, Category, Today, DiffLastTenDays = Today - LastTenDays, DiffLastMonth = Today - LastMonth, DiffYearStart = Today - YearStart
 	FROM (
 		SELECT Id = 1, Category = '总额'
-			, CAST(ROUND(ISNULL(@NoShenFu_1/10000, 0), 2) AS money) AS Today
-			, CAST(ROUND(ISNULL(@NoShenFu_2/10000, 0), 2) AS money) AS LastTenDays
-			, CAST(ROUND(ISNULL(@NoShenFu_3/10000, 0), 2) AS money) AS LastMonth
-			, CAST(ROUND(ISNULL(@NoShenFu_4/10000, 0), 2) AS money) AS YearStart
+			, CAST(ROUND(ISNULL(@NoShenFu_1 + @ShenMu_1 + @FuGu_1, 0)/10000, 2) AS money) AS Today
+			, CAST(ROUND(ISNULL(@NoShenFu_2 + @ShenMu_2 + @FuGu_2, 0)/10000, 2) AS money) AS LastTenDays
+			, CAST(ROUND(ISNULL(@NoShenFu_3 + @ShenMu_3 + @FuGu_3, 0)/10000, 2) AS money) AS LastMonth
+			, CAST(ROUND(ISNULL(@NoShenFu_4 + @ShenMu_4 + @FuGu_4, 0)/10000, 2) AS money) AS YearStart
 		UNION ALL
-		SELECT Id = 2, Category = '横山'
+		SELECT Id = 2, Category = '神木'
+			, CAST(ROUND(ISNULL(@ShenMu_1/10000, 0), 2) AS money)
+			, CAST(ROUND(ISNULL(@ShenMu_2/10000, 0), 2) AS money)
+			, CAST(ROUND(ISNULL(@ShenMu_3/10000, 0), 2) AS money)
+			, CAST(ROUND(ISNULL(@ShenMu_4/10000, 0), 2) AS money)
+		UNION ALL
+		SELECT Id = 3, Category = '府谷'
+			, CAST(ROUND(ISNULL(@FuGu_1/10000, 0), 2) AS money)
+			, CAST(ROUND(ISNULL(@FuGu_2/10000, 0), 2) AS money)
+			, CAST(ROUND(ISNULL(@FuGu_3/10000, 0), 2) AS money)
+			, CAST(ROUND(ISNULL(@FuGu_4/10000, 0), 2) AS money)
+		UNION ALL
+		SELECT Id = 4, Category = '横山'
 			, CAST(ROUND(ISNULL(@HengShan_1/10000, 0), 2) AS money)
 			, CAST(ROUND(ISNULL(@HengShan_2/10000, 0), 2) AS money)
 			, CAST(ROUND(ISNULL(@HengShan_3/10000, 0), 2) AS money)
 			, CAST(ROUND(ISNULL(@HengShan_4/10000, 0), 2) AS money)
 		UNION ALL
-		SELECT Id = 3, Category = '靖边'
+		SELECT Id = 5, Category = '靖边'
 			, CAST(ROUND(ISNULL(@JingBian_1/10000, 0), 2) AS money)
 			, CAST(ROUND(ISNULL(@JingBian_2/10000, 0), 2) AS money)
 			, CAST(ROUND(ISNULL(@JingBian_3/10000, 0), 2) AS money)
 			, CAST(ROUND(ISNULL(@JingBian_4/10000, 0), 2) AS money)
 		UNION ALL
-		SELECT Id = 4, Category = '定边'
+		SELECT Id = 6, Category = '定边'
 			, CAST(ROUND(ISNULL(@DingBian_1/10000, 0), 2) AS money)
 			, CAST(ROUND(ISNULL(@DingBian_2/10000, 0), 2) AS money)
 			, CAST(ROUND(ISNULL(@DingBian_3/10000, 0), 2) AS money)

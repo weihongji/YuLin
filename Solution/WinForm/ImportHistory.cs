@@ -38,9 +38,9 @@ namespace Reporting
 			var sql = new StringBuilder();
 			sql.AppendLine("SELECT ImportDate AS [数据日期]");
 			sql.AppendLine("	, Id AS [编号]");
-			sql.AppendLine("	, DateStamp AS [导入时间]");
-			sql.AppendLine("	, WJFLDate AS [五级分类（榆林）]");
-			sql.AppendLine("	, WJFLSFDate AS [五级分类（神府）]");
+			sql.AppendLine("	, DateStamp AS [创建时间]");
+			sql.AppendLine("	, WJFLDate AS [五级分类]");
+			sql.AppendLine("	, SUBSTRING(dbo.sfGetImportStatus(ImportDate), 1, 9) AS [导入状况]");
 			sql.AppendLine("FROM Import");
 			sql.AppendLine("ORDER BY ImportDate");
 			var table = dao.ExecuteDataTable(sql.ToString());
@@ -58,8 +58,7 @@ namespace Reporting
 			this.dataGridView1.Columns[3].Width = 140;
 			this.dataGridView1.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable;
 
-			this.dataGridView1.Columns[4].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
-			this.dataGridView1.Columns[4].Width = 140;
+			this.dataGridView1.Columns[4].Width = 100;
 			this.dataGridView1.Columns[4].SortMode = DataGridViewColumnSortMode.NotSortable;
 		}
 	}

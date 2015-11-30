@@ -8,9 +8,11 @@
 
 解除系统的时间限制
 
-搞清楚x86 和Any CPU设置为什么没提交到git
 
 每次发布前测试报表结果
 
 Import SF
 Import 业务状况表(各支行 )
+
+神木/府谷 -> table function:
+	SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%' OR Name LIKE '%神府%'

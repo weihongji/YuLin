@@ -7,15 +7,33 @@ namespace Reporting
 {
 	public class XEnum
 	{
+		public enum OrgArea
+		{
+			YuLin = 1, // 榆林
+			ShenFu = 2 // 神府
+		}
+
 		public enum ImportItemType
 		{
-			Loan = 1, // 贷款欠款查询
+			None = 0,
+			Loan = 1, // 贷款欠款查询（榆林）
 			Public = 2, // 对公
 			Private = 3, // 个人
 			NonAccrual = 4, // 非应计贷款明细表
 			Overdue = 5, // 逾期贷款明细表
 			YWNei = 6, // 业务状况表一级科目（表内）
-			YWWai = 7 // 业务状况表一级科目（表外）
+			YWWai = 7, // 业务状况表一级科目（表外）
+			LoanSF = 8, // 贷款欠款查询（神府）
+			WjflSF = 9 // 五级分类（神府）
+		}
+
+		public enum WjflSheetSF
+		{
+			YQ = 1, // 逾期
+			BL = 2, // 不良
+			FYJ = 3, // 非应计
+			ZQX = 4, // 只欠息
+			GZ = 5 // 关注
 		}
 
 		public enum ReportType

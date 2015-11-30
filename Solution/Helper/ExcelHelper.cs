@@ -244,7 +244,7 @@ namespace Reporting
 			}
 			catch (Exception ex) {
 				logger.Error(ex);
-				throw;
+				return ex.Message;
 			}
 			finally {
 				if (excelOpened) {
@@ -261,6 +261,171 @@ namespace Reporting
 				GC.Collect();
 			}
 		}
+
+		#region WJFL SF
+
+		public static string ProcessWJFLSF(string filePath) {
+			var result = "";
+			logger.Debug("Removing rows about column header row for " + filePath.Substring(filePath.LastIndexOf('\\') + 1));
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			theExcelApp.DisplayAlerts = false;
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "逾期贷款");
+				if (!string.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "不良贷款");
+				if (!string.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "非应计贷款");
+				if (!string.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "只欠息贷款");
+				if (!string.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "关注类贷款");
+				if (!string.IsNullOrEmpty(result)) {
+					logger.Error(result);
+					return result;
+				}
+
+				theExcelBook.Save();
+				logger.Debug("Remove done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				return ex.Message;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return result;
+		}
+
+		private static string UnifyColumnHeader4WJFLSF(Workbook excelBook, string sheetName) {
+			var theSheet = (Worksheet)excelBook.Sheets[sheetName];
+			theSheet.Activate();
+			int headerRow = GetColumnHeaderRow(theSheet, "序号", 5);
+			var result = "";
+			Range range = null;
+			if (headerRow == 0) {
+				result = "在\"" + sheetName + "\"工作表中没有找到列名";
+				logger.Error(result);
+				return result;
+			}
+			else if (headerRow > 1) {
+				range = (Range)theSheet.get_Range(string.Format("1:{0}", headerRow - 1));
+				range.Select();
+				logger.Debug("Removing rows from sheet " + sheetName);
+				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+			}
+			int i = 1;
+			while (++i < 20) {
+				var cell = ((Range)theSheet.Cells[1, i]);
+				if (string.IsNullOrEmpty(cell.Value2)) {
+					break;
+				}
+				else if (cell.Value2 == "企业（客户）名称") {
+					cell.Value2 = "客户名称";
+				}
+				else if (cell.Value2 == "发放日") {
+					cell.Value2 = "放款日期";
+				}
+				else if (cell.Value2 == "到期日") {
+					cell.Value2 = "到期日期";
+				}
+				else if (cell.Value2 == "本金余额") {
+					cell.Value2 = "贷款余额";
+				}
+			}
+			return result;
+		}
+
+		public static string GetImportDateFromWJFLSF(string filePath, out DateTime date) {
+			logger.Debug("Getting import date from WJFL SF");
+
+			var result = string.Empty;
+			date = new DateTime(1900, 1, 1);
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+
+				theSheet = (Worksheet)theExcelBook.Sheets["非应计贷款"];
+				string val = ((Range)theSheet.Cells[1, 2]).Value2;
+				if (string.IsNullOrEmpty(val)) {
+					result = "在非应计工作表中没有找到标题";
+				}
+				else if (val.IndexOf("月") < 0) {
+					result = "在非应计工作表的标题中没有找到数据日期";
+				}
+				else {
+					var dateString = val.Substring(0, val.IndexOf("月")).Replace("年", "/") + "/1";
+					if (DateTime.TryParse(dateString, out date)) {
+						date = DateHelper.GetLastDayInMonth(date);
+					}
+					else {
+						result = "在非应计工作表的标题中没有找到正确的数据日期";
+					}
+				}
+				if (result.Length > 0) {
+					logger.Debug(result);
+				}
+				else {
+					logger.Debug("Got date: " + date.ToString("yyyy-MM-dd"));
+				}
+				return result;
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				return ex.Message;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+		}
+		#endregion
 
 		public static void InitSheet(string filePath, TargetTableSheet sheet) {
 			InitSheet(filePath, sheet, null);
@@ -1448,7 +1613,7 @@ namespace Reporting
 						((Range)theSheet.Cells[excelRow, 2 + j]).Value2 = dataTable.Rows[i][2 + j];
 					}
 					if (excelRow == 6) { // 不良贷款余额 ends
-						excelRow = 10;
+						excelRow = 8;
 					}
 					else {
 						excelRow++;

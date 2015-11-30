@@ -137,6 +137,7 @@ namespace Reporting
 			this.lblImportYWNei.Text = "";
 			this.lblImportYWWai.Text = "";
 			this.txtImportDate.Text = "";
+			this.lblImportLoanSF.Text = "";
 		}
 
 		private void btnImport_Click(object sender, EventArgs e) {
@@ -151,9 +152,10 @@ namespace Reporting
 						this.lblImportLoan.Text,
 						this.lblImportPublic.Text, this.lblImportPrivate.Text,
 						this.lblImportNonAccrual.Text, this.lblImportOverdue.Text,
-						this.lblImportYWNei.Text, this.lblImportYWWai.Text
+						this.lblImportYWNei.Text, this.lblImportYWWai.Text,
+						this.lblImportLoanSF.Text
 					};
-				var importer = new Importer();
+				var importer = new ImporterSF();
 				this.Cursor = Cursors.WaitCursor;
 				try {
 					var startTime = DateTime.Now;
@@ -211,6 +213,17 @@ namespace Reporting
 				}
 			}
 
+			if (this.lblImportLoanSF.Text.Length > 0) {
+				DateTime dt = DateHelper.Look4Date(this.lblImportLoanSF.Text);
+				if (dt.Year > 2000) {
+					if (dt != asOfDate) {
+						ShowStop("《贷款欠款查询（神府）》的文件命名显示日期与所选的数据日期不一致。\r\n请检查输入的数据日期是否正确。");
+						this.txtImportDate.Focus();
+						return false;
+					}
+				}
+			}
+
 			return true;
 		}
 
@@ -227,6 +240,22 @@ namespace Reporting
 			}
 			else {
 				this.lblImportLoan.Text = "";
+			}
+		}
+
+		private void btnImportLoanSF_Click(object sender, EventArgs e) {
+			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
+				this.lblImportLoanSF.Text = this.openFileDialog1.FileName;
+				// Guess date from file name, like 贷款欠款查询_806050000_20151007.xls
+				DateTime dt = DateHelper.Look4Date(this.openFileDialog1.FileName);
+				if (dt.Year > 2000) {
+					if (this.txtImportDate.Text == "") {
+						this.txtImportDate.Text = dt.ToString("yyyy-M-d");
+					}
+				}
+			}
+			else {
+				this.lblImportLoanSF.Text = "";
 			}
 		}
 
@@ -298,8 +327,22 @@ namespace Reporting
 			}
 		}
 
+		private void btnImportWJFLOpenerSF_Click(object sender, EventArgs e) {
+			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
+				this.lblImportWJFLPathSF.Text = this.openFileDialog1.FileName;
+			}
+			else {
+				this.lblImportWJFLPathSF.Text = "";
+			}
+		}
+
 		private void btnImportWJFL_Click(object sender, EventArgs e) {
-			if (!IsValidToImportWJFL()) {
+			ImportWJFL_YL();
+			ImportWJFL_SF();
+		}
+
+		private void ImportWJFL_YL() {
+			if (!IsValidToImportWJFL(this.lblImportWJFLPath.Text)) {
 				return;
 			}
 			var filePath = this.lblImportWJFLPath.Text;
@@ -318,7 +361,7 @@ namespace Reporting
 				if (string.IsNullOrEmpty(result)) {
 					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
 					var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
-					ShowInfo(string.Format("{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
+					ShowInfo(string.Format("榆林{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 				}
 				else {
 					ShowError(result);
@@ -342,24 +385,68 @@ namespace Reporting
 			}
 		}
 
-		private bool IsValidToImportWJFL() {
-			var filePath = this.lblImportWJFLPath.Text;
-			if (filePath == "") {
-				ShowStop("请选择风险贷款情况表的初表");
-				this.btnImportWJFLOpener.Focus();
-				return false;
+		private void ImportWJFL_SF() {
+			if (!IsValidToImportWJFL(this.lblImportWJFLPathSF.Text)) {
+				return;
 			}
-			else if (filePath.IndexOf(" - ") < 0) {
-				if (MessageBox.Show("确定您所选择的文件为修订七级分类之后的风险贷款情况表吗？", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
-					return false;
+			var filePath = this.lblImportWJFLPathSF.Text;
+			DateTime asOfDate;
+			var result = ExcelHelper.GetImportDateFromWJFLSF(filePath, out asOfDate);
+			if (!string.IsNullOrEmpty(result)) {
+				ShowError(result);
+				return;
+			}
+			var importer = new ImporterSF();
+			this.Cursor = Cursors.WaitCursor;
+			try {
+				var startTime = DateTime.Now;
+				result = importer.UpdateWJFL(asOfDate, filePath);
+				this.Cursor = Cursors.Default;
+				if (string.IsNullOrEmpty(result)) {
+					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
+					var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
+					ShowInfo(string.Format("神府{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
+				}
+				else {
+					ShowError(result);
 				}
 			}
+			catch (IOException ex) {
+				if (ex.Message.IndexOf("it is being used by another process") > 0) {
+					ShowError("五级分类文件已经被打开，请先从Excel里关闭该报表然后再导入。");
+				}
+				else {
+					ShowError("请关闭所有excel，然后再尝试导出报表。");
+				}
+				logger.Error(ex);
+			}
+			catch (Exception ex) {
+				ShowError("导入发生错误");
+				logger.Error(ex);
+			}
+			finally {
+				this.Cursor = Cursors.Default;
+			}
+		}
+
+		private bool IsValidToImportWJFL(string filePath) {
+			if (filePath == "") {
+				//ShowStop("请选择风险贷款情况表的初表");
+				//this.btnImportWJFLOpener.Focus();
+				return false;
+			}
+			//else if (filePath.IndexOf(" - ") < 0) {
+			//	if (MessageBox.Show("确定您所选择的文件为修订七级分类之后的风险贷款情况表吗？", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+			//		return false;
+			//	}
+			//}
 
 			return true;
 		}
 
 		private void InitImportWJFLPanel() {
 			this.lblImportWJFLPath.Text = "";
+			this.lblImportWJFLPathSF.Text = "";
 		}
 
 		private void menuImport_History_Click(object sender, EventArgs e) {

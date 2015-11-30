@@ -11,40 +11,15 @@ namespace Reporting
 {
 	public class Importer
 	{
-		private string[] targetFileNames = { "dummy", "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls", "YWNei.xls", "YWWai.xls" };
-		private Logger logger = Logger.GetLogger("ExcelImporter");
+		protected List<string> targetFileNames = new List<string> { "dummy", "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls", "YWNei.xls", "YWWai.xls" };
+		private Logger logger = Logger.GetLogger("Importer");
 
 		#region Create import instance and backup imported files
-		public string CreateImport(DateTime asOfDate, string[] sourceFiles) {
+		public virtual string CreateImport(DateTime asOfDate, string[] sourceFiles) {
 			logger.Debug("");
 			var result = string.Empty;
-			var dao = new SqlDbHelper();
-			var dateString = asOfDate.ToString("yyyyMMdd");
-			var sql = new StringBuilder();
-			sql.AppendLine(string.Format("SELECT ISNULL(MAX(Id), 0) FROM Import WHERE ImportDate = '{0}'", dateString));
-			logger.DebugFormat("Getting existing import id for {0}", dateString);
-			var importId = (int)dao.ExecuteScalar(sql.ToString());
-			logger.DebugFormat("Existing import id = {0}", importId);
-			if (importId == 0) {
-				sql.Clear();
-				sql.AppendLine(string.Format("INSERT INTO Import (ImportDate) VALUES ('{0}')", dateString));
-				sql.AppendLine("SELECT SCOPE_IDENTITY()");
-				importId = (int)((decimal)dao.ExecuteScalar(sql.ToString()));
-			}
-			else {
-				sql.Clear();
-				sql.AppendLine(string.Format("UPDATE Import SET ModifyDate = getdate() WHERE Id = {0}", importId));
-				dao.ExecuteNonQuery(sql.ToString());
-			}
-
-			var importRootFolder = System.Environment.CurrentDirectory + "\\Import";
-			if (!Directory.Exists(importRootFolder)) {
-				Directory.CreateDirectory(importRootFolder);
-			}
-			var importFolder = importRootFolder + "\\" + importId.ToString();
-			if (!Directory.Exists(importFolder)) {
-				Directory.CreateDirectory(importFolder);
-			}
+			var importId = GetImportId(asOfDate);
+			var importFolder = GetImportFolder(importId);
 
 			// Create/update import items records
 			logger.DebugFormat("Copying source files to {0}", importFolder);
@@ -87,26 +62,63 @@ namespace Reporting
 			return result;
 		}
 
-		public string UpdateWJFL(DateTime asOfDate, string sourceFilePath) {
+		protected int GetImportId(DateTime asOfDate) {
+			var dao = new SqlDbHelper();
+			var dateString = asOfDate.ToString("yyyyMMdd");
+			var sql = new StringBuilder();
+			sql.AppendLine(string.Format("SELECT ISNULL(MAX(Id), 0) FROM Import WHERE ImportDate = '{0}'", dateString));
+			logger.DebugFormat("Getting existing import id for {0}", dateString);
+			var importId = (int)dao.ExecuteScalar(sql.ToString());
+			logger.DebugFormat("Existing import id = {0}", importId);
+			if (importId == 0) {
+				sql.Clear();
+				sql.AppendLine(string.Format("INSERT INTO Import (ImportDate) VALUES ('{0}')", dateString));
+				sql.AppendLine("SELECT SCOPE_IDENTITY()");
+				importId = (int)((decimal)dao.ExecuteScalar(sql.ToString()));
+			}
+			else {
+				sql.Clear();
+				sql.AppendLine(string.Format("UPDATE Import SET ModifyDate = getdate() WHERE Id = {0}", importId));
+				dao.ExecuteNonQuery(sql.ToString());
+			}
+			return importId;
+		}
+
+		protected string GetImportFolder(int importId) {
+			var importRootFolder = System.Environment.CurrentDirectory + "\\Import";
+			if (!Directory.Exists(importRootFolder)) {
+				Directory.CreateDirectory(importRootFolder);
+			}
+			var importFolder = importRootFolder + "\\" + importId.ToString();
+			if (!Directory.Exists(importFolder)) {
+				Directory.CreateDirectory(importFolder);
+			}
+
+			return importFolder;
+		}
+
+		public virtual string UpdateWJFL(DateTime asOfDate, string sourceFilePath) {
 			var result = string.Empty;
+
+			if (!File.Exists(sourceFilePath)) {
+				result = "风险贷款情况表的初表修订结果在这个路径下没找到：\r\n" + sourceFilePath;
+				logger.Debug(result);
+				return result;
+			}
+
 			var dao = new SqlDbHelper();
 			var dateString = asOfDate.ToString("yyyyMMdd");
 			logger.DebugFormat("Getting existing import id for {0}", dateString);
 
 			var import = Import.GetByDate(asOfDate);
-			if (import == null) {
-				result = string.Format("{0}的数据还没导入系统", asOfDate.ToString("yyyy年M月d日"));
+			if (import == null || !import.Items.Exists(x => x.ItemType == XEnum.ImportItemType.Loan)) {
+				result = string.Format("{0}的《贷款欠款查询》数据还没导入系统，请先导入这项数据", asOfDate.ToString("yyyy年M月d日"));
 				logger.Debug(result);
 				return result;
 			}
 
 			var importFolder = System.Environment.CurrentDirectory + "\\Import\\" + import.Id.ToString();
 			var targetFilePath = string.Format("{0}\\Processed\\WJFL.xls", importFolder);
-			if (!File.Exists(sourceFilePath)) {
-				result = "风险贷款情况表的初表修订结果在这个路径下没找到：\r\n" + sourceFilePath;
-				logger.Debug(result);
-				return result;
-			}
 
 			logger.DebugFormat("Copying WJFL update file into {0}", targetFilePath);
 			File.Copy(sourceFilePath, targetFilePath, true);
@@ -248,7 +260,7 @@ namespace Reporting
 			return result;
 		}
 
-		private bool CopyItem(int importId, string importFolder, string sourceFilePath, XEnum.ImportItemType itemType) {
+		protected bool CopyItem(int importId, string importFolder, string sourceFilePath, XEnum.ImportItemType itemType) {
 			int itemTypeId = (int)itemType;
 
 			if (sourceFilePath.Length == 0 || !File.Exists(sourceFilePath)) {
@@ -323,15 +335,10 @@ namespace Reporting
 			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Public];
 			var excelColumns = "[分行名称], [支行名称], [客户姓名], [借款人企业性质], [组织机构代码], [合同编号], [借据编号], [借据开始日期], [借据结束日期], [行业门类], [行业大类], [行业中类], [行业小类], [贷款期限(月)], [币种], [发放后投向行业门类], [发放后投向行业大类], [发放后投向行业中类], [发放后投向行业小类], [业务类别], [授信品种], [核算项目名称], [七级分类], [客户信用等级], [客户规模(行内）], [客户规模(行外）], [本金逾期天数], [欠息天数], [贷款余额], [利率], [浮动利率], [主要担保方式], [保证金比例], [正常余额], [逾期余额], [非应计余额], [贷款账号], [是否涉农], [是否政府融资平台]";
 			var dbColumns = "OrgName, OrgName2, CustomerName, OrgType, OrgCode, ContractNo, DueBillNo, LoanStartDate, LoanEndDate, IndustryType1, IndustryType2, IndustryType3, IndustryType4, TermMonth, CurrencyType, Direction1, Direction2, Direction3, Direction4, OccurType, BusinessType, SubjectNo, ClassifyResult, CreditLevel, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, ActualBusinessRate, RateFloat, VouchTypeName, BailRatio, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsAgricultureCredit, IsINRZ";
-			OleDbConnection oconn = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + targetFilePath + ";Extended Properties=Excel 8.0");
-			oconn.Open();
-			DataTable dt = oconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-			int maxSheets = 3;
-			for (int sheetIndex = 0; sheetIndex < maxSheets; sheetIndex++) {
-				if (dt.Rows.Count < sheetIndex * 2 + 1) {
-					break;
-				}
-				var result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.Public, excelColumns, dbColumns, sheetIndex + 1);
+
+			var table = SourceTable.GetById(XEnum.ImportItemType.Public);
+			for (int sheetIndex = 1; sheetIndex <= table.Sheets.Count; sheetIndex++) {
+				var result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.Public, excelColumns, dbColumns, sheetIndex);
 				if (!String.IsNullOrEmpty(result)) {
 					return result;
 				}
@@ -414,7 +421,7 @@ namespace Reporting
 			return ImportTable(importId, targetFilePath, XEnum.ImportItemType.YWWai, excelColumns, dbColumns);
 		}
 
-		private string ImportTable(int importId, string filePath, XEnum.ImportItemType itemType, string excelColumns, string dbColumns, int sheetIndex = 1) {
+		protected string ImportTable(int importId, string filePath, XEnum.ImportItemType itemType, string excelColumns, string dbColumns, int sheetIndex = 1) {
 			int columnCount = dbColumns.Split(',').Length;
 			string suffix = GetTableSuffix(itemType);
 			logger.DebugFormat("Importing {0} to database", suffix);
@@ -457,24 +464,14 @@ namespace Reporting
 
 				var sql = new StringBuilder();
 				sql.AppendFormat("SELECT {0} FROM [{1}]", excelColumns, sheet1);
-				if (itemType == XEnum.ImportItemType.Loan) {
-					sql.Append(" WHERE [贷款状态] <> '结清'");
-				}
-				else if (itemType == XEnum.ImportItemType.Public) {
-					sql.Append(" WHERE [分行名称] = '长安银行榆林分行'");
-				}
-				else if (itemType == XEnum.ImportItemType.Private) {
-					sql.Append(" WHERE [二级分行] = '长安银行榆林分行'");
-				}
-				else if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
-					sql.Append(" WHERE LEN([科目代号]) > 2");
-				}
-				OleDbCommand ocmd = new OleDbCommand(sql.ToString(), oconn);
+				sql.AppendLine(GetImportWhereSql(itemType));
+				var s = sql.ToString();
+				OleDbCommand ocmd = new OleDbCommand(s, oconn);
 				OleDbDataReader reader = ocmd.ExecuteReader();
 
 				int dataRowIndex = 0;
 				var dao = new SqlDbHelper();
-				if (itemType == XEnum.ImportItemType.Public && sheetIndex > 1) {
+				if ((itemType == XEnum.ImportItemType.Public || itemType == XEnum.ImportItemType.WjflSF) && sheetIndex > 1) {
 					// Don't delete existing records when importing sheet2 or later
 				}
 				else {
@@ -489,6 +486,9 @@ namespace Reporting
 					dataRowIndex++;
 					if (itemType == XEnum.ImportItemType.Public) {
 						sql.AppendLine(GetInsertSql4Public(reader, importId, suffix, columnCount, dbColumns, sheetIndex));
+					}
+					else if (itemType == XEnum.ImportItemType.WjflSF) {
+						sql.AppendLine(GetInsertSql4WjflSF(reader, importId, suffix, columnCount, dbColumns, sheetIndex));
 					}
 					else {
 						sql.AppendLine(GetInsertSql(reader, importId, suffix, columnCount, dbColumns));
@@ -548,7 +548,7 @@ namespace Reporting
 			if (expected.Equals("UNKNOWN")) {
 				return true;
 			}
-			return actual.EndsWith("$") && actual.StartsWith(expected);
+			return (actual.EndsWith("$") || actual.EndsWith("$'")) && actual.IndexOf(expected) >= 0;
 		}
 
 		private string GetTableSuffix(XEnum.ImportItemType itemType) {
@@ -556,6 +556,23 @@ namespace Reporting
 			var startAt = suffix.LastIndexOf('.');
 			suffix = suffix.Substring(startAt + 1);
 			return suffix;
+		}
+
+		protected virtual string GetImportWhereSql(XEnum.ImportItemType itemType) {
+			var sql = "";
+			if (itemType == XEnum.ImportItemType.Loan) {
+				sql = "WHERE [贷款状态] <> '结清'";
+			}
+			else if (itemType == XEnum.ImportItemType.Public) {
+				sql = "WHERE [分行名称] = '长安银行榆林分行'";
+			}
+			else if (itemType == XEnum.ImportItemType.Private) {
+				sql = "WHERE [二级分行] = '长安银行榆林分行'";
+			}
+			else if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
+				sql = "WHERE LEN([科目代号]) > 2";
+			}
+			return sql;
 		}
 
 		private string GetInsertSql(OleDbDataReader reader, int importId, string suffix, int columnCount, string columns) {
@@ -578,7 +595,17 @@ namespace Reporting
 			return sql;
 		}
 
-		private bool IsAllCopied(DateTime asOfDate) {
+		private string GetInsertSql4WjflSF(OleDbDataReader reader, int importId, string suffix, int columnCount, string columns, int type) {
+			var values = new StringBuilder();
+			values.Append(DataUtility.GetSqlValue(reader, 0));
+			for (int i = 1; i < columnCount; i++) {
+				values.Append(", " + DataUtility.GetSqlValue(reader, i));
+			}
+			var sql = string.Format("INSERT INTO Import{0} (ImportId, WjflType, {1}) VALUES ({2}, {3}, {4})", suffix, columns, importId, type, values);
+			return sql;
+		}
+
+		protected virtual bool IsAllCopied(DateTime asOfDate) {
 			var dao = new SqlDbHelper();
 			var importedItems = (string)dao.ExecuteScalar(string.Format("SELECT dbo.sfGetImportStatus('{0}')", asOfDate.ToString("yyyyMMdd")));
 			return importedItems.StartsWith("1111111");

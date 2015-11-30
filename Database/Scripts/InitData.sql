@@ -19,16 +19,16 @@ IF NOT EXISTS(SELECT * FROM Org) BEGIN
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (5 ,'806050301', '世纪广场支行', '世纪广场', '榆林分行世纪广场支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (6 ,'806050401', '榆林保宁路支行', '保宁路', '榆林分行保宁路支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (7 ,'806050501', '榆林开发区支行', '开发区', '榆林分行开发区支行')
-	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (8 ,'806050601', '神木县支行', '神木支行', NULL)
-	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (9 ,'806050701', '府谷县支行', '府谷支行', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (8 ,'806050601', '神木县支行', '神木支行', '长安银行神木县支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (9 ,'806050701', '府谷县支行', '府谷支行', '长安银行府谷县支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (10,'806050801', '横山县支行', '横山支行', NULL)
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (11,'806050901', '榆林银沙路支行', '银沙路', '榆林分行银沙路支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (12,'806051001', '靖边县支行', '靖边支行', NULL)
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (13,'806051101', '榆林肤施路支行', '肤施路', '榆林分行肤施路支行')
-	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (14,'806051201', '神木县大柳塔支行', '神木大柳塔', NULL)
-	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (15,'806051301', '府谷县河滨路支行', '府谷河滨路', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (14,'806051201', '神木县大柳塔支行', '神木大柳塔', '长安银行神木县大柳塔支行')
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (15,'806051301', '府谷县河滨路支行', '府谷河滨路', '长安银行府谷县河滨路支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (16,'806051401', '定边县支行', '定边支行', NULL)
-	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (17,'806051501', '神木县东兴街支行', '神木东兴街', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (17,'806051501', '神木县东兴街支行', '神木东兴街', '长安银行神木县东兴街支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (18,'806051601', '榆林青山路社区支行', '青山路', '榆林分行青山路社区支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (19,'806051701', '榆林上郡路支行', '上郡路', '榆林分行上郡路支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (20,'806051801', '靖边县长城路小微支行', '靖边长城路', NULL)
@@ -36,7 +36,7 @@ IF NOT EXISTS(SELECT * FROM Org) BEGIN
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (22,'806052001', '榆林金沙路社区支行', '金沙路', '榆林分行金沙路社区支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (23,'806052101', '横山县北大街小微支行', '横山北大街', NULL)
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (24,'806052201', '府谷县河滨公园小微支行', '府谷河滨公园', NULL)
-	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (25,'806052301', '神木县麟州路小微支行', '神木麟州路', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (25,'806052301', '神木县麟州路小微支行', '神木麟州路', '神木县支行麟州路支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (26,'806052401', '神木县锦界工业园小微支行', '神木锦界工业园', NULL)
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (27,'806052601', '榆林明珠大道支行', '明珠大道', '榆林分行明珠大道支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (28,'806057777', '806057777', '806057777', NULL)
@@ -617,6 +617,8 @@ IF NOT EXISTS(SELECT * FROM SourceTable) BEGIN
 	INSERT INTO SourceTable(Id, Name) VALUES (5, '逾期贷款明细表')
 	INSERT INTO SourceTable(Id, Name) VALUES (6, '业务状况表（表内）')
 	INSERT INTO SourceTable(Id, Name) VALUES (7, '业务状况表（表外）')
+	INSERT INTO SourceTable(Id, Name) VALUES (8, '贷款欠款查询（神府）')
+	INSERT INTO SourceTable(Id, Name) VALUES (9, '五级分类（神府）')
 END
 
 IF NOT EXISTS(SELECT * FROM SourceTableSheet) BEGIN
@@ -627,8 +629,14 @@ IF NOT EXISTS(SELECT * FROM SourceTableSheet) BEGIN
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (5, 5, 1, '逾期贷款明细表', 8, '本页小计')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (6, 2, 2, '表外', 1, '')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (7, 2, 3, '委贷', 1, '')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (8, 6, 1, '业务状况表（表内）', 8, '10')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (9, 7, 1, '业务状况表（表外）', 8, '09')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (8, 6, 1, '业务状况表一级科目（表内）', 8, '10')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (9, 7, 1, '业务状况表一级科目（表外）', 8, '09')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (10, 8, 1, '贷款欠款查询', 4, '')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (11, 9, 1, '逾期贷款', 2, '小计')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (12, 9, 2, '不良贷款', 2, '小计')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (13, 9, 3, '非应计贷款', 2, '小计')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (14, 9, 4, '只欠息贷款', 2, '小计')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (15, 9, 5, '关注类贷款', 2, '小计')
 END
 
 IF NOT EXISTS(SELECT * FROM SourceTableSheetColumn) BEGIN
@@ -768,6 +776,46 @@ IF NOT EXISTS(SELECT * FROM SourceTableSheetColumn) BEGIN
 
 	/* YWNei */
 	/* YWWai */
+	
+	/* LoanSF */
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 1, '机构号码')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 2, '贷款科目')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 3, '贷款帐号')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 4, '客户名称')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 5, '客户编号')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 6, '客户类型')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 7, '币种')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 8, '贷款总额')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 9, '本金余额')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 10, '拖欠本金')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 11, '拖欠应收利息')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 12, '拖欠催收利息')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 13, '')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 14, '借据编号')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 15, '放款日期')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 16, '到期日期')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 17, '置换/转让')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 18, '核销标志')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 19, '贷款状态')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 20, '贷款种类')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 21, '贷款种类说明')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 22, '贷款用途')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 23, '转列逾期')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 24, '转列非应计日期')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 25, '利息计至日')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 26, '利率种类')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 27, '利率加减符号')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 28, '利率加减码')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 29, '逾期利率依据方式')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 30, '逾期利率种类')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 31, '逾期利率加减符号')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 32, '逾期利率加减码')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 33, '利率依据方式')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 34, '合同最初计息利率')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 35, '合同最初逾期利率')
+	INSERT INTO SourceTableSheetColumn(SheetId, [Index], Name) VALUES (8, 36, '扣款账号')
+
+	/* WjfsSF */
 END
 
 IF NOT EXISTS(SELECT * FROM TableMapping) BEGIN

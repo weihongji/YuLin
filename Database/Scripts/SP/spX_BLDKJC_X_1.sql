@@ -80,6 +80,15 @@ BEGIN
 			FROM ImportLoan
 			WHERE ImportId = @importIdToday AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 				AND CustomerType = '对公'
+			UNION ALL
+			SELECT Balance = CapitalAmount
+				, GZ = CASE WHEN DangerLevel LIKE '关%' THEN CapitalAmount ELSE 0.00 END
+				, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
+				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
+				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
+			FROM ImportLoanSF
+			WHERE ImportId = @importIdToday
+				AND CustomerType = '对公'
 		) AS X
 	END
 	ELSE BEGIN
@@ -94,6 +103,16 @@ BEGIN
 			FROM ImportLoan L
 				LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 			WHERE L.ImportId = @importIdToday AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				AND L.CustomerType = '对公'
+			UNION ALL
+			SELECT Balance = L.CapitalAmount
+				, GZ = CASE WHEN W.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
+				, CJ = CASE WHEN W.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
+				, KY = CASE WHEN W.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
+				, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
+			FROM ImportLoanSF L
+				LEFT JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+			WHERE L.ImportId = @importIdToday
 				AND L.CustomerType = '对公'
 		) AS X
 	END
@@ -110,6 +129,16 @@ BEGIN
 			LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 		WHERE L.ImportId = @importIdLastTenDays AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND L.CustomerType = '对公'
+		UNION ALL
+		SELECT Balance = L.CapitalAmount
+			, GZ = CASE WHEN W.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
+			, CJ = CASE WHEN W.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
+			, KY = CASE WHEN W.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
+			, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
+		FROM ImportLoanSF L
+			LEFT JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+		WHERE L.ImportId = @importIdLastTenDays
+			AND L.CustomerType = '对公'
 	) AS X
 
 	SELECT SUM(Balance) AS Balance, SUM(GZ) AS GZ, SUM(CJ) AS CJ, SUM(KY) AS KY, SUM(SS) AS SS
@@ -123,6 +152,15 @@ BEGIN
 		FROM ImportLoan
 		WHERE ImportId = @importIdLastMonth AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND CustomerType = '对公'
+		UNION ALL
+		SELECT Balance = CapitalAmount
+			, GZ = CASE WHEN DangerLevel LIKE '关%' THEN CapitalAmount ELSE 0.00 END
+			, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
+			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
+			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
+		FROM ImportLoanSF
+		WHERE ImportId = @importIdLastMonth
+			AND CustomerType = '对公'
 	) AS X
 
 	SELECT SUM(Balance) AS Balance, SUM(GZ) AS GZ, SUM(CJ) AS CJ, SUM(KY) AS KY, SUM(SS) AS SS
@@ -135,6 +173,15 @@ BEGIN
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
 		WHERE ImportId = @importIdYearStart AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND CustomerType = '对公'
+		UNION ALL
+		SELECT Balance = CapitalAmount
+			, GZ = CASE WHEN DangerLevel LIKE '关%' THEN CapitalAmount ELSE 0.00 END
+			, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
+			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
+			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
+		FROM ImportLoanSF
+		WHERE ImportId = @importIdYearStart
 			AND CustomerType = '对公'
 	) AS X
 
@@ -151,6 +198,15 @@ BEGIN
 			FROM ImportLoan
 			WHERE ImportId = @importIdToday AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 				AND CustomerType = '对私'
+			UNION ALL
+			SELECT Balance = CapitalAmount
+				, GZ = CASE WHEN DangerLevel LIKE '关%' THEN CapitalAmount ELSE 0.00 END
+				, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
+				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
+				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
+			FROM ImportLoanSF
+			WHERE ImportId = @importIdToday
+				AND CustomerType = '对私'
 		) AS X
 	END
 	ELSE BEGIN
@@ -165,6 +221,16 @@ BEGIN
 			FROM ImportLoan L
 				LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 			WHERE L.ImportId = @importIdToday AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				AND L.CustomerType = '对私'
+			UNION ALL
+			SELECT Balance = L.CapitalAmount
+				, GZ = CASE WHEN W.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
+				, CJ = CASE WHEN W.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
+				, KY = CASE WHEN W.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
+				, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
+			FROM ImportLoanSF L
+				LEFT JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+			WHERE L.ImportId = @importIdToday
 				AND L.CustomerType = '对私'
 		) AS X
 	END
@@ -181,6 +247,16 @@ BEGIN
 			LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 		WHERE L.ImportId = @importIdLastTenDays AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND L.CustomerType = '对私'
+		UNION ALL
+		SELECT Balance = L.CapitalAmount
+			, GZ = CASE WHEN W.DangerLevel LIKE '关%' THEN L.CapitalAmount ELSE 0.00 END
+			, CJ = CASE WHEN W.DangerLevel = '次级' THEN L.CapitalAmount ELSE 0.00 END
+			, KY = CASE WHEN W.DangerLevel = '可疑' THEN L.CapitalAmount ELSE 0.00 END
+			, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
+		FROM ImportLoanSF L
+			LEFT JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+		WHERE L.ImportId = @importIdLastTenDays
+			AND L.CustomerType = '对私'
 	) AS X
 
 	SELECT SUM(Balance) AS Balance, SUM(GZ) AS GZ, SUM(CJ) AS CJ, SUM(KY) AS KY, SUM(SS) AS SS
@@ -193,6 +269,15 @@ BEGIN
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
 		WHERE ImportId = @importIdLastMonth AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND CustomerType = '对私'
+		UNION ALL
+		SELECT Balance = CapitalAmount
+			, GZ = CASE WHEN DangerLevel LIKE '关%' THEN CapitalAmount ELSE 0.00 END
+			, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
+			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
+			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
+		FROM ImportLoanSF
+		WHERE ImportId = @importIdLastMonth
 			AND CustomerType = '对私'
 	) AS X
 
@@ -207,6 +292,15 @@ BEGIN
 		FROM ImportLoan
 		WHERE ImportId = @importIdYearStart AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
 			AND CustomerType = '对私'
+		UNION ALL
+		SELECT Balance = CapitalAmount
+			, GZ = CASE WHEN DangerLevel LIKE '关%' THEN CapitalAmount ELSE 0.00 END
+			, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
+			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
+			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
+		FROM ImportLoanSF
+		WHERE ImportId = @importIdYearStart
+			AND CustomerType = '对私'
 	) AS X
 
 	/* Final Temporary table */
@@ -217,11 +311,28 @@ BEGIN
 		, YearStart = CAST(ROUND(ISNULL(YearStart/10000, 0), 2) AS money)
 	INTO #Final
 	FROM (
-		SELECT 1 AS Id, 'Public' AS Category, T.Balance AS Today, D.Balance AS LastTenDays, M.Balance AS LastMonth, Y.Balance AS YearStart
-		FROM #PublicToday T, #PublicLastTenDays D, #PublicLastMonth M, #PublicYearStart Y
+		--SELECT 1 AS Id, 'Public' AS Category, T.Balance AS Today, D.Balance AS LastTenDays, M.Balance AS LastMonth, Y.Balance AS YearStart
+		--FROM #PublicToday T, #PublicLastTenDays D, #PublicLastMonth M, #PublicYearStart Y
+		--UNION ALL
+		--SELECT 2 AS Id, 'Private' AS Category, T.Balance AS Today, D.Balance AS LastTenDays, M.Balance AS LastMonth, Y.Balance AS YearStart
+		--FROM #PrivateToday T, #PrivateLastTenDays D, #PrivateLastMonth M, #PrivateYearStart Y
+/*
+	SELECT @importIdToday = Id FROM Import WHERE ImportDate = @asOfDate
+	SELECT @importIdLastTenDays = Id FROM Import WHERE ImportDate = @asOfDateLastTenDays
+	SELECT @importIdLastMonth = Id FROM Import WHERE ImportDate =  @asOfDateLastMonth
+	SELECT @importIdYearStart = Id FROM Import WHERE ImportDate =  @asOfDateYearStart
+*/
+		SELECT 1 AS Id, 'Public' AS Category
+			, dbo.sfGetLoanBalance(@asOfDate, 1) + dbo.sfGetLoanBalanceSF(@asOfDate, 1) AS Today
+			, dbo.sfGetLoanBalance(@asOfDate, 1) + dbo.sfGetLoanBalanceSF(@asOfDateLastTenDays, 1) AS LastTenDays
+			, dbo.sfGetLoanBalance(@asOfDate, 1) + dbo.sfGetLoanBalanceSF(@asOfDateLastMonth, 1) AS LastMonth
+			, dbo.sfGetLoanBalance(@asOfDate, 1) + dbo.sfGetLoanBalanceSF(@asOfDateYearStart, 1) AS YearStart
 		UNION ALL
-		SELECT 2 AS Id, 'Private' AS Category, T.Balance AS Today, D.Balance AS LastTenDays, M.Balance AS LastMonth, Y.Balance AS YearStart
-		FROM #PrivateToday T, #PrivateLastTenDays D, #PrivateLastMonth M, #PrivateYearStart Y
+		SELECT 2 AS Id, 'Private' AS Category
+			, dbo.sfGetLoanBalance(@asOfDate, 2) + dbo.sfGetLoanBalanceSF(@asOfDate, 2) AS Today
+			, dbo.sfGetLoanBalance(@asOfDate, 2) + dbo.sfGetLoanBalanceSF(@asOfDateLastTenDays, 2) AS LastTenDays
+			, dbo.sfGetLoanBalance(@asOfDate, 2) + dbo.sfGetLoanBalanceSF(@asOfDateLastMonth, 2) AS LastMonth
+			, dbo.sfGetLoanBalance(@asOfDate, 2) + dbo.sfGetLoanBalanceSF(@asOfDateYearStart, 2) AS YearStart
 		UNION ALL
 		SELECT 3 AS Id, 'PublicGZ' AS Category, T.GZ AS Today, D.GZ AS LastTenDays, M.GZ AS LastMonth, Y.GZ AS YearStart
 		FROM #PublicToday T, #PublicLastTenDays D, #PublicLastMonth M, #PublicYearStart Y
