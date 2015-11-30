@@ -13,6 +13,7 @@ sqlcmd -S .\SQL2012 -d YuLin -i sfGetDangerLevel.sql
 sqlcmd -S .\SQL2012 -d YuLin -i sfGetImportIdWJFL.sql
 sqlcmd -S .\SQL2012 -d YuLin -i sfGetImportStatus.sql
 sqlcmd -S .\SQL2012 -d YuLin -i sfGetLoanBalance.sql
+sqlcmd -S .\SQL2012 -d YuLin -i sfGetLoanBalanceSF.sql
 sqlcmd -S .\SQL2012 -d YuLin -i sfGetOrgId.sql
 echo Done
 
