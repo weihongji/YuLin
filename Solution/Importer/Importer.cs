@@ -530,8 +530,8 @@ namespace Reporting
 				}
 			}
 			catch (Exception ex) {
-				logger.Error("Outest catch", ex);
-				return ex.Message;
+				logger.Error("Outest catch: ", ex);
+				throw ex;
 			}
 			finally {
 				if (oleOpened) {
@@ -564,10 +564,10 @@ namespace Reporting
 				sql = "WHERE [贷款状态] <> '结清'";
 			}
 			else if (itemType == XEnum.ImportItemType.Public) {
-				sql = "WHERE [分行名称] = '长安银行榆林分行'";
+				sql = "WHERE [分行名称] LIKE '%长安银行榆林分行%'";
 			}
 			else if (itemType == XEnum.ImportItemType.Private) {
-				sql = "WHERE [二级分行] = '长安银行榆林分行'";
+				sql = "WHERE [二级分行] LIKE '%长安银行榆林分行%'";
 			}
 			else if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
 				sql = "WHERE LEN([科目代号]) > 2";

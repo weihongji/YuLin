@@ -36,6 +36,9 @@ namespace Reporting
 						s = "'" + ((DateTime)val).ToString(dateTimePattern) + "'";
 					}
 				}
+				else if (val is double) {
+					s = Math.Round((double)val, 4).ToString();
+				}
 				else {
 					s = "'" + val.ToString().Trim().Replace("'", "''") + "'";
 				}
