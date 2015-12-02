@@ -1184,7 +1184,7 @@ namespace Reporting
 
 				int rowStartAt = 7;
 				for (int i = 0; i < 7; i++) {
-					((Range)theSheet.Cells[rowStartAt + i, 3]).Value2 = dataTable.Rows[i][0];
+					((Range)theSheet.Cells[rowStartAt + i, 2]).Value2 = dataTable.Rows[i][0];
 					((Range)theSheet.Cells[rowStartAt + i, 6]).Value2 = dataTable.Rows[i][1];
 					((Range)theSheet.Cells[rowStartAt + i, 7]).Value2 = dataTable.Rows[i][2];
 					((Range)theSheet.Cells[rowStartAt + i, 8]).Value2 = dataTable.Rows[i][3];

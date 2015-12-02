@@ -43,7 +43,7 @@ IF NOT EXISTS(SELECT * FROM Org) BEGIN
 END
 
 IF NOT EXISTS(SELECT * FROM OrgOffset) BEGIN
-	INSERT INTO OrgOffset(OrgId, Offset, StartDate, EndDate, Comment) VALUES (16, 4938.00, '20010101', '20501213', '定边支行, 单位：万元')
+	--INSERT INTO OrgOffset(OrgId, Offset, StartDate, EndDate, Comment) VALUES (16, 4938.00, '20010101', '20501213', '定边支行, 单位：万元')
 END
 
 IF NOT EXISTS(SELECT * FROM DanBaoFangShi) BEGIN

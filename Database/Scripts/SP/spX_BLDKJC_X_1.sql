@@ -364,7 +364,7 @@ BEGIN
 	FROM #Final
 	UNION ALL
 	SELECT Id, Category
-		, RatioToday = CAST(ROUND(ISNULL(RatioToday*100, 0), 2) AS money) --乘以100只是为了变成money，输出到excel之前回除以100
+		, RatioToday = CAST(ROUND(ISNULL(RatioToday*100, 0), 2) AS money) --乘以100只是为了变成money，输出到excel之前会除以100
 		, DiffRatioLastTenDays = CAST(ROUND(ISNULL((RatioToday - RatioLastTenDays)*100, 0), 2) AS money)
 		, DiffRatioLastMonth = CAST(ROUND(ISNULL((RatioToday - RatioLastMonth)*100, 0), 2) AS money)
 		, DiffRatioYearStart = CAST(ROUND(ISNULL((RatioToday - RatioYearStart)*100, 0), 2) AS money)

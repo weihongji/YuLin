@@ -25,5 +25,5 @@ BEGIN
 			OR @type = 2 AND CustomerType = '╤тк╫'
 		)
 
-	RETURN @balance
+	RETURN ISNULL(@balance, 0)
 END

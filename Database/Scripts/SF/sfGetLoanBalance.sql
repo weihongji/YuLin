@@ -25,5 +25,5 @@ BEGIN
 			OR @type = 2 AND SubjectName LIKE '%¸öÈË%'
 		)
 
-	RETURN @balance
+	RETURN ISNULL(@balance, 0)
 END

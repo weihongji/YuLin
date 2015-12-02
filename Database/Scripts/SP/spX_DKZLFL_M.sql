@@ -76,19 +76,19 @@ BEGIN
 	GROUP BY CustomerType
 
 	/* 各项贷款 */
-	UPDATE R SET Balance0 = X.Total, Balance1 = X.G1, Balance2 = X.G2, Balance3 = X.G3, Balance4 = X.CJ, Balance5 = X.KY, Balance6 = X.SS
+	UPDATE R SET Balance0 = dbo.sfGetLoanBalance(@asOfDate, 0), Balance1 = X.G1, Balance2 = X.G2, Balance3 = X.G3, Balance4 = X.CJ, Balance5 = X.KY, Balance6 = X.SS
 	FROM #Result R, (
 		SELECT Total = SUM(Total), G1 = SUM(G1), G2 = SUM(G2), G3 = SUM(G3), CJ = SUM(CJ), KY = SUM(KY), SS = SUM(SS) FROM #ResultSingle
 	) AS X
 	WHERE R.SubjectName = '各项贷款'
 
 	/* 法人客户 */
-	UPDATE R SET Balance0 = X.Total, Balance1 = X.G1, Balance2 = X.G2, Balance3 = X.G3, Balance4 = X.CJ, Balance5 = X.KY, Balance6 = X.SS
+	UPDATE R SET Balance0 = dbo.sfGetLoanBalance(@asOfDate, 1), Balance1 = X.G1, Balance2 = X.G2, Balance3 = X.G3, Balance4 = X.CJ, Balance5 = X.KY, Balance6 = X.SS
 	FROM #Result R, #ResultSingle X
 	WHERE R.SubjectName = '法人客户' AND X.Category = '对公'
 
 	/* 个人客户 */
-	UPDATE R SET Balance0 = X.Total, Balance1 = X.G1, Balance2 = X.G2, Balance3 = X.G3, Balance4 = X.CJ, Balance5 = X.KY, Balance6 = X.SS
+	UPDATE R SET Balance0 = dbo.sfGetLoanBalance(@asOfDate, 2), Balance1 = X.G1, Balance2 = X.G2, Balance3 = X.G3, Balance4 = X.CJ, Balance5 = X.KY, Balance6 = X.SS
 	FROM #Result R, #ResultSingle X
 	WHERE R.SubjectName = '个人客户' AND X.Category = '对私'
 
