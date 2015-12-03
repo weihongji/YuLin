@@ -93,6 +93,29 @@ namespace Reporting
 			return "";
 		}
 
+		private string CreateImportItem(int importId, string sourceFilePath) {
+			logger.Debug("Updating ImportItem table");
+			int itemTypeId = (int)XEnum.ImportItemType.WjflSF;
+			var dao = new SqlDbHelper();
+			var sql = new StringBuilder();
+			sql.AppendFormat("SELECT ISNULL(MAX(Id), 0) FROM ImportItem WHERE ImportId = {0} AND ItemType = {1}", importId, itemTypeId);
+			var importItemId = (int)dao.ExecuteScalar(sql.ToString());
+			if (importItemId == 0) {
+				sql.Clear();
+				sql.AppendLine(string.Format("INSERT INTO ImportItem (ImportId, ItemType, FilePath) VALUES ({0}, {1}, '{2}')", importId, itemTypeId, sourceFilePath));
+				sql.AppendLine("SELECT SCOPE_IDENTITY()");
+				importItemId = (int)((decimal)dao.ExecuteScalar(sql.ToString()));
+				logger.Debug("New record created. ImportItemId = " + importItemId.ToString());
+			}
+			else {
+				sql.Clear();
+				sql.AppendFormat("UPDATE ImportItem SET FilePath = '{0}', ModifyDate = getdate() WHERE Id = {1}", sourceFilePath, importItemId);
+				dao.ExecuteNonQuery(sql.ToString());
+				logger.Debug("Existing record updated. ImportItemId = " + importItemId.ToString());
+			}
+			return string.Empty;
+		}
+
 		public override string UpdateWJFL(DateTime asOfDate, string sourceFilePath) {
 			var result = string.Empty;
 
@@ -120,6 +143,12 @@ namespace Reporting
 			File.Copy(sourceFilePath, targetFilePath, true);
 			result = ExcelHelper.ProcessWJFLSF(targetFilePath);
 			if (!string.IsNullOrEmpty(result)) {
+				return result;
+			}
+
+			result = CreateImportItem(import.Id, sourceFilePath);
+			if (!string.IsNullOrEmpty(result)) {
+				logger.Error(result);
 				return result;
 			}
 
