@@ -71,7 +71,7 @@ BEGIN
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
 		WHERE ImportId = @importId
-			AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	) AS X1
 	GROUP BY CustomerType
 
@@ -106,7 +106,7 @@ BEGIN
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan L INNER JOIN ImportPublic P ON L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
 		WHERE L.ImportId = @importId
-			AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
 	) AS X1
 
@@ -129,7 +129,7 @@ BEGIN
 				, SS = CASE WHEN L.DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan L INNER JOIN ImportPrivate P ON L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
 		WHERE L.ImportId = @importId
-			AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	) AS X1
 	GROUP BY ProductName
 

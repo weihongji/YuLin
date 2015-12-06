@@ -1,3 +1,5 @@
+SET NOCOUNT OFF
+
 IF NOT EXISTS(SELECT * FROM Globals) BEGIN
 	INSERT INTO Globals (SystemVersion, DBSchemaLevel, FixedDataLevel)
 	VALUES ('1.0.0.6', 1, 1)
@@ -40,11 +42,14 @@ IF NOT EXISTS(SELECT * FROM Org) BEGIN
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (26,'806052401', '神木县锦界工业园小微支行', '神木锦界工业园', NULL)
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (27,'806052601', '榆林明珠大道支行', '明珠大道', '榆林分行明珠大道支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (28,'806057777', '806057777', '806057777', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (29,'806058888', '神府区域直属支行营业部', '神府营业部', NULL)
 END
 
+/*
 IF NOT EXISTS(SELECT * FROM OrgOffset) BEGIN
-	--INSERT INTO OrgOffset(OrgId, Offset, StartDate, EndDate, Comment) VALUES (16, 4938.00, '20010101', '20501213', '定边支行, 单位：万元')
+	INSERT INTO OrgOffset(OrgId, Offset, StartDate, EndDate, Comment) VALUES (16, 4938.00, '20010101', '20501213', '定边支行, 单位：万元')
 END
+*/
 
 IF NOT EXISTS(SELECT * FROM DanBaoFangShi) BEGIN
 	INSERT INTO DanBaoFangShi(Name, Category) VALUES ('信用', '信用')

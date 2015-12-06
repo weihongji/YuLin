@@ -21,7 +21,9 @@ BEGIN
 		, ZQX_Count, ZQX_Amount, ZQX_Amount/Total_Amount AS ZQX_Percentage
 		, Total_Interest
 		, Y_B_Count = YBTotal_Count, Y_B_Amount = YBTotal_Amount, Y_B_Percentage = YBTotal_Amount/Total_Amount
-	FROM #Result
+	FROM #Result R
+		INNER JOIN Org O ON R.OrgId = O.Id
+	ORDER BY O.OrgNo, O.Id
 
 	DROP TABLE #Result
 END

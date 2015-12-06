@@ -61,7 +61,7 @@ BEGIN
 		LEFT JOIN ImportNonAccrual NA ON L.LoanAccount = NA.LoanAccount AND NA.ImportId = L.ImportId
 		LEFT JOIN ImportOverdue OD ON L.LoanAccount = OD.LoanAccount AND OD.ImportId = L.ImportId
 	WHERE L.ImportId = @importIdWJFL
-		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 
 	UPDATE #ResultWJFL SET OverdueDays = OweInterestDays WHERE OverdueDays = 0 AND OweInterestDays > 0 AND CustomerType LIKE '%房%'
 	UPDATE #ResultWJFL SET CustomerType =
@@ -82,14 +82,14 @@ BEGIN
 		SELECT L2.Id FROM
 			(
 				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND ImportId = @importId1
 					AND LoanState = '非应计'
 			) AS L1
 			RIGHT JOIN
 			(
 				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND ImportId = @importId2
 					AND LoanState = '非应计'
 			) AS L2 ON L1.LoanAccount = L2.LoanAccount
@@ -100,14 +100,14 @@ BEGIN
 		SELECT L2.Id FROM
 			(
 				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND ImportId = @importId1
 					AND LoanState IN ('逾期', '部分逾期')
 			) AS L1
 			RIGHT JOIN
 			(
 				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND ImportId = @importId2
 					AND LoanState IN ('逾期', '部分逾期')
 			) AS L2 ON L1.LoanAccount = L2.LoanAccount
@@ -118,14 +118,14 @@ BEGIN
 		SELECT L2.Id FROM
 			(
 				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND ImportId = @importId1
 					AND LoanState = '正常' AND OweYingShouInterest + OweCuiShouInterest != 0
 			) AS L1
 			RIGHT JOIN
 			(
 				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND ImportId = @importId2
 					AND LoanState = '正常' AND OweYingShouInterest + OweCuiShouInterest != 0
 			) AS L2 ON L1.LoanAccount = L2.LoanAccount

@@ -21,7 +21,7 @@ BEGIN
 	
 	SELECT DangerLevel, CAST(ROUND(SUM(CapitalAmount)/10000, 2) AS money) as Amount INTO #Result FROM ImportLoan
 	WHERE ImportId = @importId
-		AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%ÉñÄ¾%' OR Name LIKE '%¸®¹È%')
+		AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	GROUP BY DangerLevel
 
 	SELECT Total = @total

@@ -34,7 +34,7 @@ BEGIN
 								, Balance6 = 0.00
 							FROM ImportPublic P
 								INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
-							WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+							WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 								AND L.DangerLevel IN ('次级', '可疑', '损失')
 							UNION ALL
 							SELECT Direction1
@@ -42,7 +42,7 @@ BEGIN
 								, LoanBalance AS Balance6
 							FROM ImportPrivate P
 								INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
-							WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+							WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 								AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 								AND L.DangerLevel IN ('次级', '可疑', '损失')
 						) AS X

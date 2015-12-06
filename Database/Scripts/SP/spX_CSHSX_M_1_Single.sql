@@ -87,7 +87,7 @@ BEGIN
 		FROM ImportPublic P
 			LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 			LEFT JOIN DanBaoFangShi D ON D.Name = P.VouchTypeName
-		WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+		WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 		UNION ALL
 		SELECT DanBao = D.Category
 			, Balance = P.LoanBalance
@@ -98,7 +98,7 @@ BEGIN
 		FROM ImportPrivate P
 			LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 			LEFT JOIN DanBaoFangShi D ON D.Name = P.DanBaoFangShi
-		WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+		WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	) AS X
 	GROUP BY DanBao
 
@@ -140,7 +140,7 @@ BEGIN
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 				FROM ImportPublic P
 					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 					AND P.BusinessType LIKE '%贴现%'
 			) AS X1
 		) AS X
@@ -198,7 +198,7 @@ BEGIN
 			FROM ImportPublic P
 				LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				LEFT JOIN DanBaoFangShi D ON D.Name = P.VouchTypeName
-			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 			UNION ALL
 			SELECT OverdueDays = CASE WHEN P.ContractStartDate < @asOfDate AND P.LoanBalance > 0 THEN DATEDIFF(day, P.ContractEndDate, @asOfDate) ELSE 0 END
 				, OweInterestDays = P.InterestOverdueDays
@@ -210,7 +210,7 @@ BEGIN
 			FROM ImportPrivate P
 				LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				LEFT JOIN DanBaoFangShi D ON D.Name = DanBaoFangShi
-			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 		) AS X
 	) AS X
 	GROUP BY DaysLevel
@@ -247,7 +247,7 @@ BEGIN
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 				FROM ImportPublic P
 					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 			) AS X1
 		) AS X
 	WHERE R.Id = 9
@@ -269,7 +269,7 @@ BEGIN
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 				FROM ImportPublic P
 					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%' AND P.PublicType = 1
+				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 					--AND P.BusinessType = '房地产开发贷款'
 					AND P.IndustryType1 = '房地产业'
 			) AS X1
@@ -293,7 +293,7 @@ BEGIN
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 				FROM ImportPrivate P
 					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 			) AS X1
 		) AS X
@@ -316,7 +316,7 @@ BEGIN
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 				FROM ImportPrivate P
 					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-				WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName LIKE '%房%'
 			) AS X1
 		) AS X
@@ -347,7 +347,7 @@ BEGIN
 						, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 					FROM ImportPrivate P
 						LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
-					WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+					WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				) AS X1
 			) AS X
 	WHERE R.Id = 13

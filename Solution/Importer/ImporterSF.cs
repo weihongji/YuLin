@@ -77,7 +77,7 @@ namespace Reporting
 					excelColumns = excelColumns.Replace(", [违约金额]", "");
 					dbColumns = dbColumns.Replace(", OweCapital", "");
 				}
-				var result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.WjflSF, excelColumns, dbColumns, sheetIndex);
+				var result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.WjflSF, excelColumns, dbColumns, "WjflType", sheetIndex, sheetIndex);
 				if (!String.IsNullOrEmpty(result)) {
 					return result;
 				}
@@ -117,6 +117,7 @@ namespace Reporting
 		}
 
 		public override string UpdateWJFL(DateTime asOfDate, string sourceFilePath) {
+			logger.DebugFormat("Updating WJFL for {0}", asOfDate.ToString("yyyy-MM-dd"));
 			var result = string.Empty;
 
 			if (!File.Exists(sourceFilePath)) {
@@ -137,9 +138,24 @@ namespace Reporting
 			}
 
 			var importFolder = System.Environment.CurrentDirectory + "\\Import\\" + import.Id.ToString();
-			var targetFilePath = string.Format("{0}\\Processed\\WJFLSF.xls", importFolder);
+			var targetFileName = "WJFLSF.xls";
 
-			logger.DebugFormat("Copying WJFL update file into {0}", targetFilePath);
+			//Original
+			var originalFolder = importFolder + @"\Original\";
+			if (!Directory.Exists(originalFolder)) {
+				Directory.CreateDirectory(originalFolder);
+			}
+			File.Copy(sourceFilePath, originalFolder + @"\" + targetFileName, true);
+
+			//Processed
+			var processedFolder = importFolder + @"\Processed\";
+			if (!Directory.Exists(processedFolder)) {
+				Directory.CreateDirectory(processedFolder);
+			}
+			File.Copy(sourceFilePath, processedFolder + @"\" + targetFileName, true);
+
+			var targetFilePath = processedFolder + @"\" + targetFileName;
+
 			File.Copy(sourceFilePath, targetFilePath, true);
 			result = ExcelHelper.ProcessWJFLSF(targetFilePath);
 			if (!string.IsNullOrEmpty(result)) {

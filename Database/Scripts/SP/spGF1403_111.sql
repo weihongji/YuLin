@@ -32,7 +32,7 @@ BEGIN
 						, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
 						, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 					FROM ImportPublic P INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
-					WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+					WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				) AS X
 			GROUP BY CustomerName, IdCode
 			ORDER BY Balance DESC
@@ -47,7 +47,7 @@ BEGIN
 						, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
 						, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 					FROM ImportPrivate P INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
-					WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+					WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				) AS X
 			GROUP BY CustomerName, IdCode
 			ORDER BY Balance DESC

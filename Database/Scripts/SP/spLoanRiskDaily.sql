@@ -15,9 +15,12 @@ BEGIN
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 	DECLARE @importIdWJFL int = dbo.sfGetImportIdWJFL(@asOfDate)
 
-	SELECT OrgId, SUM(CapitalAmount) AS Amount, SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) AS OweInterest INTO #Total FROM ImportLoan
+	SELECT OrgId, dbo.sfGetLoanBalanceOf(@asOfDate, 0, OrgId) AS Amount, SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) AS OweInterest INTO #Total FROM ImportLoan
 	WHERE ImportId = @importId
 	GROUP BY OrgId
+
+	UPDATE #Total SET Amount = dbo.sfGetLoanBalanceOf(@asOfDate, 1, 1) WHERE OrgId = 1 --公司部
+	UPDATE #Total SET Amount = dbo.sfGetLoanBalanceOf(@asOfDate, 2, 1) WHERE OrgId = 2 --营业部
 
 	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #YB FROM ImportLoan
 	WHERE ImportId = @importId
@@ -48,7 +51,7 @@ BEGIN
 		LEFT JOIN #BL    B ON O.Id = B.OrgId
 		LEFT JOIN #ZQX   Z ON O.Id = Z.OrgId
 	WHERE T.Amount > 0
-		AND NOT(O.Name LIKE '%神木%' OR O.Name LIKE '%府谷%')
+		AND O.Id IN (SELECT Id FROM dbo.sfGetOrgs())
 		AND O.OrgNo != '806057777'
 
 	-- Offset

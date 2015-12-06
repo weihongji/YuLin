@@ -38,7 +38,7 @@ BEGIN
 		, LastSeasonAmount = SUM(Balance1)
 	FROM ImportPublic
 	WHERE ImportId = @importId
-		AND (OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%')
+		AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 		AND MyBankIndTypeName IN ('中型企业', '小型企业')
 	GROUP BY CustomerName
 END

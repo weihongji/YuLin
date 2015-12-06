@@ -32,7 +32,7 @@ BEGIN
 				, KY = CASE WHEN L.DangerLevel = '可疑' THEN Balance1 ELSE 0.00 END
 				, SS = CASE WHEN L.DangerLevel = '损失' THEN Balance1 ELSE 0.00 END
 			FROM ImportPublic P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
-			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			UNION ALL
 			SELECT Direction1 = ISNULL(Direction1, '')
 				, Direction2 = ISNULL(Direction2, '')
@@ -44,7 +44,7 @@ BEGIN
 				, KY = CASE WHEN L.DangerLevel = '可疑' THEN LoanBalance ELSE 0.00 END
 				, SS = CASE WHEN L.DangerLevel = '损失' THEN LoanBalance ELSE 0.00 END
 			FROM ImportPrivate P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
-			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 		) AS X ON D.Name IN (X.Direction1, X.Direction2, X.Direction3, X.Direction4)
 	GROUP BY D.Id, D.Name

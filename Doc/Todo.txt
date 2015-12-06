@@ -16,3 +16,5 @@ Import 业务状况表(各支行 )
 
 神木/府谷 -> table function:
 	SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%' OR Name LIKE '%神府%'
+
+没有Import文件夹的情况下导入五级分类报错。STR：1. 导入基础数据；2. 删除Import文件夹；3. 导入五级分类

@@ -24,7 +24,7 @@ BEGIN
 		LEFT JOIN ImportLoan LM ON LM.ImportId = @importIdLastMonth AND LM.LoanAccount = L.LoanAccount
 		LEFT JOIN Direction D ON D.Name = P.Direction1
 	WHERE L.ImportId = @importId
-		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%ÉñÄ¾%' OR Name LIKE '%¸®¹È%')
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 		AND L.CustomerType = '¶ÔË½'
 	ORDER BY P.LoanBalance DESC
 

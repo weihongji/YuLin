@@ -30,7 +30,7 @@ BEGIN
 			SELECT 0 AS Id, '法人类不良贷款余额' AS Name, SUM(L.CapitalAmount) AS Balance
 			FROM ImportLoan L
 				INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 				AND L.CustomerType = '对公'
 			UNION ALL
@@ -41,7 +41,7 @@ BEGIN
 					FROM ImportLoan L
 						INNER JOIN ImportLoan   W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 						INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-					WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+					WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 						AND W.DangerLevel IN ('次级', '可疑', '损失')
 					GROUP BY Direction1
 				) AS B ON D.Name = B.Direction1
@@ -51,7 +51,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan    W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 				AND P.ProductName LIKE '%公务卡%'
 			UNION ALL
@@ -59,7 +59,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan    W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 				AND P.ProductName LIKE '%汽车%'
 			UNION ALL
@@ -67,7 +67,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan    W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 				AND P.ProductName LIKE '%住房%'
 			UNION ALL
@@ -75,7 +75,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan    W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 				AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 			UNION ALL
@@ -83,7 +83,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan    W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 				AND P.ProductName NOT LIKE '%公务卡%'
 				AND P.ProductName NOT LIKE '%汽车%'

@@ -26,7 +26,7 @@ BEGIN
 	INTO #Top20
 	FROM ImportLoan L
 	WHERE ImportId = @importId
-		AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 		AND CustomerType = '对公'
 		AND EXISTS(SELECT * FROM ImportPublic P WHERE P.LoanAccount = L.LoanAccount AND P.ImportId = @importId) --Exclude 陕西恒盛塬实业集团有限公司
 	GROUP BY CustomerName

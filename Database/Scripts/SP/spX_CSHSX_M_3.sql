@@ -29,7 +29,7 @@ BEGIN
 		INNER JOIN ImportPublic P ON P.LoanAccount = L.LoanAccount AND P.ImportId = @importId
 		LEFT JOIN Direction D ON D.Name = P.Direction1
 	WHERE L.ImportId = @importId
-		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 		AND CustomerType = '对公'
 		AND DangerLevel IN ('次级', '可疑', '损失')
 	ORDER BY L.Id

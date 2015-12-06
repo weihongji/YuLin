@@ -78,7 +78,7 @@ BEGIN
 				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 			FROM ImportLoan
-			WHERE ImportId = @importIdToday AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE ImportId = @importIdToday AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND CustomerType = '对公'
 			UNION ALL
 			SELECT Balance = CapitalAmount
@@ -102,7 +102,7 @@ BEGIN
 				, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 			FROM ImportLoan L
 				LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
-			WHERE L.ImportId = @importIdToday AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importIdToday AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND L.CustomerType = '对公'
 			UNION ALL
 			SELECT Balance = L.CapitalAmount
@@ -127,7 +127,7 @@ BEGIN
 			, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 		FROM ImportLoan L
 			LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
-		WHERE L.ImportId = @importIdLastTenDays AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE L.ImportId = @importIdLastTenDays AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND L.CustomerType = '对公'
 		UNION ALL
 		SELECT Balance = L.CapitalAmount
@@ -150,7 +150,7 @@ BEGIN
 			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
-		WHERE ImportId = @importIdLastMonth AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE ImportId = @importIdLastMonth AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND CustomerType = '对公'
 		UNION ALL
 		SELECT Balance = CapitalAmount
@@ -172,7 +172,7 @@ BEGIN
 			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
-		WHERE ImportId = @importIdYearStart AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE ImportId = @importIdYearStart AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND CustomerType = '对公'
 		UNION ALL
 		SELECT Balance = CapitalAmount
@@ -196,7 +196,7 @@ BEGIN
 				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 			FROM ImportLoan
-			WHERE ImportId = @importIdToday AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE ImportId = @importIdToday AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND CustomerType = '对私'
 			UNION ALL
 			SELECT Balance = CapitalAmount
@@ -220,7 +220,7 @@ BEGIN
 				, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 			FROM ImportLoan L
 				LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
-			WHERE L.ImportId = @importIdToday AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			WHERE L.ImportId = @importIdToday AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND L.CustomerType = '对私'
 			UNION ALL
 			SELECT Balance = L.CapitalAmount
@@ -245,7 +245,7 @@ BEGIN
 			, SS = CASE WHEN W.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 		FROM ImportLoan L
 			LEFT JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
-		WHERE L.ImportId = @importIdLastTenDays AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE L.ImportId = @importIdLastTenDays AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND L.CustomerType = '对私'
 		UNION ALL
 		SELECT Balance = L.CapitalAmount
@@ -268,7 +268,7 @@ BEGIN
 			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
-		WHERE ImportId = @importIdLastMonth AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE ImportId = @importIdLastMonth AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND CustomerType = '对私'
 		UNION ALL
 		SELECT Balance = CapitalAmount
@@ -290,7 +290,7 @@ BEGIN
 			, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 			, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
 		FROM ImportLoan
-		WHERE ImportId = @importIdYearStart AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		WHERE ImportId = @importIdYearStart AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND CustomerType = '对私'
 		UNION ALL
 		SELECT Balance = CapitalAmount

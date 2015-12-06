@@ -24,12 +24,12 @@ BEGIN
 				, Count5 = CASE WHEN MAX(ScopeName) IN ('小型企业', '微型企业') AND MAX(Balance1)<500 THEN 1 ELSE 0 END
 				, Count6 = 0
 			FROM ImportPublic
-			WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
+			WHERE ImportId = @importId AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND PublicType = 1
 			GROUP BY CustomerName
 			UNION ALL
 			SELECT Count1 = 0, Count2 = 0, Count3 = 0, Count4 = 0, Count5 = 0, 1 AS Count6
 			FROM ImportPrivate
-			WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
+			WHERE ImportId = @importId AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 			GROUP BY CustomerName, IdCardNo
 		) AS X

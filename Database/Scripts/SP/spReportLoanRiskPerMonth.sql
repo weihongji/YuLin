@@ -83,7 +83,7 @@ BEGIN
 		LEFT JOIN ImportNonAccrual NA ON L.LoanAccount = NA.LoanAccount AND NA.ImportId = L.ImportId
 		LEFT JOIN ImportOverdue OD ON L.LoanAccount = OD.LoanAccount AND OD.ImportId = L.ImportId
 	WHERE L.Id IN (SELECT Id FROM #LoanId)
-		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%ÉñÄ¾%' OR Name LIKE '%¸®¹È%')
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	
 	UPDATE #Result SET OverdueDays = OweInterestDays WHERE OverdueDays = 0 AND OweInterestDays > 0 AND CustomerType LIKE '%·¿%'
 	UPDATE #Result SET CustomerType =

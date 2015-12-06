@@ -37,13 +37,13 @@ BEGIN
 								, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1< 500 THEN Balance1 ELSE 0.00 END
 								, Balance6 = 0.00
 							FROM ImportPublic
-							WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
+							WHERE ImportId = @importId AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND PublicType = 1
 							UNION ALL
 							SELECT Direction1
 								, Balance1 = 0.00, Balance2 = 0.00, Balance3 = 0.00, Balance4 = 0.00, Balance5 = 0.00
 								, LoanBalance AS Balance6
 							FROM ImportPrivate
-							WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
+							WHERE ImportId = @importId AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 								AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 						) AS X
 					GROUP BY Direction1
@@ -59,7 +59,7 @@ BEGIN
 						, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1< 500 THEN Balance1 ELSE 0.00 END
 						, Balance6 = 0.00
 					FROM ImportPublic
-					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
+					WHERE ImportId = @importId AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND PublicType = 1
 						AND BusinessType LIKE '%转贴现%'
 				) AS X
 			UNION ALL
@@ -72,12 +72,12 @@ BEGIN
 						, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1< 500 THEN Balance1 ELSE 0.00 END
 						, Balance6 = 0.00
 					FROM ImportPublic
-					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%' AND PublicType = 1
+					WHERE ImportId = @importId AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND PublicType = 1
 						AND LoanStartDate BETWEEN @yearStart AND @yearEnd
 					UNION ALL
 					SELECT Balance1 = 0.00, Balance2 = 0.00, Balance3 = 0.00, Balance4 = 0.00, Balance5 = 0.00, LoanBalance AS Balance6
 					FROM ImportPrivate
-					WHERE ImportId = @importId AND OrgName2 NOT LIKE '%神木%' AND OrgName2 NOT LIKE '%府谷%'
+					WHERE ImportId = @importId AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 						AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 						AND ContractStartDate BETWEEN @yearStart AND @yearEnd
 				) AS X

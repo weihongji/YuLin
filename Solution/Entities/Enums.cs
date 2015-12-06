@@ -78,5 +78,11 @@ namespace Reporting
 			C_XZDKMX_D = 62,		// 新增贷款明细表
 			C_JQDKMX_D = 63,		// 结清贷款明细表
 		}
+
+		public enum OrgId
+		{
+			YuLin = 1001, // 榆林
+			ShenFu = 1002 // 神府
+		}
 	}
 }

@@ -32,7 +32,7 @@ BEGIN
 				, OverdueDays = MAX(CASE WHEN L.LoanEndDate < @asOfDate AND L.CapitalAmount > 0 THEN DATEDIFF(day, L.LoanEndDate, @asOfDate) ELSE 0 END)
 				, OweInterestDays = MAX(P.OweInterestDays)
 			FROM ImportPublic P INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
-			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND (
 					@type = 'GZ' AND L.DangerLevel LIKE '关%'
 					OR @type = 'CJ' AND L.DangerLevel = '次级'
@@ -49,7 +49,7 @@ BEGIN
 				, OverdueDays = MAX(CASE WHEN L.LoanEndDate < @asOfDate AND L.CapitalAmount > 0 THEN DATEDIFF(day, L.LoanEndDate, @asOfDate) ELSE 0 END)
 				, OweInterestDays = MAX(P.InterestOverdueDays)
 			FROM ImportPrivate P INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
-			WHERE P.ImportId = @importId AND P.OrgName2 NOT LIKE '%神木%' AND P.OrgName2 NOT LIKE '%府谷%'
+			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND (
 					@type = 'GZ' AND L.DangerLevel LIKE '关%'
 					OR @type = 'CJ' AND L.DangerLevel = '次级'

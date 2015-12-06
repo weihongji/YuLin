@@ -130,6 +130,7 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.openFileMultiSelect = new System.Windows.Forms.OpenFileDialog();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
@@ -239,7 +240,7 @@
 			// 
 			this.menuReport_X_WJFL_M.Name = "menuReport_X_WJFL_M";
 			this.menuReport_X_WJFL_M.Size = new System.Drawing.Size(292, 22);
-			this.menuReport_X_WJFL_M.Text = "末风险贷款情况表（五级分类）";
+			this.menuReport_X_WJFL_M.Text = "风险贷款情况表（五级分类）";
 			this.menuReport_X_WJFL_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_FXDKTB_D
@@ -1131,6 +1132,11 @@
 			// 
 			this.openFileDialog1.Filter = "Excel文件|*.xls";
 			// 
+			// openFileMultiSelect
+			// 
+			this.openFileMultiSelect.Filter = "Excel文件|*.xls";
+			this.openFileMultiSelect.Multiselect = true;
+			// 
 			// frmMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1273,6 +1279,7 @@
 		private System.Windows.Forms.Label lblImportWJFLPathSF;
 		private System.Windows.Forms.Button btnImportWJFLOpenerSF;
 		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.OpenFileDialog openFileMultiSelect;
 
 
 	}

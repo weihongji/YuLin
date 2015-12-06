@@ -21,6 +21,7 @@ namespace Reporting
 		private List<TableMapping> _selectedColumns;
 		private List<string> _publicColumns;
 		private List<string> _privateColumns;
+		private string[] importYWNeiFiles, importYWWaiFiles;
 
 		public List<TargetTable> Reports {
 			get {
@@ -87,6 +88,16 @@ namespace Reporting
 				if (titleAttribute.Title != "")
 					this.lblReleaseDate.Text = string.Format("发布日期：{0}", titleAttribute.Title);
 			}
+
+			var licenseTo = ConfigurationManager.AppSettings["LicenseTo"];
+			if (!string.IsNullOrEmpty(licenseTo) && licenseTo.Length == 6) {
+				licenseTo = string.Format("20{0}-{1}-{2}", licenseTo.Substring(0, 2), licenseTo.Substring(2, 2), licenseTo.Substring(4, 2));
+				DateTime licenseDate;
+				if (DateTime.TryParse(licenseTo, out licenseDate) && DateTime.Today > licenseDate) {
+					ShowInfo("报表系统使用期限已经结束，请联系该系统的售后服务。");
+					menuSystem_Exit_Click(null, null);
+				}
+			}
 		}
 
 		private void menuSystem_About_Click(object sender, EventArgs e) {
@@ -138,6 +149,9 @@ namespace Reporting
 			this.lblImportYWWai.Text = "";
 			this.txtImportDate.Text = "";
 			this.lblImportLoanSF.Text = "";
+
+			this.importYWNeiFiles = new string[0];
+			this.importYWWaiFiles = new string[0];
 		}
 
 		private void btnImport_Click(object sender, EventArgs e) {
@@ -152,7 +166,8 @@ namespace Reporting
 						this.lblImportLoan.Text,
 						this.lblImportPublic.Text, this.lblImportPrivate.Text,
 						this.lblImportNonAccrual.Text, this.lblImportOverdue.Text,
-						this.lblImportYWNei.Text, this.lblImportYWWai.Text,
+						string.Join("|", importYWNeiFiles),
+						string.Join("|", importYWWaiFiles),
 						this.lblImportLoanSF.Text
 					};
 				var importer = new ImporterSF();
@@ -170,6 +185,10 @@ namespace Reporting
 					else {
 						ShowError(result);
 					}
+				}
+				catch (System.Data.SqlClient.SqlException ex) {
+					logger.Error("Error in btnImport_Click:\r\n", ex);
+					ShowError("数据库访问发生错误，请确保数据库可以访问。");
 				}
 				catch (Exception ex) {
 					ShowError("导入发生错误");
@@ -296,20 +315,34 @@ namespace Reporting
 		}
 
 		private void btnImportYWNei_Click(object sender, EventArgs e) {
-			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
-				this.lblImportYWNei.Text = this.openFileDialog1.FileName;
+			if (this.openFileMultiSelect.ShowDialog() == DialogResult.OK) {
+				if (this.openFileMultiSelect.FileNames.Length == 1) {
+					this.lblImportYWNei.Text = this.openFileMultiSelect.FileNames[0];
+				}
+				else {
+					this.lblImportYWNei.Text = string.Format("{0} 个文件被选中", this.openFileMultiSelect.FileNames.Length);
+				}
+				this.importYWNeiFiles = this.openFileMultiSelect.FileNames;
 			}
 			else {
 				this.lblImportYWNei.Text = "";
+				this.importYWNeiFiles = new string[0];
 			}
 		}
 
 		private void btnImportYWWai_Click(object sender, EventArgs e) {
-			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
-				this.lblImportYWWai.Text = this.openFileDialog1.FileName;
+			if (this.openFileMultiSelect.ShowDialog() == DialogResult.OK) {
+				if (this.openFileMultiSelect.FileNames.Length == 1) {
+					this.lblImportYWWai.Text = this.openFileMultiSelect.FileNames[0];
+				}
+				else {
+					this.lblImportYWWai.Text = string.Format("{0} 个文件被选中", this.openFileMultiSelect.FileNames.Length);
+				}
+				this.importYWWaiFiles = this.openFileMultiSelect.FileNames;
 			}
 			else {
 				this.lblImportYWWai.Text = "";
+				this.importYWWaiFiles = new string[0];
 			}
 		}
 
@@ -372,9 +405,13 @@ namespace Reporting
 					ShowError("五级分类文件已经被打开，请先从Excel里关闭该报表然后再导入。");
 				}
 				else {
-					ShowError("请关闭所有excel，然后再尝试导出报表。");
+					ShowError("文件处理发生错误，可能路径不存在或者excel文件正在被使用。");
 				}
 				logger.Error(ex);
+			}
+			catch (System.Data.SqlClient.SqlException ex) {
+				logger.Error("Error in ImportWJFL_YL:\r\n", ex);
+				ShowError("数据库访问发生错误，请确保数据库可以访问。");
 			}
 			catch (Exception ex) {
 				ShowError("导入发生错误");
@@ -419,6 +456,10 @@ namespace Reporting
 					ShowError("请关闭所有excel，然后再尝试导出报表。");
 				}
 				logger.Error(ex);
+			}
+			catch (System.Data.SqlClient.SqlException ex) {
+				logger.Error("Error in ImportWJFL_SF:\r\n", ex);
+				ShowError("数据库访问发生错误，请确保数据库可以访问。");
 			}
 			catch (Exception ex) {
 				ShowError("导入发生错误");
@@ -478,7 +519,17 @@ namespace Reporting
 			var nameCore = reportMenuName.Substring(position + 1);
 			var reportType = XEnum.ReportType.None;
 			if (Enum.TryParse<XEnum.ReportType>(nameCore, out reportType)) {
-				ShowReport(reportType);
+				try {
+					ShowReport(reportType);
+				}
+				catch (System.Data.SqlClient.SqlException ex) {
+					logger.Error("Error in ShowReport:\r\n", ex);
+					ShowError("数据库访问发生错误，请确保数据库可以访问。");
+				}
+				catch (Exception ex) {
+					logger.Error("Error in ShowReport:\r\n", ex);
+					ShowError(ex.Message);
+				}
 			}
 			else {
 				ShowStop("Unknown report menu name: " + reportMenuName);
@@ -785,11 +836,11 @@ namespace Reporting
 			if (msg.IndexOf("Exception") >= 0) {
 				msg = "发生错误";
 			}
-			ShowErrorDialog(msg);
+			ShowErrorDialog(msg, this.Text);
 		}
 
-		private void ShowErrorDialog(string msg) {
-			MessageBox.Show(msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+		public static void ShowErrorDialog(string msg, string title) {
+			MessageBox.Show(msg, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		#endregion
 

@@ -49,7 +49,7 @@ BEGIN
 		SELECT @NoShenFu_1 = ISNULL(SUM(CapitalAmount), 0)
 		FROM ImportLoan
 		WHERE ImportId = @importIdToday AND DangerLevel IN ('次级', '可疑', '损失')
-			AND OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 
 		SELECT @HengShan_1 = ISNULL(SUM(CapitalAmount), 0)
 		FROM ImportLoan
@@ -80,7 +80,7 @@ BEGIN
 		SELECT @NoShenFu_1 = ISNULL(SUM(L.CapitalAmount), 0)
 		FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 		WHERE L.ImportId = @importIdToday AND W.DangerLevel IN ('次级', '可疑', '损失')
-			AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+			AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 
 		SELECT @HengShan_1 = ISNULL(SUM(L.CapitalAmount), 0)
 		FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
@@ -112,7 +112,7 @@ BEGIN
 	SELECT @NoShenFu_2 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 	WHERE L.ImportId = @importIdLastTenDays AND W.DangerLevel IN ('次级', '可疑', '损失')
-		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 
 	SELECT @HengShan_2 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
@@ -143,7 +143,7 @@ BEGIN
 	SELECT @NoShenFu_3 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L
 	WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
-		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 
 	SELECT @HengShan_3 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L
@@ -174,7 +174,7 @@ BEGIN
 	SELECT @NoShenFu_4 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L
 	WHERE L.ImportId = @importIdYearStart AND L.DangerLevel IN ('次级', '可疑', '损失')
-		AND L.OrgId NOT IN (SELECT Id FROM Org WHERE Name LIKE '%神木%' OR Name LIKE '%府谷%')
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 
 	SELECT @HengShan_4 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L
