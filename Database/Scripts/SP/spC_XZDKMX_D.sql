@@ -145,7 +145,7 @@ BEGIN
 		, R.OweInterestDays
 		, OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
 		, BusinessType = R.CustomerType
-		, L.OrgId, L.LoanCatalog, L.LoanAccount, L.CustomerNo, L.CustomerType, L.CurrencyType, L.LoanAmount, L.OweCapital, L.OweYingShouInterest, L.OweCuiShouInterest, L.DueBillNo, L.ZhiHuanZhuanRang, L.HeXiaoFlag, L.LoanState, L.LoanType, L.LoanTypeName, L.Direction, L.ZhuanLieYuQi, L.ZhuanLieFYJ, L.InterestEndDate, L.LiLvType, L.LiLvSymbol, L.LiLvJiaJianMa, L.YuQiLiLvYiJu, L.YuQiLiLvType, L.YuQiLiLvSymbol, L.YuQiLiLvJiaJianMa, L.LiLvYiJu, L.ContractInterestRatio, L.ContractOverdueInterestRate, L.ChargeAccount
+		, L.OrgId, L.OrgNo, L.LoanCatalog, L.LoanAccount, L.CustomerNo, L.CustomerType, L.CurrencyType, L.LoanAmount, L.OweCapital, L.OweYingShouInterest, L.OweCuiShouInterest, L.DueBillNo, L.ZhiHuanZhuanRang, L.HeXiaoFlag, L.LoanState, L.LoanType, L.LoanTypeName, L.Direction, L.ZhuanLieYuQi, L.ZhuanLieFYJ, L.InterestEndDate, L.LiLvType, L.LiLvSymbol, L.LiLvJiaJianMa, L.YuQiLiLvYiJu, L.YuQiLiLvType, L.YuQiLiLvSymbol, L.YuQiLiLvJiaJianMa, L.LiLvYiJu, L.ContractInterestRatio, L.ContractOverdueInterestRate, L.ChargeAccount
 	INTO #Result
 	FROM ImportLoan L
 		INNER JOIN Org O ON L.OrgId = O.Id

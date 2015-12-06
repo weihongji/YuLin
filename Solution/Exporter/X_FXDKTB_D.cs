@@ -23,6 +23,15 @@ namespace Reporting
 			var fileName = string.Format("{0}风险贷款通报（日报）.xls", this.AsOfDate.ToString("M.dd"));
 			Logger.Debug("Generating " + fileName);
 
+			// Check YWNei import
+			var dao = new SqlDbHelper();
+			var sql = string.Format("SELECT COUNT(*) FROM ImportYWNei WHERE ImportId = (SELECT Id FROM Import I WHERE I.ImportDate = '{0}') AND OrgId < 100", this.AsOfDate.ToString("yyyyMMdd"));
+			var count = (int)dao.ExecuteScalar(sql);
+			if (count == 0) {
+				Logger.Error("支行业务状况表还没导入");
+				return string.Format("导入各支行{0}的业务状况表（表内）之后才能导出此报表。", this.AsOfDate.ToString("yyyy-M-d"));
+			}
+
 			var report = TargetTable.GetById(XEnum.ReportType.X_FXDKTB_D);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 

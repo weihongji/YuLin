@@ -612,24 +612,30 @@ namespace Reporting
 				if (sheet.TableId == (int)XEnum.ReportType.X_WJFL_M) {
 					((Range)theSheet.Cells[footerRowFrom, 1]).Value2 = "合计";
 					((Range)theSheet.Cells[footerRowFrom, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
-					if (sheet.Name.Equals("逾期")) {
-						((Range)theSheet.Cells[footerRowFrom, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", dataRowFrom, footerRowFrom - 1);
-						((Range)theSheet.Cells[footerRowFrom, 4]).Value2 = string.Format("=SUM(D{0}:D{1})", dataRowFrom, footerRowFrom - 1);
-						((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
-					}
-					else {
-						((Range)theSheet.Cells[footerRowFrom, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", dataRowFrom, footerRowFrom - 1);
-						((Range)theSheet.Cells[footerRowFrom, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", dataRowFrom, footerRowFrom - 1);
+					if (dataRowCount > 0) {
+						if (sheet.Name.Equals("逾期")) {
+							((Range)theSheet.Cells[footerRowFrom, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", dataRowFrom, footerRowFrom - 1);
+							((Range)theSheet.Cells[footerRowFrom, 4]).Value2 = string.Format("=SUM(D{0}:D{1})", dataRowFrom, footerRowFrom - 1);
+							((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
+						}
+						else {
+							((Range)theSheet.Cells[footerRowFrom, 3]).Value2 = string.Format("=SUM(C{0}:C{1})", dataRowFrom, footerRowFrom - 1);
+							((Range)theSheet.Cells[footerRowFrom, 5]).Value2 = string.Format("=SUM(E{0}:E{1})", dataRowFrom, footerRowFrom - 1);
+						}
 					}
 				}
 				else if (sheet.TableId == (int)XEnum.ReportType.F_HYB_M) {
 					((Range)theSheet.Cells[footerRowFrom, 1]).Value2 = "合计";
 					((Range)theSheet.Cells[footerRowFrom, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
-					((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
+					if (dataRowCount > 0) {
+						((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
+					}
 				}
 				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D || sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D) {
-					for (int i = 2; i <= sheet.Columns.Count; i++) {
-						((Range)theSheet.Cells[footerRowFrom, i]).Value2 = string.Format("=SUM({0}{1}:{0}{2})", GetColumnCharacters(i), dataRowFrom, footerRowFrom - 1);
+					if (dataRowCount > 0) {
+						for (int i = 2; i <= sheet.Columns.Count; i++) {
+							((Range)theSheet.Cells[footerRowFrom, i]).Value2 = string.Format("=SUM({0}{1}:{0}{2})", GetColumnCharacters(i), dataRowFrom, footerRowFrom - 1);
+						}
 					}
 				}
 
@@ -679,11 +685,13 @@ namespace Reporting
 
 					((Range)theSheet.Cells[footerRowFrom, 2]).Value2 = "合计";
 					((Range)theSheet.Cells[footerRowFrom, 2]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
-					if (sheet.Name.IndexOf("对公") >= 0) {
-						((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
-					}
-					else if (sheet.Name.IndexOf("个人") >= 0) {
-						((Range)theSheet.Cells[footerRowFrom, 8]).Value2 = string.Format("=SUM(H{0}:H{1})", dataRowFrom, footerRowFrom - 1);
+					if (dataRowCount > 0) {
+						if (sheet.Name.IndexOf("对公") >= 0) {
+							((Range)theSheet.Cells[footerRowFrom, 6]).Value2 = string.Format("=SUM(F{0}:F{1})", dataRowFrom, footerRowFrom - 1);
+						}
+						else if (sheet.Name.IndexOf("个人") >= 0) {
+							((Range)theSheet.Cells[footerRowFrom, 8]).Value2 = string.Format("=SUM(H{0}:H{1})", dataRowFrom, footerRowFrom - 1);
+						}
 					}
 				}
 				else if (sheet.TableId == (int)XEnum.ReportType.C_XZDKMX_D || sheet.TableId == (int)XEnum.ReportType.C_JQDKMX_D) {
