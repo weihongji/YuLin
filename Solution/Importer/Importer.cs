@@ -797,8 +797,11 @@ namespace Reporting
 			else if (orgNo.Equals("806058000")) {
 				return "806050001";
 			}
-			else {
+			else if (orgNo.EndsWith("00")) {
 				return orgNo.Substring(0, orgNo.Length - 1) + "1";
+			}
+			else {
+				return orgNo;
 			}
 		}
 		#endregion

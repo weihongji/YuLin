@@ -9,6 +9,8 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	DECLARE @orgId7777 int = (SELECT Id FROM Org WHERE OrgNo = '806057777')
+
 	IF NOT EXISTS(SELECT * FROM sys.tables WHERE name = 'Shell_LoanRisk') BEGIN
 		EXEC spLoanRiskDaily '19000101'
 	END
@@ -22,8 +24,13 @@ BEGIN
 		, Total_Interest
 		, Y_B_Count = YBTotal_Count, Y_B_Amount = YBTotal_Amount, Y_B_Percentage = YBTotal_Amount/Total_Amount
 	FROM #Result R
-		INNER JOIN Org O ON R.OrgId = O.Id
-	ORDER BY O.OrgNo, O.Id
+	UNION ALL
+	SELECT '清算中心（贴现）', CAST(ROUND(dbo.sfGetLoanBalanceOf(@asOfDate, 1301, @orgId7777)/10000, 2) AS money)
+		, 0, 0, 0
+		, 0, 0, 0
+		, 0, 0, 0
+		, 0
+		, 0, 0, 0
 
 	DROP TABLE #Result
 END

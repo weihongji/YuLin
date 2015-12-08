@@ -5,7 +5,7 @@ GO
 
 CREATE FUNCTION dbo.sfGetLoanBalanceOf(
 	@asOfDate as smalldatetime,
-	@type as smallint, /* 0: 全部, 1: 公司, 2: 个人 */
+	@type as smallint, /* 0: 全部, 1: 公司, 2: 个人, xxxx: 科目代号 */
 	@orgId as int
 )
 RETURNS money
@@ -14,7 +14,7 @@ BEGIN
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
-	IF @type IS NULL OR (@type != 1 AND @type != 2) BEGIN
+	IF @type IS NULL BEGIN
 		SET @type = 0
 	END
 
@@ -25,6 +25,7 @@ BEGIN
 		AND (@type = 0
 			OR @type = 1 AND SubjectName NOT LIKE '%个人%'
 			OR @type = 2 AND SubjectName LIKE '%个人%'
+			OR @type BETWEEN 1000 AND 9999 AND SubjectCode = CAST(@type AS varchar)
 		)
 
 	RETURN ISNULL(@balance, 0)
