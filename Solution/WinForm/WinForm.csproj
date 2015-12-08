@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundThread.cs" />
     <Compile Include="CustomizeDQDK.cs">
       <SubType>Form</SubType>
     </Compile>

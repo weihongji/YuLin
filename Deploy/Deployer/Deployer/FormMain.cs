@@ -20,7 +20,6 @@ namespace Deployer
 		}
 
 		private void FormMain_Load(object sender, EventArgs e) {
-			StartSqlServer();
 			this.lblVersionText.Text = ConfigurationManager.AppSettings["Version"];
 			this.lblDateText.Text = ConfigurationManager.AppSettings["ReleaseDate"];
 		}
@@ -35,6 +34,7 @@ namespace Deployer
 			if (MessageBox.Show(string.Format("您确定要部署{0}版本吗？", this.lblVersionText.Text), this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) {
 				return;
 			}
+			StartSqlServer();
 			try {
 				var appPath = ConfigurationManager.AppSettings["AppPath"];
 				if (!Directory.Exists(appPath)) {

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Reporting
@@ -845,64 +846,12 @@ namespace Reporting
 			MessageBox.Show(msg, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
-		/// <summary>
-		/// Try to start SQL Server service if it is not running.
-		/// </summary>
-		/// <remarks>
-		/// This is used to handle the issue that SQL Server service stops for unknown reason.
-		/// </remarks>
-		/// <returns>
-		/// 0: Already running, nothing to do
-		/// 1: Success to start
-		/// 2: Failed to start
-		/// </returns>
-		private int StartSqlServer() {
-			logger.Debug("Checking sql server service...");
-			int result = 0;
-			Process[] sqlservers = Process.GetProcessesByName("sqlservr");
-			if (sqlservers.Length == 0) {
-				try {
-					var sqlinstance = GetSqlServerInstance();
-					Process process = new Process();
-					process.StartInfo.FileName = "net";
-					process.StartInfo.Arguments = "start " + sqlinstance;
-					process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-					process.Start();
-					process.WaitForExit();
-					process.Close();
-					sqlservers = Process.GetProcessesByName("sqlservr");
-					if (sqlservers.Length > 0) {
-						result = 1;
-						logger.Info("Sql server started");
-					}
-					else {
-						result = 2;
-						logger.Info("Sql server failed to start");
-					}
-				}
-				catch (Exception ex) {
-					logger.Error("Failed to start sql server.\r\n", ex);
-					result = 2;
-				}
-			}
-			logger.Debug("Starting service result: " + result.ToString());
-			return result;
-		}
-
-		private string GetSqlServerInstance() {
-			var result = "MSSQLSERVER";
-			try {
-				var cnnStr = ConfigurationManager.ConnectionStrings["conn"].ConnectionString;
-				var cnn = new System.Data.SqlClient.SqlConnection(cnnStr);
-				var server = cnn.DataSource;
-				if (server.IndexOf("\\") > 0) {
-					result = string.Format("MSSQL${0}", server.Substring(server.IndexOf("\\") + 1));
-				}
-			}
-			catch (Exception ex) {
-				logger.Error("Failed when getting sql server instance name:\r\n", ex);
-			}
-			return result;
+		private void StartSqlServer() {
+			var o = new BackgroundThread();
+			var thread = new Thread(new ThreadStart(o.StartSqlServer));
+			thread.Start();
+			// Spin for a while waiting for the started thread to become alive
+			while (!thread.IsAlive);
 		}
 		#endregion
 
