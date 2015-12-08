@@ -655,6 +655,12 @@ namespace Reporting
 				return result;
 			}
 
+			result = UpdateOrgId(importId);
+			if (!String.IsNullOrEmpty(result)) {
+				logger.Error(result);
+				return result;
+			}
+
 			result = AssignDangerLevel(importId);
 			if (!String.IsNullOrEmpty(result)) {
 				logger.Error(result);
@@ -708,6 +714,34 @@ namespace Reporting
 				var dao = new SqlDbHelper();
 				var count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
 				logger.DebugFormat("Done ({0} affected)", count);
+			}
+			catch (Exception ex) {
+				return ex.Message;
+			}
+			return string.Empty;
+		}
+
+		// Update the OrgId in Loan to distinguish 公司部 or 营业部
+		// Run this section after OrgId assigned to ImportPublic and ImportPrivate
+		// And after LoanAccount assigned to ImportPrivate
+		private string UpdateOrgId(int importId) {
+			try {
+				var dao = new SqlDbHelper();
+				var sql = new StringBuilder();
+				int count = 0;
+
+				logger.Debug("Update OrgId column in Loan");
+				sql.Clear();
+				sql.AppendLine("UPDATE L");
+				sql.AppendLine("SET OrgId = ISNULL(P.OrgId, R.OrgId)");
+				sql.AppendLine("FROM ImportLoan L");
+				sql.AppendLine("	LEFT JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = L.ImportId");
+				sql.AppendLine("	LEFT JOIN ImportPrivate R ON L.LoanAccount = R.LoanAccount AND R.ImportId = L.ImportId");
+				sql.AppendLine("WHERE L.ImportId = {0}");
+				sql.AppendLine("	AND L.OrgId = 1");
+				sql.AppendLine("	AND (P.OrgId = 2 OR R.OrgId = 2)");
+				count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+				logger.DebugFormat("Done to update org id from Public & Private. ({0} affected)", count);
 			}
 			catch (Exception ex) {
 				return ex.Message;
