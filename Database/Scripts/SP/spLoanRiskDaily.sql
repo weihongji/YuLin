@@ -15,7 +15,9 @@ BEGIN
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 	DECLARE @importIdWJFL int = dbo.sfGetImportIdWJFL(@asOfDate)
 
-	SELECT O.Id AS OrgId, dbo.sfGetLoanBalanceOf(@asOfDate, 0, O.Id) AS Amount, SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) AS OweInterest
+	SELECT O.Id AS OrgId
+		, CASE WHEN dbo.sfGetLoanBalanceOf(@asOfDate, 0, O.Id) > 0 THEN dbo.sfGetLoanBalanceOf(@asOfDate, 0, O.Id) ELSE SUM(CapitalAmount) END AS Amount
+		, SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) AS OweInterest
 	INTO #Total
 	FROM ImportLoan L
 		RIGHT JOIN Org O ON L.OrgId = O.Id AND ImportId = @importId
@@ -29,10 +31,13 @@ BEGIN
 		AND LoanState IN ('逾期', '部分逾期', '非应计') AND LoanTypeName != '委托贷款'
 	GROUP BY OrgId
 
-	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #BL FROM ImportLoan
+	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #BL
+	FROM ImportLoan
 	WHERE ImportId = @importId
 		AND LoanState IN ('逾期', '部分逾期', '非应计') AND LoanTypeName != '委托贷款'
-		AND DangerLevel IN ('次级', '可疑', '损失')
+		AND LoanAccount IN (
+			SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdWJFL AND DangerLevel IN ('次级', '可疑', '损失')
+		)
 	GROUP BY OrgId
 
 	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #ZQX FROM ImportLoan
