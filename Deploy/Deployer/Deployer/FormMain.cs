@@ -31,9 +31,6 @@ namespace Deployer
 				return;
 			}
 
-			if (MessageBox.Show(string.Format("您确定要部署{0}版本吗？", this.lblVersionText.Text), this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) {
-				return;
-			}
 			StartSqlServer();
 			try {
 				var appPath = ConfigurationManager.AppSettings["AppPath"];
@@ -44,38 +41,64 @@ namespace Deployer
 				var binPath = Path.Combine(appPath, "Bin");
 				var dbPath = Path.Combine(appPath, "Database");
 				var upgradePath = System.Environment.CurrentDirectory;
+				var dbScript = Path.Combine(upgradePath, "Scripts");
 				var backupPath = Path.Combine(appPath, "Backup", DateTime.Now.ToString("yyMMddHHmmss"));
 
-				// Backups
-				DetachDB();
-				if (Directory.Exists(dbPath)) {
-					if (!Directory.Exists(backupPath)) {
-						Directory.CreateDirectory(backupPath);
+				if (Directory.Exists(dbScript)) { // Upgrade db with existing data reserved
+					if (MessageBox.Show(string.Format("请确认报表系统没在运行，然后选择【确定】开始{0}的升级。", this.lblVersionText.Text), this.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) {
+						return;
 					}
-					Directory.Move(dbPath, Path.Combine(backupPath, "Database"));
+					// Update db schema or data
+					Process process = new Process();
+					process.StartInfo.FileName = "cmd";
+					process.StartInfo.Arguments = string.Format("/k cd {0} && run.bat", dbScript);
+					process.Start();
+					process.WaitForExit();
+					process.Close();
+
+					// Replace bin files
+					process.StartInfo.FileName = "cmd";
+					process.StartInfo.Arguments = string.Format("/k xcopy /E /Y \"{0}\" \"{1}\"&&exit", Path.Combine(upgradePath, "bin"), binPath);
+					process.Start();
+					process.WaitForExit();
+					process.Close();
+
 				}
-				if (Directory.Exists(binPath)) {
-					if (!Directory.Exists(backupPath)) {
-						Directory.CreateDirectory(backupPath);
+				else { // Re-deploy and a new db will be created.
+					if (MessageBox.Show(string.Format("请确认报表系统没在运行，然后选择【确定】开始部署{0}。", this.lblVersionText.Text), this.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) {
+						return;
 					}
-					Directory.Move(binPath, Path.Combine(backupPath, "Bin"));
+					// Backups
+					DetachDB();
+					if (Directory.Exists(dbPath)) {
+						if (!Directory.Exists(backupPath)) {
+							Directory.CreateDirectory(backupPath);
+						}
+						Directory.Move(dbPath, Path.Combine(backupPath, "Database"));
+					}
+					if (Directory.Exists(binPath)) {
+						if (!Directory.Exists(backupPath)) {
+							Directory.CreateDirectory(backupPath);
+						}
+						Directory.Move(binPath, Path.Combine(backupPath, "Bin"));
+					}
+
+					// Create new db
+					var dbPathInfo = Directory.CreateDirectory(dbPath);
+
+					File.Copy(Path.Combine(upgradePath, @"database\YuLin.mdf"), Path.Combine(dbPath, "YuLin.mdf"), true);
+					var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
+					dao.ExecuteNonQuery(string.Format("CREATE DATABASE YuLin ON (FILENAME='{0}') FOR ATTACH", Path.Combine(dbPath, "YuLin.mdf")));
+
+					// Create new bin
+					Directory.CreateDirectory(binPath);
+					Process process = new Process();
+					process.StartInfo.FileName = "cmd";
+					process.StartInfo.Arguments = string.Format("/k xcopy /E \"{0}\" \"{1}\"&&exit", Path.Combine(upgradePath, "bin"), binPath);
+					process.Start();
+					process.WaitForExit();
+					process.Close();
 				}
-
-				// Create new db
-				var dbPathInfo = Directory.CreateDirectory(dbPath);
-
-				File.Copy(Path.Combine(upgradePath, @"database\YuLin.mdf"), Path.Combine(dbPath, "YuLin.mdf"), true);
-				var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
-				dao.ExecuteNonQuery(string.Format("CREATE DATABASE YuLin ON (FILENAME='{0}') FOR ATTACH", Path.Combine(dbPath, "YuLin.mdf")));
-
-				// Create new bin
-				Directory.CreateDirectory(binPath);
-				Process process = new Process();
-				process.StartInfo.FileName = "cmd";
-				process.StartInfo.Arguments = string.Format("/k xcopy /E \"{0}\" \"{1}\"&&exit", Path.Combine(upgradePath, "bin"), binPath);
-				process.Start();
-				process.WaitForExit();
-				process.Close();
 
 				MessageBox.Show("部署完毕", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				this.btnUpgrade.Text = "关闭";
