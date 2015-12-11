@@ -30,6 +30,10 @@ namespace Reporting
 		public abstract string GenerateReport();
 
 		public static string GetReportFolder() {
+			return GetReportFolder(new DateTime(2000, 1, 1));
+		}
+
+		public static string GetReportFolder(DateTime asOfDate) {
 			var dir = (ConfigurationManager.AppSettings["ReportDirectory"] ?? "").Trim().Replace("/", @"\");
 			if (dir.IndexOf(':') > 0) { // full path, such as C:\Report
 				return dir;
@@ -41,17 +45,20 @@ namespace Reporting
 			if (dir.Length == 0) {
 				dir = "Report";
 			}
+			if (asOfDate.Year > 2010) {
+				dir += "\\" + asOfDate.ToString("yyyyMM");
+			}
 			return System.Environment.CurrentDirectory + "\\" + dir;
 		}
 
 		public string CreateReportFile(string templateName, string targetName) {
 			var template = @"Template\" + templateName;
 
-			var folder = GetReportFolder();
+			var folder = GetReportFolder(this.AsOfDate);
 			if (!Directory.Exists(folder)) {
 				Directory.CreateDirectory(folder);
 			}
-			var filePath = folder +"\\" + targetName;
+			var filePath = folder + "\\" + targetName;
 			if (File.Exists(template)) {
 				File.Copy(template, filePath, true);
 			}

@@ -651,7 +651,7 @@ namespace Reporting
 			this.txtReportPath.Text = BaseReport.GetReportFolder();
 		}
 
-		private bool IsValidToExport(out DateTime asOfDate, out DateTime asOfDate2) {
+		private bool IsValidToExport(out DateTime asOfDate, out DateTime asOfDate2, bool quiet = false) {
 			asOfDate = new DateTime(1900, 1, 1);
 			asOfDate2 = new DateTime(1900, 1, 1);
 
@@ -659,13 +659,17 @@ namespace Reporting
 			var dateText = this.cmbReportMonth.Text;
 
 			if (dateText == "") {
-				ShowStop("需要填写导出数据的月份");
-				this.cmbReportMonth.Focus();
+				if (!quiet) {
+					ShowStop("需要填写导出数据的月份");
+					this.cmbReportMonth.Focus();
+				}
 				return false;
 			}
 			else if (dateText.IndexOf('*') >= 0) {
-				ShowStop(dateText.Replace(" *", "") + "月份的数据的尚未全部导入系统");
-				this.cmbReportMonth.Focus();
+				if (!quiet) {
+					ShowStop(dateText.Replace(" *", "") + "月份的数据的尚未全部导入系统");
+					this.cmbReportMonth.Focus();
+				}
 				return false;
 			}
 
@@ -674,8 +678,10 @@ namespace Reporting
 			}
 
 			if (!DateTime.TryParse(dateText, out asOfDate)) {
-				ShowStop("填写的月份格式错误");
-				this.cmbReportMonth.Focus();
+				if (!quiet) {
+					ShowStop("填写的月份格式错误");
+					this.cmbReportMonth.Focus();
+				}
 				return false;
 			}
 
@@ -684,22 +690,28 @@ namespace Reporting
 			}
 
 			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
-				ShowStop("日期超出范围");
-				this.cmbReportMonth.Focus();
+				if (!quiet) {
+					ShowStop("日期超出范围");
+					this.cmbReportMonth.Focus();
+				}
 				return false;
 			}
 
 			if (this.cmbReportMonth2.Visible) {
 				if (!DateTime.TryParse(this.cmbReportMonth2.Text, out asOfDate2)) {
-					ShowStop("第二个日期的格式错误");
-					this.cmbReportMonth2.Focus();
+					if (!quiet) {
+						ShowStop("第二个日期的格式错误");
+						this.cmbReportMonth2.Focus();
+					}
 					return false;
 				}
 			}
 
 			if (asOfDate == asOfDate2) {
-				ShowStop("相同日期不能比较");
-				this.cmbReportMonth.Focus();
+				if (!quiet) {
+					ShowStop("相同日期不能比较");
+					this.cmbReportMonth.Focus();
+				}
 				return false;
 			}
 
@@ -759,7 +771,7 @@ namespace Reporting
 					ShowError("报表文件已经被打开，请先从Excel里关闭该报表然后再导出。");
 				}
 				else {
-					ShowError("请关闭所有excel，然后再尝试导出报表。");
+					ShowError("导出发生错误");
 				}
 				logger.Error(ex);
 			}
@@ -813,6 +825,16 @@ namespace Reporting
 			if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path)) {
 				ShowInfo("此目录尚不存在，请您导出报表后再打开此目录");
 				return;
+			}
+			DateTime asOfDate, asOfDate2;
+			if (IsValidToExport(out asOfDate, out asOfDate2, true)) {
+				if (asOfDate2 > asOfDate) {
+					asOfDate = asOfDate2;
+				}
+				var path2 = BaseReport.GetReportFolder(asOfDate);
+				if (Directory.Exists(path2)) {
+					path = path2;
+				}
 			}
 			Process process = new Process();
 			process.StartInfo.FileName = "explorer";
