@@ -634,7 +634,12 @@ namespace Reporting
 				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D || sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D) {
 					if (dataRowCount > 0) {
 						for (int i = 2; i <= sheet.Columns.Count; i++) {
-							((Range)theSheet.Cells[footerRowFrom, i]).Value2 = string.Format("=SUM({0}{1}:{0}{2})", GetColumnCharacters(i), dataRowFrom, footerRowFrom - 1);
+							if (i == 5 || i == 8 || i == 11 || i == 15) {
+								((Range)theSheet.Cells[footerRowFrom, i]).Value2 = string.Format("={0}{1}/B{1}", GetColumnCharacters(i - 1), footerRowFrom);
+							}
+							else {
+								((Range)theSheet.Cells[footerRowFrom, i]).Value2 = string.Format("=SUM({0}{1}:{0}{2})", GetColumnCharacters(i), dataRowFrom, footerRowFrom - 1);
+							}
 						}
 					}
 				}

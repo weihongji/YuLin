@@ -693,6 +693,16 @@ namespace Reporting
 				sql.AppendLine("WHERE ImportId = {0} AND OrgId IS NULL");
 				count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
 				logger.DebugFormat("Done ({0} affected)", count);
+
+				if (itemType == XEnum.ImportItemType.Loan) {
+					logger.Debug("Assigning OrgId4Report column to " + suffix);
+					sql.Clear();
+					sql.AppendLine("UPDATE ImportLoan");
+					sql.AppendLine("SET OrgId4Report = CASE WHEN OrgId IN (1, 2) THEN (CASE WHEN LEN(CustomerName) >= 5 THEN 1 ELSE 2 END)  ELSE OrgId END");
+					sql.AppendLine("WHERE ImportId = {0} AND OrgId4Report IS NULL");
+					count = dao.ExecuteNonQuery(string.Format(sql.ToString(), importId));
+					logger.DebugFormat("Done ({0} affected)", count);
+				}
 			}
 			catch (Exception ex) {
 				return ex.Message;

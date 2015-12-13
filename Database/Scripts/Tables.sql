@@ -126,6 +126,7 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('ImportLoan')
 		Id int IDENTITY(1,1) NOT NULL,
 		ImportId int NOT NULL,
 		OrgId int NULL,
+		OrgId4Report int NULL,
 		DangerLevel nvarchar(20) NULL,
 		OrgNo varchar(50) NOT NULL,
 		LoanCatalog nvarchar(100) NULL,

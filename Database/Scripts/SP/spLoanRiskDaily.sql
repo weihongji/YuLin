@@ -26,25 +26,28 @@ BEGIN
 	UPDATE #Total SET Amount = dbo.sfGetLoanBalanceOf(@asOfDate, 1, 1) WHERE OrgId = 1 --公司部
 	UPDATE #Total SET Amount = dbo.sfGetLoanBalanceOf(@asOfDate, 2, 1) WHERE OrgId = 2 --营业部
 
-	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #YB FROM ImportLoan
+	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoan WHERE ImportId = @importId AND OrgId4Report = 1) WHERE OrgId = 1 --营业部
+	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoan WHERE ImportId = @importId AND OrgId4Report = 2) WHERE OrgId = 2 --营业部
+
+	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #YB FROM ImportLoan
 	WHERE ImportId = @importId
 		AND LoanState IN ('逾期', '部分逾期', '非应计') AND LoanTypeName != '委托贷款'
-	GROUP BY OrgId
+	GROUP BY OrgId4Report
 
-	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #BL
+	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #BL
 	FROM ImportLoan
 	WHERE ImportId = @importId
 		AND LoanState IN ('逾期', '部分逾期', '非应计') AND LoanTypeName != '委托贷款'
 		AND LoanAccount IN (
 			SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdWJFL AND DangerLevel IN ('次级', '可疑', '损失')
 		)
-	GROUP BY OrgId
+	GROUP BY OrgId4Report
 
-	SELECT OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #ZQX FROM ImportLoan
+	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #ZQX FROM ImportLoan
 	WHERE ImportId = @importId
 			AND LoanState = '正常'
 			AND OweYingShouInterest + OweCuiShouInterest != 0
-	GROUP BY OrgId
+	GROUP BY OrgId4Report
 
 	SELECT O.Id AS OrgId, O.Alias1 AS OrgName, CAST(ROUND(ISNULL(T.Amount, 0)/10000, 2) AS money) AS Total_Amount, CAST(ROUND(ISNULL(T.OweInterest, 0)/10000, 2) AS money) AS Total_Interest
 		, ISNULL(Y.Number, 0) - ISNULL(B.Number, 0) AS YQ_Count, CAST(ROUND((ISNULL(Y.Amount, 0)-ISNULL(B.Amount, 0))/10000, 2) AS money) AS YQ_Amount
