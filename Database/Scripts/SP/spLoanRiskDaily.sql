@@ -26,8 +26,8 @@ BEGIN
 	UPDATE #Total SET Amount = dbo.sfGetLoanBalanceOf(@asOfDate, 1, 1) WHERE OrgId = 1 --公司部
 	UPDATE #Total SET Amount = dbo.sfGetLoanBalanceOf(@asOfDate, 2, 1) WHERE OrgId = 2 --营业部
 
-	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoan WHERE ImportId = @importId AND OrgId4Report = 1) WHERE OrgId = 1 --营业部
-	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoan WHERE ImportId = @importId AND OrgId4Report = 2) WHERE OrgId = 2 --营业部
+	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoan WHERE ImportId = @importId AND LoanTypeName != '委托贷款' AND OrgId4Report = 1) WHERE OrgId = 1 --营业部
+	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoan WHERE ImportId = @importId AND LoanTypeName != '委托贷款' AND OrgId4Report = 2) WHERE OrgId = 2 --营业部
 
 	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #YB FROM ImportLoan
 	WHERE ImportId = @importId
