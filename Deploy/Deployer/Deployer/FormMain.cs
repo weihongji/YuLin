@@ -57,11 +57,13 @@ namespace Deployer
 					process.Close();
 
 					// Replace bin files
-					process.StartInfo.FileName = "cmd";
-					process.StartInfo.Arguments = string.Format("/k xcopy /E /Y \"{0}\" \"{1}\"&&exit", Path.Combine(upgradePath, "bin"), binPath);
-					process.Start();
-					process.WaitForExit();
-					process.Close();
+					if (Directory.Exists(Path.Combine(upgradePath, "bin"))) {
+						process.StartInfo.FileName = "cmd";
+						process.StartInfo.Arguments = string.Format("/k xcopy /E /Y \"{0}\" \"{1}\"&&exit", Path.Combine(upgradePath, "bin"), binPath);
+						process.Start();
+						process.WaitForExit();
+						process.Close();
+					}
 
 				}
 				else { // Re-deploy and a new db will be created.
