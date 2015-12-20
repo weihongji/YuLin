@@ -123,7 +123,7 @@ namespace Reporting
 			using (SqlConnection connection = new SqlConnection(connectionString)) {
 				using (SqlCommand command = new SqlCommand(sql, connection)) {
 					command.CommandType = commandType;
-					command.CommandTimeout = 600; // 10 minutes
+					command.CommandTimeout = 1800; // 30 minutes
 					if (parameters != null) {
 						foreach (SqlParameter parameter in parameters) {
 							command.Parameters.Add(parameter);

@@ -183,6 +183,7 @@ namespace Reporting
 						var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
 						var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
 						ShowInfo(string.Format("{0}的数据导入完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
+						logger.DebugFormat("Import done. {0} seconds costed.", seconds);
 						InitImportPanel();
 					}
 					else {

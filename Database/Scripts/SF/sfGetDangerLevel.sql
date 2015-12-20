@@ -14,7 +14,7 @@ BEGIN
 	--DECLARE @loanAccount as varchar(50) = '806050001481024889' --806050001481018516
 	DECLARE @asOfDate as smalldatetime
 	DECLARE @customerType nvarchar(20)
-	DECLARE @customerScale nvarchar(20) /* 1: 大中企业, 2: 小微企业, 3: 个人消费 */
+	DECLARE @customerScale char(1) /* 1: 大中企业, 2: 小微企业, 3: 个人消费 */
 	DECLARE @danbaofangshi nvarchar(20)
 	DECLARE @overdueDays as int, @oweInterestDays as int
 	DECLARE @importLoanId as int
@@ -22,7 +22,7 @@ BEGIN
 
 	SELECT @asOfDate = ImportDate FROM Import WHERE Id = @importId
 	SELECT @importLoanId = Id
-		, @customerType = CustomerType
+		, @customerType = CASE WHEN LEN(CustomerName) < 5 THEN '对私' ELSE '对公' END /*CustomerType*/
 		, @overdueDays = CASE WHEN LoanEndDate < @asOfDate THEN DATEDIFF(day, LoanEndDate, @asOfDate) ELSE 0 END
 	FROM ImportLoan
 	WHERE ImportId = @importId AND LoanAccount = @loanAccount
