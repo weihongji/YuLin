@@ -17,12 +17,10 @@ BEGIN
 	DECLARE @customerScale char(1) /* 1: 大中企业, 2: 小微企业, 3: 个人消费 */
 	DECLARE @danbaofangshi nvarchar(20)
 	DECLARE @overdueDays as int, @oweInterestDays as int
-	DECLARE @importLoanId as int
 	DECLARE @dangerLevel nvarchar(20) /* 正常, 关注, 次级, 可疑, 损失*/
 
 	SELECT @asOfDate = ImportDate FROM Import WHERE Id = @importId
-	SELECT @importLoanId = Id
-		, @customerType = CASE WHEN LEN(CustomerName) < 5 THEN '对私' ELSE '对公' END /*CustomerType*/
+	SELECT @customerType = CASE WHEN LEN(CustomerName) < 5 THEN '对私' ELSE '对公' END /*CustomerType*/
 		, @overdueDays = CASE WHEN LoanEndDate < @asOfDate THEN DATEDIFF(day, LoanEndDate, @asOfDate) ELSE 0 END
 	FROM ImportLoan
 	WHERE ImportId = @importId AND LoanAccount = @loanAccount
@@ -30,34 +28,28 @@ BEGIN
 	IF @customerType = '对公' BEGIN
 		SELECT @customerScale = (CASE WHEN P.MyBankIndTypeName IN ('微型企业', '小型企业') THEN '2' ELSE '1' END)
 			, @oweInterestDays = P.OweInterestDays
-		FROM ImportPublic P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount AND P.ImportId = @importId
-		WHERE L.Id = @importLoanId
+		FROM ImportPublic P
+		WHERE ImportId = @importId AND LoanAccount = @loanAccount
 	END
 	ELSE BEGIN
 		SELECT @customerScale = (CASE WHEN LEN(P.Direction1) > 0 THEN '2' ELSE '3' END)
 			, @oweInterestDays = InterestOverdueDays
-		FROM ImportPrivate P INNER JOIN ImportLoan L ON P.CustomerName = L.CustomerName AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate AND P.OrgId = L.OrgId AND P.ImportId = @importId
-		WHERE L.Id = @importLoanId
+		FROM ImportPrivate P
+		WHERE ImportId = @importId AND LoanAccount = @loanAccount
 	END
 
-	SELECT @danbaofangshi = DanBaoFangShi FROM ImportNonAccrual A INNER JOIN ImportLoan L ON A.LoanAccount = L.LoanAccount AND A.ImportId = @importId
-	WHERE L.Id = @importLoanId
+	SELECT @danbaofangshi = DanBaoFangShi FROM ImportNonAccrual WHERE ImportId = @importId AND LoanAccount = @loanAccount
 
 	IF @danbaofangshi IS NULL BEGIN
-		SELECT @danbaofangshi = DanBaoFangShi FROM ImportOverdue O INNER JOIN ImportLoan L ON O.LoanAccount = L.LoanAccount AND O.ImportId = @importId
-		WHERE L.Id = @importLoanId
+		SELECT @danbaofangshi = DanBaoFangShi FROM ImportOverdue WHERE ImportId = @importId AND LoanAccount = @loanAccount
 	END
 
 	IF @danbaofangshi IS NULL BEGIN
 		IF @customerType = '对公' BEGIN
-			SELECT @danbaofangshi = P.VOUCHTYPENAME
-			FROM ImportPublic P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount AND P.ImportId = L.ImportId
-			WHERE P.ImportId = @importId
+			SELECT @danbaofangshi = VOUCHTYPENAME FROM ImportPublic WHERE ImportId = @importId AND LoanAccount = @loanAccount
 		END
 		ELSE BEGIN
-			SELECT @danbaofangshi = P.DanBaoFangShi
-			FROM ImportPrivate P INNER JOIN ImportLoan L ON P.LoanAccount = L.LoanAccount AND P.ImportId = L.ImportId
-			WHERE P.ImportId = @importId
+			SELECT @danbaofangshi = DanBaoFangShi FROM ImportPrivate WHERE ImportId = @importId AND LoanAccount = @loanAccount
 		END
 		SELECT @danbaofangshi = Category FROM DanBaoFangShi WHERE Name = @danbaofangshi
 	END
