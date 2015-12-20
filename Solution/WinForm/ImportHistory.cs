@@ -59,10 +59,15 @@ namespace Reporting
 
 				this.dataGridView1.Columns[3].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
 				this.dataGridView1.Columns[3].Width = 140;
-				this.dataGridView1.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable;
+				//this.dataGridView1.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable;
 
 				this.dataGridView1.Columns[4].Width = 100;
-				this.dataGridView1.Columns[4].SortMode = DataGridViewColumnSortMode.NotSortable;
+				//this.dataGridView1.Columns[4].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+				//Status bar
+				this.toolStripStatusTime.Text = string.Format("更新时间：{0}", DateTime.Now.ToString("HH:mm:ss"));
+				this.toolStripStatusTotal.Text = string.Format("共{0}条记录", table.Rows.Count);
+				this.toolStripStatusSelected.Text = string.Format("选中{0}条记录", this.dataGridView1.SelectedRows.Count);
 			}
 			catch (System.Data.SqlClient.SqlException ex) {
 				logger.Error("Error in LoadData:\r\n", ex);
@@ -82,6 +87,10 @@ namespace Reporting
 				msg = "发生错误";
 			}
 			frmMain.ShowErrorDialog(msg, this.Text);
+		}
+
+		private void dataGridView1_SelectionChanged(object sender, EventArgs e) {
+			this.toolStripStatusSelected.Text = string.Format("选中{0}条记录", this.dataGridView1.SelectedRows.Count);
 		}
 	}
 }

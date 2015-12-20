@@ -31,9 +31,14 @@
 			this.btnClose = new System.Windows.Forms.Button();
 			this.panelData = new System.Windows.Forms.Panel();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
+			this.statusBar = new System.Windows.Forms.StatusStrip();
+			this.toolStripStatusTotal = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusTime = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusSelected = new System.Windows.Forms.ToolStripStatusLabel();
 			this.panelCommand.SuspendLayout();
 			this.panelData.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+			this.statusBar.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panelCommand
@@ -103,6 +108,39 @@
 			this.dataGridView1.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.dataGridView1.Size = new System.Drawing.Size(684, 501);
 			this.dataGridView1.TabIndex = 0;
+			this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
+			// 
+			// statusBar
+			// 
+			this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusTime,
+            this.toolStripStatusTotal,
+            this.toolStripStatusSelected});
+			this.statusBar.Location = new System.Drawing.Point(0, 536);
+			this.statusBar.Name = "statusBar";
+			this.statusBar.Size = new System.Drawing.Size(684, 26);
+			this.statusBar.TabIndex = 3;
+			// 
+			// toolStripStatusTotal
+			// 
+			this.toolStripStatusTotal.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+			this.toolStripStatusTotal.Name = "toolStripStatusTotal";
+			this.toolStripStatusTotal.Size = new System.Drawing.Size(141, 21);
+			this.toolStripStatusTotal.Text = "Count of total records";
+			// 
+			// toolStripStatusTime
+			// 
+			this.toolStripStatusTime.Name = "toolStripStatusTime";
+			this.toolStripStatusTime.Size = new System.Drawing.Size(145, 21);
+			this.toolStripStatusTime.Text = "Time records loaded at";
+			// 
+			// toolStripStatusSelected
+			// 
+			this.toolStripStatusSelected.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+			this.toolStripStatusSelected.Name = "toolStripStatusSelected";
+			this.toolStripStatusSelected.Size = new System.Drawing.Size(146, 21);
+			this.toolStripStatusSelected.Text = "Count of selected rows";
+			this.toolStripStatusSelected.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// frmImportHistory
 			// 
@@ -110,6 +148,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnClose;
 			this.ClientSize = new System.Drawing.Size(684, 562);
+			this.Controls.Add(this.statusBar);
 			this.Controls.Add(this.panelData);
 			this.Controls.Add(this.panelCommand);
 			this.KeyPreview = true;
@@ -123,7 +162,10 @@
 			this.panelCommand.PerformLayout();
 			this.panelData.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+			this.statusBar.ResumeLayout(false);
+			this.statusBar.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -135,5 +177,9 @@
 		private System.Windows.Forms.Button btnRefresh;
 		private System.Windows.Forms.Panel panelData;
 		private System.Windows.Forms.DataGridView dataGridView1;
+		private System.Windows.Forms.StatusStrip statusBar;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusTotal;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusTime;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusSelected;
 	}
 }
