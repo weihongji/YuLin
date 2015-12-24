@@ -96,9 +96,14 @@ namespace Reporting
 			if (!string.IsNullOrEmpty(licenseTo) && licenseTo.Length == 6) {
 				licenseTo = string.Format("20{0}-{1}-{2}", licenseTo.Substring(0, 2), licenseTo.Substring(2, 2), licenseTo.Substring(4, 2));
 				DateTime licenseDate;
-				if (DateTime.TryParse(licenseTo, out licenseDate) && DateTime.Today > licenseDate) {
-					ShowInfo("报表系统使用期限已经结束，请联系该系统的售后服务。");
-					menuSystem_Exit_Click(null, null);
+				if (DateTime.TryParse(licenseTo, out licenseDate)) {
+					if (DateTime.Today > licenseDate.AddMonths(-1) && DateTime.Today <= licenseDate) {
+						ShowInfo(string.Format("报表系统将于{0}到期，请尽快联系售后服务解决，以免影响您的使用。", licenseDate.ToString("M月d日")));
+					}
+					else if (DateTime.Today > licenseDate) {
+						ShowInfo("报表系统使用期限已经结束，请联系该系统的售后服务。");
+						menuSystem_Exit_Click(null, null);
+					}
 				}
 			}
 		}
