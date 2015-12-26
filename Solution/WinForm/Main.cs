@@ -75,8 +75,13 @@ namespace Reporting
 			if (defaultPanel.Equals("import")) {
 				menuImport_Source_Click(null, null);
 			}
-			else if (defaultPanel.Equals("report")) {
-				ShowReport(XEnum.ReportType.X_FXDKTB_D);
+			else if (defaultPanel.StartsWith("report")) {
+				if (defaultPanel.IndexOf('|') > 0) {
+					ShowReport(defaultPanel.Substring(defaultPanel.IndexOf('|') + 1));
+				}
+				else {
+					ShowReport(XEnum.ReportType.X_FXDKTB_D);
+				}
 			}
 			else {
 				menuSystem_About_Click(null, null);
@@ -526,24 +531,7 @@ namespace Reporting
 				return;
 			}
 			var nameCore = reportMenuName.Substring(position + 1);
-			var reportType = XEnum.ReportType.None;
-			if (Enum.TryParse<XEnum.ReportType>(nameCore, out reportType)) {
-				try {
-					ShowReport(reportType);
-				}
-				catch (System.Data.SqlClient.SqlException ex) {
-					logger.Error("Error in ShowReport:\r\n", ex);
-					ShowError("数据库访问发生错误，请确保数据库可以访问。");
-				}
-				catch (Exception ex) {
-					logger.Error("Error in ShowReport:\r\n", ex);
-					ShowError(ex.Message);
-				}
-			}
-			else {
-				ShowStop("Unknown report menu name: " + reportMenuName);
-				return;
-			}
+			ShowReport(nameCore);
 		}
 
 		private void ShowAsOfDate2() {
@@ -561,6 +549,27 @@ namespace Reporting
 			}
 			else {
 				this.btnSelectColumns.Visible = false;
+			}
+		}
+
+		private void ShowReport(string reportName) {
+			var reportType = XEnum.ReportType.None;
+			if (Enum.TryParse<XEnum.ReportType>(reportName, out reportType)) {
+				try {
+					ShowReport(reportType);
+				}
+				catch (System.Data.SqlClient.SqlException ex) {
+					logger.Error("Error in ShowReport:\r\n", ex);
+					ShowError("数据库访问发生错误，请确保数据库可以访问。");
+				}
+				catch (Exception ex) {
+					logger.Error("Error in ShowReport:\r\n", ex);
+					ShowError(ex.Message);
+				}
+			}
+			else {
+				ShowStop("Unknown report menu name: " + reportName);
+				return;
 			}
 		}
 

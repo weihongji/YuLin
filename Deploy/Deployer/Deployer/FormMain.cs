@@ -20,6 +20,10 @@ namespace Deployer
 		}
 
 		private void FormMain_Load(object sender, EventArgs e) {
+			var version = new Version(Application.ProductVersion);
+			if (version != null) {
+				this.Text = string.Format("长安银行报表系统部署工具 ({0})", version);
+			}
 			this.lblVersionText.Text = ConfigurationManager.AppSettings["Version"];
 			this.lblDateText.Text = ConfigurationManager.AppSettings["ReleaseDate"];
 		}
@@ -87,10 +91,12 @@ namespace Deployer
 
 					// Create new db
 					var dbPathInfo = Directory.CreateDirectory(dbPath);
-
-					File.Copy(Path.Combine(upgradePath, @"database\YuLin.mdf"), Path.Combine(dbPath, "YuLin.mdf"), true);
+					var dataFilePath = Path.Combine(dbPath, "YuLin.mdf");
+					var logFilePath = Path.Combine(dbPath, "YuLin_log.ldf");
+					File.Copy(Path.Combine(upgradePath, @"database\YuLin.mdf"), dataFilePath, true);
+					File.Copy(Path.Combine(upgradePath, @"database\YuLin_log.ldf"), logFilePath, true);
 					var dao = new SqlDbHelper(ConfigurationManager.ConnectionStrings["master"].ConnectionString);
-					dao.ExecuteNonQuery(string.Format("CREATE DATABASE YuLin ON (FILENAME='{0}') FOR ATTACH", Path.Combine(dbPath, "YuLin.mdf")));
+					dao.ExecuteNonQuery(string.Format("CREATE DATABASE YuLin ON (FILENAME='{0}'), (FILENAME='{1}') FOR ATTACH", dataFilePath, logFilePath));
 
 					// Create new bin
 					Directory.CreateDirectory(binPath);
