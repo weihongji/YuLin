@@ -114,7 +114,7 @@ namespace Reporting
 
 			var import = Import.GetByDate(asOfDate);
 			if (import == null || !import.Items.Exists(x => x.ItemType == XEnum.ImportItemType.Loan)) {
-				result = string.Format("{0}的《贷款欠款查询》数据还没导入系统，请先导入这项数据", asOfDate.ToString("yyyy年M月d日"));
+				result = string.Format("{0}的《贷款欠款查询》数据还没导入系统，请先导入这项数据。", asOfDate.ToString("yyyy年M月d日"));
 				logger.Debug(result);
 				return result;
 			}

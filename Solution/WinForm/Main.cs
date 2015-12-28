@@ -408,10 +408,10 @@ namespace Reporting
 				if (string.IsNullOrEmpty(result)) {
 					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
 					var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
-					ShowInfo(string.Format("榆林{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
+					ShowInfo(string.Format("榆林分行{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 				}
 				else {
-					ShowError(result);
+					ShowError("榆林分行: " + result);
 				}
 			}
 			catch (IOException ex) {
@@ -456,10 +456,10 @@ namespace Reporting
 				if (string.IsNullOrEmpty(result)) {
 					var seconds = Math.Round((DateTime.Now - startTime).TotalSeconds);
 					var timeSpan = seconds > 3 ? string.Format("({0}秒)", seconds) : "";
-					ShowInfo(string.Format("神府{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
+					ShowInfo(string.Format("神府支行{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 				}
 				else {
-					ShowError(result);
+					ShowError("神府支行: " + result);
 				}
 			}
 			catch (IOException ex) {
