@@ -2,7 +2,7 @@ SET NOCOUNT OFF
 
 IF NOT EXISTS(SELECT * FROM Globals) BEGIN
 	INSERT INTO Globals (SystemVersion, DBSchemaLevel, FixedDataLevel)
-	VALUES ('1.0.0.6', 1, 1)
+	VALUES ('1.0.0.12', 1, 1)
 END
 
 IF NOT EXISTS(SELECT * FROM Serial) BEGIN
