@@ -111,8 +111,14 @@ namespace Reporting
 		}
 
 		public static string ProcessWJFL(string filePath) {
+			logger.Debug("Processing WJFL");
 			var result = "";
-			logger.Debug("Removing rows about column header row for " + filePath.Substring(filePath.LastIndexOf('\\') + 1));
+			var expectedNames = new List<string> { "非应计", "逾期", "只欠息" };
+			result = UnifySheetNames(filePath, expectedNames);
+			if (!string.IsNullOrEmpty(result)) {
+				logger.Error(result);
+				return result;
+			}
 
 			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
 			theExcelApp.DisplayAlerts = false;
@@ -124,20 +130,13 @@ namespace Reporting
 				theExcelBook = theExcelApp.Workbooks.Open(filePath);
 				excelOpened = true;
 
-				result = UnifyColumnHeader4WJFL(theExcelBook, "非应计");
-				if (!string.IsNullOrEmpty(result)) {
-					logger.Error(result);
-					return result;
-				}
-				result = UnifyColumnHeader4WJFL(theExcelBook, "逾期");
-				if (!string.IsNullOrEmpty(result)) {
-					logger.Error(result);
-					return result;
-				}
-				result = UnifyColumnHeader4WJFL(theExcelBook, "只欠息");
-				if (!string.IsNullOrEmpty(result)) {
-					logger.Error(result);
-					return result;
+				logger.Debug("Removing rows about column header row for " + filePath.Substring(filePath.LastIndexOf('\\') + 1));
+				foreach (var sheetName in expectedNames) {
+					result = UnifyColumnHeader4WJFL(theExcelBook, sheetName);
+					if (!string.IsNullOrEmpty(result)) {
+						logger.Error(result);
+						return result;
+					}
 				}
 
 				theExcelBook.Save();
@@ -164,7 +163,112 @@ namespace Reporting
 			return result;
 		}
 
+		private static string UnifySheetNames(string filePath, List<string> expectedNames) {
+			logger.Debug("Unifying sheet names");
+			var result = "";
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+			theExcelApp.DisplayAlerts = false;
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			bool changed = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+
+				var actualNames = new List<string>();
+				for (int i = 0; i < theExcelBook.Sheets.Count; i++) {
+					actualNames.Add(((Worksheet)theExcelBook.Sheets[i + 1]).Name);
+				}
+				var clonedExpectedNames = expectedNames.Select(x => x).ToList();
+				var clonedActualNames = actualNames.Select(x => x).ToList();
+				for (int i = clonedExpectedNames.Count - 1; i >= 0; i--) {
+					var name = clonedExpectedNames[i];
+					if (clonedActualNames.Contains(name)) {
+						clonedActualNames.Remove(name);
+						clonedExpectedNames.Remove(name);
+					}
+				}
+
+				// Trim spaces
+				if (clonedExpectedNames.Count > 0) {
+					for (int i = clonedExpectedNames.Count - 1; i >= 0; i--) {
+						var name = clonedExpectedNames[i];
+						for (int j = 0; j < clonedActualNames.Count; j++) {
+							if (clonedActualNames[j].Trim().Equals(name)) {
+								logger.WarnFormat("Triming spaces for \"{0}\" sheet", clonedActualNames[j]);
+								var sheet = (Worksheet)theExcelBook.Sheets[1 + actualNames.IndexOf(clonedActualNames[j])];
+								if (sheet.Name.Equals(clonedActualNames[j])) {
+									sheet.Name = name;
+									changed = true;
+								}
+								clonedActualNames.RemoveAt(j);
+								clonedExpectedNames.Remove(name);
+							}
+						}
+					}
+				}
+
+				// Check partial matches
+				if (clonedExpectedNames.Count > 0) { // One or more expected names are not exactly matched
+					for (int i = clonedExpectedNames.Count - 1; i >= 0; i--) {
+						var name = clonedExpectedNames[i];
+						logger.WarnFormat("Hasn't found {0} sheet. Searching possible ...", name);
+						var matches = clonedActualNames.Where(x => x.IndexOf(name) >= 0).ToList();
+						if (matches.Count() == 0) {
+							logger.Warn("No possible sheet found.");
+							result = string.Format("没找到\"{0}\"工作表", name);
+							break;
+						}
+						else if (matches.Count() == 1) {
+							clonedActualNames.Remove(matches[0]);
+							clonedExpectedNames.Remove(name);
+							logger.WarnFormat("Got {0}. Renaming it as {1}", matches[0], name);
+							var sheet = (Worksheet)theExcelBook.Sheets[1 + actualNames.IndexOf(matches[0])];
+							if (sheet.Name.Equals(matches[0])) {
+								sheet.Name = name;
+								changed = true;
+							}
+						}
+						else {
+							logger.WarnFormat("{0} possible sheets found. Cannot identify the correct one.", matches.Count());
+							result = string.Format("{0}个工作表名字带有\"{1}\"字样，无法判断到底哪个是{1}", matches.Count(), name);
+							break;
+						}
+					}
+				}
+
+				if (changed) {
+					theExcelBook.Save();
+					logger.Debug("Saved changes");
+				}
+				logger.Debug("Unify sheet names done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return result;
+		}
+
 		private static string UnifyColumnHeader4WJFL(Workbook excelBook, string sheetName) {
+			logger.DebugFormat("Unifying column headers for sheet {0}", sheetName);
 			var theSheet = (Worksheet)excelBook.Sheets[sheetName];
 			theSheet.Activate();
 			int headerRow = GetColumnHeaderRow(theSheet, "行名", 5);
@@ -180,6 +284,7 @@ namespace Reporting
 				range.Select();
 				logger.Debug("Removing rows from sheet " + sheetName);
 				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+				logger.Debug("Done");
 			}
 			int i = 1;
 			while (++i < 20) {
@@ -219,6 +324,7 @@ namespace Reporting
 
 				theSheet = (Worksheet)theExcelBook.Sheets["非应计"];
 				string val = ((Range)theSheet.Cells[1, 1]).Value2;
+				logger.DebugFormat("Title in 非应计 sheet: {0}", string.IsNullOrEmpty(val) ? "Empty" : val);
 				if (string.IsNullOrEmpty(val)) {
 					result = "在非应计工作表中没有找到标题";
 				}
@@ -329,6 +435,7 @@ namespace Reporting
 		}
 
 		private static string UnifyColumnHeader4WJFLSF(Workbook excelBook, string sheetName) {
+			logger.DebugFormat("Unifying column headers for sheet {0}", sheetName);
 			var theSheet = (Worksheet)excelBook.Sheets[sheetName];
 			theSheet.Activate();
 			int headerRow = GetColumnHeaderRow(theSheet, "序号", 5);
@@ -344,6 +451,7 @@ namespace Reporting
 				range.Select();
 				logger.Debug("Removing rows from sheet " + sheetName);
 				range.Delete(XlDeleteShiftDirection.xlShiftUp);
+				logger.Debug("Done");
 			}
 			int i = 1;
 			while (++i < 20) {
@@ -383,6 +491,7 @@ namespace Reporting
 
 				theSheet = (Worksheet)theExcelBook.Sheets["非应计贷款"];
 				string val = ((Range)theSheet.Cells[1, 2]).Value2;
+				logger.DebugFormat("Title in 非应计 sheet: {0}", string.IsNullOrEmpty(val) ? "Empty" : val);
 				if (string.IsNullOrEmpty(val)) {
 					result = "在非应计工作表中没有找到标题";
 				}
@@ -547,8 +656,7 @@ namespace Reporting
 				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D
 						|| sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D
 						|| sheet.TableId == (int)XEnum.ReportType.X_CSHSX_M && sheet.Index == 3
-					)
-				{
+					) {
 					dummyHeader = true;
 					dummyHeaderRows = 1;
 				}
@@ -590,8 +698,7 @@ namespace Reporting
 				if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D
 						|| sheet.TableId == (int)XEnum.ReportType.X_ZXQYZJXQ_S
 						|| sheet.TableId == (int)XEnum.ReportType.X_CSHSX_M && sheet.Index == 3
-					)
-				{
+					) {
 					if (sheet.FooterStartRow > 0) {
 						theSheetTemplate.Activate();
 						oRange = (Range)theSheetTemplate.get_Range(string.Format("{0}:{1}", sheet.FooterStartRow, sheet.FooterEndRow));
@@ -825,7 +932,7 @@ namespace Reporting
 					try {
 						val = cell.Value2;
 					}
-					catch {}
+					catch { }
 					if (!string.IsNullOrWhiteSpace(val)) {
 						if (asOfDate2.Year > 2001) {
 							if (val.IndexOf("year2") >= 0) {
