@@ -576,3 +576,38 @@ IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('TableMapping
 		CONSTRAINT PK_TableMapping PRIMARY KEY CLUSTERED (Id ASC)
 	) ON [PRIMARY]
 END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('AI_ImportTable')) BEGIN
+	CREATE TABLE dbo.AI_ImportTable(
+		Id int NOT NULL,
+		Name varchar(50) NOT NULL
+		CONSTRAINT PK_AI_ImportTable PRIMARY KEY CLUSTERED (Id ASC)
+	) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('AI_ImportColumn')) BEGIN
+	CREATE TABLE dbo.AI_ImportColumn(
+		Id int IDENTITY(1,1) NOT NULL,
+		TableId int NOT NULL,
+		[Index] int NOT NULL CONSTRAINT DF_AI_ImportColumn_Index DEFAULT (1),
+		Name varchar(50) NOT NULL
+		CONSTRAINT PK_AI_ImportColumn PRIMARY KEY CLUSTERED (Id ASC)
+	) ON [PRIMARY]
+
+	ALTER TABLE dbo.AI_ImportColumn WITH CHECK ADD CONSTRAINT FK_AI_ImportColumn_AI_ImportTable FOREIGN KEY(TableId) REFERENCES dbo.AI_ImportTable (Id)
+
+	CREATE NONCLUSTERED INDEX IX_AI_ImportColumn_TableId ON dbo.AI_ImportColumn(TableId ASC) ON [PRIMARY]
+END
+
+IF NOT EXISTS(SELECT * FROM sys.tables WHERE object_id = OBJECT_ID('AI_ImportColumnMapping')) BEGIN
+	CREATE TABLE dbo.AI_ImportColumnMapping(
+		ColumnId int NOT NULL,
+		[Index] int NOT NULL CONSTRAINT DF_AI_ImportColumnMapping_Index DEFAULT (1),
+		Alias varchar(50) NOT NULL
+		CONSTRAINT PK_AI_ImportColumnMapping PRIMARY KEY CLUSTERED (ColumnId ASC, [Index] ASC)
+	) ON [PRIMARY]
+
+	ALTER TABLE dbo.AI_ImportColumnMapping WITH CHECK ADD CONSTRAINT FK_AI_ImportColumnMapping_AI_ImportColumn FOREIGN KEY(ColumnId) REFERENCES dbo.AI_ImportColumn (Id)
+
+	CREATE NONCLUSTERED INDEX IX_AI_ImportColumnMapping_TableId ON dbo.AI_ImportColumnMapping(ColumnId ASC) ON [PRIMARY]
+END

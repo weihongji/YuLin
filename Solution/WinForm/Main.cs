@@ -97,6 +97,12 @@ namespace Reporting
 					this.lblReleaseDate.Text = string.Format("发布日期：{0}", titleAttribute.Title);
 			}
 
+			var showImportMiscMenu = ConfigurationManager.AppSettings["showImportMiscMenu"] ?? "true";
+			if (showImportMiscMenu.Equals("false")) {
+				this.menuImport_Misc.Visible = false;
+			}
+
+
 			var licenseTo = ConfigurationManager.AppSettings["LicenseTo"];
 			if (!string.IsNullOrEmpty(licenseTo) && licenseTo.Length == 6) {
 				licenseTo = string.Format("20{0}-{1}-{2}", licenseTo.Substring(0, 2), licenseTo.Substring(2, 2), licenseTo.Substring(4, 2));
@@ -507,6 +513,11 @@ namespace Reporting
 		private void menuImport_History_Click(object sender, EventArgs e) {
 			var form = new frmImportHistory();
 			form.Show();
+		}
+
+		private void menuImport_Misc_FixGaoFeng_Click(object sender, EventArgs e) {
+			var form = new frmFixGaoFeng();
+			form.ShowDialog();
 		}
 		#endregion
 

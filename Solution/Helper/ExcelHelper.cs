@@ -80,6 +80,39 @@ namespace Reporting
 						}
 					}
 
+					if (itemType == XEnum.ImportItemType.Public) {
+						logger.DebugFormat("Fixing direction columns headers for {0}", theSheet.Name);
+						var columns = AI_ImportColumn.GetList(itemType);
+						var previousBlanks = 0;
+						for (int i = 1; i < 100; i++) {
+							var cell = ((Range)theSheet.Cells[1, i]);
+							string val = cell.Value2;
+							if (val != null) {
+								val = val.Trim();
+							}
+							if (string.IsNullOrEmpty(val)) {
+								if (previousBlanks > 0) {
+									break;
+								}
+								else {
+									previousBlanks++;
+									continue;
+								}
+							}
+
+							previousBlanks = 0;
+							if (!columns.Exists(x=>x.Name.Equals(val))) {
+								var c = AI_ImportColumn.GetByAlias(itemType, val);
+								if (c != null) {
+									val = c.Name;
+								}
+							}
+							if (!val.Equals(cell.Value2)) {
+								cell.Value2 = val;
+							}
+						}
+					}
+
 					if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
 						logger.DebugFormat("Fixing column headers for {0}", theSheet.Name);
 						((Range)theSheet.Cells[1, 1]).Value2 = "科目代号";

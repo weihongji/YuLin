@@ -79,6 +79,12 @@
     <Compile Include="CustomizeOne.Designer.cs">
       <DependentUpon>CustomizeOne.cs</DependentUpon>
     </Compile>
+    <Compile Include="FixGaoFeng.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FixGaoFeng.Designer.cs">
+      <DependentUpon>FixGaoFeng.cs</DependentUpon>
+    </Compile>
     <Compile Include="ImportHistory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomizeOne.resx">
       <DependentUpon>CustomizeOne.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FixGaoFeng.resx">
+      <DependentUpon>FixGaoFeng.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ImportHistory.resx">
       <DependentUpon>ImportHistory.cs</DependentUpon>

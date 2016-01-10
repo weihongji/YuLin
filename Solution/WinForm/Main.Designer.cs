@@ -131,6 +131,8 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.openFileMultiSelect = new System.Windows.Forms.OpenFileDialog();
+			this.menuImport_Misc = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuImport_Misc_FixGaoFeng = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
@@ -195,7 +197,8 @@
 			this.menuImport.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuImport_Source,
             this.menuImport_WJFL,
-            this.menuImport_History});
+            this.menuImport_History,
+            this.menuImport_Misc});
 			this.menuImport.Name = "menuImport";
 			this.menuImport.Size = new System.Drawing.Size(89, 21);
 			this.menuImport.Text = "数据导入 (&D)";
@@ -203,21 +206,21 @@
 			// menuImport_Source
 			// 
 			this.menuImport_Source.Name = "menuImport_Source";
-			this.menuImport_Source.Size = new System.Drawing.Size(148, 22);
+			this.menuImport_Source.Size = new System.Drawing.Size(152, 22);
 			this.menuImport_Source.Text = "基础数据 (&B)";
 			this.menuImport_Source.Click += new System.EventHandler(this.menuImport_Source_Click);
 			// 
 			// menuImport_WJFL
 			// 
 			this.menuImport_WJFL.Name = "menuImport_WJFL";
-			this.menuImport_WJFL.Size = new System.Drawing.Size(148, 22);
+			this.menuImport_WJFL.Size = new System.Drawing.Size(152, 22);
 			this.menuImport_WJFL.Text = "五级分类 (&W)";
 			this.menuImport_WJFL.Click += new System.EventHandler(this.menuImport_WJFL_Click);
 			// 
 			// menuImport_History
 			// 
 			this.menuImport_History.Name = "menuImport_History";
-			this.menuImport_History.Size = new System.Drawing.Size(148, 22);
+			this.menuImport_History.Size = new System.Drawing.Size(152, 22);
 			this.menuImport_History.Text = "导入查询 (&V)";
 			this.menuImport_History.Click += new System.EventHandler(this.menuImport_History_Click);
 			// 
@@ -324,28 +327,28 @@
 			// menuReport_F_GF0102_081_M
 			// 
 			this.menuReport_F_GF0102_081_M.Name = "menuReport_F_GF0102_081_M";
-			this.menuReport_F_GF0102_081_M.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF0102_081_M.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF0102_081_M.Text = "GF0102-081";
 			this.menuReport_F_GF0102_081_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF0107_141_M
 			// 
 			this.menuReport_F_GF0107_141_M.Name = "menuReport_F_GF0107_141_M";
-			this.menuReport_F_GF0107_141_M.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF0107_141_M.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF0107_141_M.Text = "GF0107-141";
 			this.menuReport_F_GF0107_141_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_SF6301_141_M
 			// 
 			this.menuReport_F_SF6301_141_M.Name = "menuReport_F_SF6301_141_M";
-			this.menuReport_F_SF6301_141_M.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_SF6301_141_M.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_SF6301_141_M.Text = "SF6301-141";
 			this.menuReport_F_SF6301_141_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_SF6401_141_M
 			// 
 			this.menuReport_F_SF6401_141_M.Name = "menuReport_F_SF6401_141_M";
-			this.menuReport_F_SF6401_141_M.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_SF6401_141_M.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_SF6401_141_M.Text = "SF6401-141";
 			this.menuReport_F_SF6401_141_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
@@ -1137,6 +1140,21 @@
 			this.openFileMultiSelect.Filter = "Excel文件|*.xls";
 			this.openFileMultiSelect.Multiselect = true;
 			// 
+			// menuImport_Misc
+			// 
+			this.menuImport_Misc.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuImport_Misc_FixGaoFeng});
+			this.menuImport_Misc.Name = "menuImport_Misc";
+			this.menuImport_Misc.Size = new System.Drawing.Size(152, 22);
+			this.menuImport_Misc.Text = "杂项(M)";
+			// 
+			// menuImport_Misc_FixGaoFeng
+			// 
+			this.menuImport_Misc_FixGaoFeng.Name = "menuImport_Misc_FixGaoFeng";
+			this.menuImport_Misc_FixGaoFeng.Size = new System.Drawing.Size(152, 22);
+			this.menuImport_Misc_FixGaoFeng.Text = "修复高锋";
+			this.menuImport_Misc_FixGaoFeng.Click += new System.EventHandler(this.menuImport_Misc_FixGaoFeng_Click);
+			// 
 			// frmMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1280,6 +1298,8 @@
 		private System.Windows.Forms.Button btnImportWJFLOpenerSF;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.OpenFileDialog openFileMultiSelect;
+		private System.Windows.Forms.ToolStripMenuItem menuImport_Misc;
+		private System.Windows.Forms.ToolStripMenuItem menuImport_Misc_FixGaoFeng;
 
 
 	}
