@@ -234,7 +234,8 @@ namespace Reporting
 					if (o == null) {
 						failedRows++;
 						if (failedRows <= 10) {
-							failedCustomers.AppendFormat("{0} （贷款余额：{1}, 放款日期：{2}, 到期日期：{3}）\r\n", DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+							var msg = GetMismatchMessage(importId, DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
+							failedCustomers.AppendLine(msg + "\r\n" + new string('-', 60));
 							logger.WarnFormat("No record matched for {0}-{1}-{2}-{3}-{4}", DataUtility.GetValue(reader, 0), DataUtility.GetValue(reader, 1), DataUtility.GetValue(reader, 2), DataUtility.GetValue(reader, 3), DataUtility.GetValue(reader, 4));
 						}
 						else {
@@ -263,10 +264,10 @@ namespace Reporting
 				logger.DebugFormat("Rows updated: {0}", updatedRows);
 				logger.DebugFormat("Rows not match: {0}", failedRows);
 				if (failedRows == 1) {
-					result = "下面客户的五级分类无法导入：\r\n" + failedCustomers.ToString() + "\r\n请确保新修改的五级分类Excel文件中，该客户的贷款余额、放款日期和到期日期格式正确。";
+					result = Consts.MESSAGE_FORM_PREFIX + "下面客户的五级分类无法导入：\r\n" + failedCustomers.ToString() + "\r\n请确保新修改的五级分类Excel文件中，该客户的贷款余额、放款日期和到期日期格式正确。";
 				}
 				else if (failedRows > 1) {
-					result = "下列客户的五级分类无法导入：\r\n" + (new string('-', 20)) + "\r\n" + failedCustomers.ToString() + "\r\n" + (new string('-', 20)) + "\r\n请确保新修改的五级分类Excel文件中，他们的贷款余额、放款日期和到期日期格式正确。";
+					result = Consts.MESSAGE_FORM_PREFIX + "下列客户的五级分类无法导入：\r\n" + (new string('-', 80)) + "\r\n" + failedCustomers.ToString() + "\r\n" + (new string('-', 80)) + "\r\n请确保新修改的五级分类Excel文件中，他们的贷款余额、放款日期和到期日期格式正确。";
 				}
 			}
 			catch (Exception ex) {
@@ -274,6 +275,54 @@ namespace Reporting
 				return ex.Message;
 			}
 			return result;
+		}
+
+		private string GetMismatchMessage(int importId, string orgName, string customerName, string amount, string startDate, string endDate) {
+			logger.DebugFormat("Get mismatch message for importId='{0}', orgName='{1}', customerName='{2}', amount='{3}', startDate='{4}', endDate='{5}'", importId, orgName, customerName, amount, startDate, endDate);
+			var msg = "";
+			var dao = new SqlDbHelper();
+			var sql = new StringBuilder();
+			sql.AppendLine("SELECT L.Id FROM ImportLoan L INNER JOIN Org O ON L.OrgId = O.Id");
+			sql.AppendLine("WHERE ImportId = '" + importId.ToString() + "'");
+			sql.AppendLine("	AND CustomerName = '" + customerName + "'");
+			if (dao.ExecuteScalar(sql.ToString()) == null) {
+				msg = string.Format("《贷款欠款查询》中，不存在客户“{0}”", customerName);
+			}
+			if (string.IsNullOrEmpty(msg)) {
+				sql.AppendLine("	AND O.OrgNo = (SELECT OrgNo FROM Org WHERE Id = dbo.sfGetOrgId('" + orgName + "'))");
+				if (dao.ExecuteScalar(sql.ToString()) == null) {
+					if (dao.ExecuteScalar("SELECT dbo.sfGetOrgId('" + orgName + "')") == DBNull.Value) {
+						msg = string.Format("银行“{0}”不存在，请用规范的银行名称。", orgName);
+					}
+					else {
+						msg = string.Format("《贷款欠款查询》中，客户{0}的银行不是“{1}”，请修改五级分类中该笔贷款的行名。", customerName, orgName);
+					}
+				}
+			}
+			if (string.IsNullOrEmpty(msg)) {
+				sql.AppendLine("	AND CapitalAmount = " + amount);
+				if (dao.ExecuteScalar(sql.ToString()) == null) {
+					msg = string.Format("《贷款欠款查询》中，客户{0}在{1}的贷款余额不是{2}。", customerName, orgName, amount);
+				}
+			}
+			if (string.IsNullOrEmpty(msg) && !string.IsNullOrEmpty(startDate)) {
+				sql.AppendLine("	AND LoanStartDate = '" + startDate + "'");
+				if (dao.ExecuteScalar(sql.ToString()) == null) {
+					msg = string.Format("《贷款欠款查询》中，客户{0}在{1}贷款余额为{2}的贷款放款日期不是{3}。", customerName, orgName, amount, startDate);
+				}
+			}
+			if (string.IsNullOrEmpty(msg) && !string.IsNullOrEmpty(endDate)) {
+				sql.AppendLine("	AND LoanEndDate = '" + endDate + "'");
+				if (dao.ExecuteScalar(sql.ToString()) == null) {
+					msg = string.Format("《贷款欠款查询》中，客户{0}在{1}贷款余额为{2}的贷款到期日期不是{3}。", customerName, orgName, amount, endDate);
+				}
+			}
+
+			if (msg.Length > 0)
+			{
+				msg = msg + string.Format("\r\n五级分类信息：\r\n\t行名：{0}, 客户名称：{1}, 贷款余额：{2}, 放款日期：{3}, 到期日期：{4}",  orgName, customerName, amount, startDate, endDate);
+			}
+			return msg;
 		}
 
 		protected bool CopyItem(int importId, string importFolder, string sourceFilePath, XEnum.ImportItemType itemType) {

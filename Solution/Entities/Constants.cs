@@ -9,5 +9,6 @@ namespace Reporting
 	{
 		public static string C_XZDKMX_D = "ImportLoanXZ";
 		public static string C_JQDKMX_D = "ImportLoanJQ";
+		public static string MESSAGE_FORM_PREFIX = "MessageForm::";
 	}
 }

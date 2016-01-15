@@ -37,6 +37,7 @@ sqlcmd -S .\SQL2012 -d YuLin -i spGF0102_081.sql
 sqlcmd -S .\SQL2012 -d YuLin -i spGF0107_141.sql
 sqlcmd -S .\SQL2012 -d YuLin -i spGF1101_121.sql
 sqlcmd -S .\SQL2012 -d YuLin -i spGF1103_121.sql
+sqlcmd -S .\SQL2012 -d YuLin -i spGF1200_101.sql
 sqlcmd -S .\SQL2012 -d YuLin -i spGF1301_081.sql
 sqlcmd -S .\SQL2012 -d YuLin -i spGF1403_111.sql
 sqlcmd -S .\SQL2012 -d YuLin -i spGF1900_151.sql

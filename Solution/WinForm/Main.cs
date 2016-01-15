@@ -417,7 +417,13 @@ namespace Reporting
 					ShowInfo(string.Format("榆林分行{0}数据的七级分类已经更新完毕。{1}", asOfDate.ToString("yyyy年M月d日"), timeSpan));
 				}
 				else {
-					ShowError("榆林分行: " + result);
+					if (result.StartsWith(Consts.MESSAGE_FORM_PREFIX)) {
+						result = result.Substring(Consts.MESSAGE_FORM_PREFIX.Length);
+						ShowMessageForm(result);
+					}
+					else {
+						ShowError("榆林分行: " + result);
+					}
 				}
 			}
 			catch (IOException ex) {
@@ -892,6 +898,14 @@ namespace Reporting
 
 		public static void ShowErrorDialog(string msg, string title) {
 			MessageBox.Show(msg, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}
+
+		private void ShowMessageForm(string msg) {
+			if (string.IsNullOrEmpty(msg)) {
+				return;
+			}
+			var form = new MessageForm(this.Text, msg);
+			form.Show();
 		}
 
 		private void StartSqlServer() {
