@@ -923,7 +923,7 @@ IF NOT EXISTS(SELECT * FROM TableMapping) BEGIN
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (104, 'ImportLoanXZ', 'ZhiHuanZhuanRang', '置换/转让', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (105, 'ImportLoanXZ', 'HeXiaoFlag', '核销标志', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (106, 'ImportLoanXZ', 'LoanState', '贷款状态', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (107, 'ImportLoanXZ', 'LoanType', '贷款种类', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (107, 'ImportLoanXZ', 'LoanType', '贷款种类', 1)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (108, 'ImportLoanXZ', 'LoanTypeName', '贷款种类说明', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (109, 'ImportLoanXZ', 'Direction', '贷款用途', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (110, 'ImportLoanXZ', 'ZhuanLieYuQi', '转列逾期', 2)
@@ -969,7 +969,7 @@ IF NOT EXISTS(SELECT * FROM TableMapping) BEGIN
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (155, 'ImportLoanJQ', 'DueBillNo', '借据编号', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (156, 'ImportLoanJQ', 'ZhiHuanZhuanRang', '置换/转让', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (157, 'ImportLoanJQ', 'HeXiaoFlag', '核销标志', 2)
-	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (158, 'ImportLoanJQ', 'LoanState', '贷款状态', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (158, 'ImportLoanJQ', 'LoanState', '贷款状态', 1)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (159, 'ImportLoanJQ', 'LoanType', '贷款种类', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (160, 'ImportLoanJQ', 'LoanTypeName', '贷款种类说明', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (161, 'ImportLoanJQ', 'Direction', '贷款用途', 2)
@@ -1035,12 +1035,8 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (12, 2, 1, 'Sheet1', 4, 7, 7)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (13, 61, 1, '对公', 2, 5, 5)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (14, 61, 2, '个人', 2, 5, 5)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (15, 62, 1, '非应计', 2, 7, 14)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (16, 62, 2, '逾期', 2, 7, 14)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (17, 62, 3, '只欠息', 2, 7, 14)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (18, 63, 1, '非应计', 2, 7, 14)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (19, 63, 2, '逾期', 2, 7, 14)
-	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (20, 63, 3, '只欠息', 2, 7, 14)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (15, 62, 1, '新增逾期贷款', 2, 7, 14)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (18, 63, 1, '化解', 2, 7, 14)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (21, 6, 1, 'Sheet1', 5, 10, 10)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (22, 4, 1, 'Sheet1', 3, 10, 15)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (23, 8, 1, 'Sheet1', 5, 14, 14)
@@ -1242,6 +1238,9 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 13, '笔数4')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 14, '余额4')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 15, '占比4')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 16, '笔数5')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 17, '余额5')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (12, 18, '占比5')
 
 	/* 到期贷款情况 - 对公 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (13, 1, '序号')
@@ -1268,40 +1267,12 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 4, '五级分类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (15, 5, '担保方式')
 
-	/* 新增贷款明细表 - 逾期 */
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (16, 1, '序号')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (16, 2, '客户名称')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (16, 3, '贷款余额')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (16, 4, '五级分类')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (16, 5, '担保方式')
-	
-	/* 新增贷款明细表 - 只欠息 */
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (17, 1, '序号')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (17, 2, '客户名称')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (17, 3, '贷款余额')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (17, 4, '五级分类')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (17, 5, '担保方式')
-
 	/* 结清贷款明细表 - 非应计 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (18, 1, '序号')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (18, 2, '客户名称')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (18, 3, '贷款余额')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (18, 4, '五级分类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (18, 5, '担保方式')
-
-	/* 结清贷款明细表 - 逾期 */
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (19, 1, '序号')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (19, 2, '客户名称')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (19, 3, '贷款余额')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (19, 4, '五级分类')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (19, 5, '担保方式')
-	
-	/* 结清贷款明细表 - 只欠息 */
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (20, 1, '序号')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (20, 2, '客户名称')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (20, 3, '贷款余额')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (20, 4, '五级分类')
-	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (20, 5, '担保方式')
 
 	/* 风险贷款变化情况表 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (21, 1,  '机构名称')

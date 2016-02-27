@@ -31,11 +31,11 @@ namespace Reporting
 
 		public override string GenerateReport() {
 			if (this.ReportType == XEnum.ReportType.C_XZDKMX_D) {
-				this.ReportFileName = "新增贷款明细表.xls";
+				this.ReportFileName = string.Format("各支行新增风险贷款明细表（{0}-{1}）.xls", this.AsOfDate.ToString("yyyy.M.d"), this.AsOfDate2.ToString("yyyy.M.d"));
 				this.SPName = "spC_XZDKMX_D";
 			}
 			else if (this.ReportType == XEnum.ReportType.C_JQDKMX_D) {
-				this.ReportFileName = "结清贷款明细表.xls";
+				this.ReportFileName = string.Format("各支行化解及清息贷款明细表（{0}-{1}）.xls", this.AsOfDate.ToString("yyyy.M.d"), this.AsOfDate2.ToString("yyyy.M.d"));
 				this.SPName = "spC_JQDKMX_D";
 			}
 			else {

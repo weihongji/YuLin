@@ -20,7 +20,7 @@ namespace Reporting
 		}
 
 		public override string GenerateReport() {
-			var fileName = string.Format("{0}风险贷款通报（日报）.xls", this.AsOfDate.ToString("M.dd"));
+			var fileName = string.Format("各支行风险贷款变化情况表{0}.xls", this.AsOfDate.ToString("M月d日"));
 			Logger.Debug("Generating " + fileName);
 
 			// Check YWNei import

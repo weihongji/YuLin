@@ -794,7 +794,7 @@ namespace Reporting
 				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKTB_D) {
 					int dataRowStartIndex = sheet.RowsBeforeHeader + 1 + 1;
 					Range dataRange = theSheet.Range[theSheet.Cells[dataRowStartIndex, 1], theSheet.Cells[footerRowFrom, columnCount]];
-					dataRange.RowHeight = 24;
+					dataRange.RowHeight = 21;
 				}
 				else if (sheet.TableId == (int)XEnum.ReportType.X_FXDKBH_D) {
 					Range dataRange = theSheet.Range[theSheet.Cells[dataRowFrom, 1], theSheet.Cells[footerRowFrom, columnCount]];

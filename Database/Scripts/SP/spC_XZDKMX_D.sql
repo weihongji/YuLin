@@ -71,66 +71,28 @@ BEGIN
 				WHEN CustomerType LIKE '%经营%' THEN '经营'
 				ELSE CustomerType
 			END
-	IF @type = 'ZQX' BEGIN
-		UPDATE #ResultWJFL SET DanBaoFangShi = (SELECT Category FROM DanBaoFangShi WHERE Name = DanBaoFangShi2)
-	END
 
 	SELECT -1 AS Id INTO #LoanId
 
-	IF @type = 'FYJ' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT L2.Id FROM
-			(
-				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
-					AND ImportId = @importId1
-					AND LoanState = '非应计'
-			) AS L1
-			RIGHT JOIN
-			(
-				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
-					AND ImportId = @importId2
-					AND LoanState = '非应计'
-			) AS L2 ON L1.LoanAccount = L2.LoanAccount
-		WHERE L1.Id IS NULL
-	END
-	ELSE IF @type = 'YQ' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT L2.Id FROM
-			(
-				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
-					AND ImportId = @importId1
-					AND LoanState IN ('逾期', '部分逾期')
-			) AS L1
-			RIGHT JOIN
-			(
-				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
-					AND ImportId = @importId2
-					AND LoanState IN ('逾期', '部分逾期')
-			) AS L2 ON L1.LoanAccount = L2.LoanAccount
-		WHERE L1.Id IS NULL
-	END
-	ELSE IF @type = 'ZQX' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT L2.Id FROM
-			(
-				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
-					AND ImportId = @importId1
-					AND LoanState = '正常' AND OweYingShouInterest + OweCuiShouInterest != 0
-			) AS L1
-			RIGHT JOIN
-			(
-				SELECT Id, LoanAccount FROM ImportLoan
-				WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
-					AND ImportId = @importId2
-					AND LoanState = '正常' AND OweYingShouInterest + OweCuiShouInterest != 0
-			) AS L2 ON L1.LoanAccount = L2.LoanAccount
-		WHERE L1.Id IS NULL
-	END
+	INSERT INTO #LoanId(Id)
+	SELECT L2.Id FROM
+		(
+			SELECT Id, LoanAccount FROM ImportLoan
+			WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+				AND ImportId = @importId1
+				AND (
+					LoanState IN ('非应计', '逾期', '部分逾期')
+					OR (LoanState = '正常' AND OweYingShouInterest + OweCuiShouInterest != 0)
+				)
+		) AS L1
+		RIGHT JOIN
+		(
+			SELECT Id, LoanAccount FROM ImportLoan
+			WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+				AND ImportId = @importId2
+				AND LoanState = '非应计'
+		) AS L2 ON L1.LoanAccount = L2.LoanAccount
+	WHERE L1.Id IS NULL
 
 	SELECT L.Id, L.ImportId
 		, SubIndex = 0
@@ -145,7 +107,9 @@ BEGIN
 		, R.OweInterestDays
 		, OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
 		, BusinessType = R.CustomerType
-		, L.OrgId, L.OrgNo, L.LoanCatalog, L.LoanAccount, L.CustomerNo, L.CustomerType, L.CurrencyType, L.LoanAmount, L.OweCapital, L.OweYingShouInterest, L.OweCuiShouInterest, L.DueBillNo, L.ZhiHuanZhuanRang, L.HeXiaoFlag, L.LoanState, L.LoanType, L.LoanTypeName, L.Direction, L.ZhuanLieYuQi, L.ZhuanLieFYJ, L.InterestEndDate, L.LiLvType, L.LiLvSymbol, L.LiLvJiaJianMa, L.YuQiLiLvYiJu, L.YuQiLiLvType, L.YuQiLiLvSymbol, L.YuQiLiLvJiaJianMa, L.LiLvYiJu, L.ContractInterestRatio, L.ContractOverdueInterestRate, L.ChargeAccount
+		, L.OrgId, L.OrgNo, L.LoanCatalog, L.LoanAccount, L.CustomerNo, L.CustomerType, L.CurrencyType, L.LoanAmount, L.OweCapital, L.OweYingShouInterest, L.OweCuiShouInterest, L.DueBillNo, L.ZhiHuanZhuanRang, L.HeXiaoFlag
+		, LoanState = CASE WHEN L.LoanState = '正常' THEN '只欠息' ELSE L.LoanState END
+		, L.LoanType, L.LoanTypeName, L.Direction, L.ZhuanLieYuQi, L.ZhuanLieFYJ, L.InterestEndDate, L.LiLvType, L.LiLvSymbol, L.LiLvJiaJianMa, L.YuQiLiLvYiJu, L.YuQiLiLvType, L.YuQiLiLvSymbol, L.YuQiLiLvJiaJianMa, L.LiLvYiJu, L.ContractInterestRatio, L.ContractOverdueInterestRate, L.ChargeAccount
 	INTO #Result
 	FROM ImportLoan L
 		INNER JOIN Org O ON L.OrgId = O.Id

@@ -293,7 +293,7 @@
 			// 
 			this.menuReport_X_FXDKBH_D.Name = "menuReport_X_FXDKBH_D";
 			this.menuReport_X_FXDKBH_D.Size = new System.Drawing.Size(292, 22);
-			this.menuReport_X_FXDKBH_D.Text = "风险贷款变化情况表";
+			this.menuReport_X_FXDKBH_D.Text = "各支行风险贷款变化情况表";
 			this.menuReport_X_FXDKBH_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_X_SZHZ_M
