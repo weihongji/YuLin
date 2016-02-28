@@ -69,6 +69,7 @@ namespace Deployer
 						process.Close();
 					}
 
+					MessageBox.Show("升级完毕", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 				else { // Re-deploy and a new db will be created.
 					if (MessageBox.Show(string.Format("请确认报表系统没在运行，然后选择【确定】开始部署{0}。", this.lblVersionText.Text), this.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) {
@@ -106,9 +107,10 @@ namespace Deployer
 					process.Start();
 					process.WaitForExit();
 					process.Close();
+
+					MessageBox.Show("部署完毕", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 
-				MessageBox.Show("部署完毕", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				this.btnUpgrade.Text = "关闭";
 			}
 			catch (Exception ex) {

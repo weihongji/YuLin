@@ -116,6 +116,9 @@ namespace Reporting
 				case XEnum.ReportType.X_CSHSX_M:
 					result = new X_CSHSX_M(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.X_WJFLPRD_D:
+					result = new X_WJFLPRD_D(asOfDate).GenerateReport();
+					break;
 				default:
 					result = "Unknown report type: " + report;
 					break;

@@ -1018,6 +1018,7 @@ IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (61, '到期贷款情况', '到期贷款情况.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (62, '新增贷款明细表', '新增贷款明细表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (63, '结清贷款明细表', '结清贷款明细表.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (64, '五级分类预测', '五级分类预测.xls')
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
@@ -1062,6 +1063,8 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (43, 5, 3, '城商行榆林地区公司类不良贷款情况表', 6, 10, 11)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (44, 5, 4, '城商行榆林地区前20大个人类贷款统计表', 5, 27, 28)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (45, 5, 5, '城商行榆林地区按揭贷款（商用房、住房）情况统计表', 5, 10, 11)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (46, 64, 1, 'Sheet1', 2, 6, 6)
+	select * from TargetTableSheet where id = 46
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
@@ -1637,6 +1640,16 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (44, 18, '五级分类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (44, 19, '上月末五级分类')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (44, 20, '不良形成原因')
+	
+	/* 五级分类预测 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (46, 1, '行名')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (46, 2, '企业（客户）名称')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (46, 3, '贷款余额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (46, 4, '欠息金额')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (46, 5, '放款日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (46, 6, '到期日期')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (46, 7, '本金逾期天数')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (46, 8, '欠息天数')
 END
 
 IF NOT EXISTS(SELECT * FROM AI_ImportTable) BEGIN

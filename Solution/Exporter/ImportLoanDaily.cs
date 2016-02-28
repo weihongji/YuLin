@@ -49,7 +49,7 @@ namespace Reporting
 			Logger.Debug("Selected columns Loan: " + string.Join(", ", this.DbColumnNames));
 
 			var report = TargetTable.GetById(this.ReportType);
-			var filePath = CreateReportFile(report.TemplateName, fileName);
+			var filePath = CreateReportFile(report.TemplateName, fileName, this.AsOfDate2);
 
 			foreach (var sheet in report.Sheets) {
 				PopulateSheet(filePath, sheet);

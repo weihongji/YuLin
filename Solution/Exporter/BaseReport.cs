@@ -52,9 +52,13 @@ namespace Reporting
 		}
 
 		public string CreateReportFile(string templateName, string targetName) {
+			return CreateReportFile(templateName, targetName, this.AsOfDate);
+		}
+
+		public string CreateReportFile(string templateName, string targetName, DateTime date) {
 			var template = @"Template\" + templateName;
 
-			var folder = GetReportFolder(this.AsOfDate);
+			var folder = GetReportFolder(date);
 			if (!Directory.Exists(folder)) {
 				Directory.CreateDirectory(folder);
 			}

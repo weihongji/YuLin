@@ -49,6 +49,7 @@ namespace Reporting
 			X_FXDKBH_D = 6,			// 风险贷款变化情况表
 			X_SZHZ_M = 7,			// 榆林分行三张表汇总表（月报）
 			X_DKZLFL_M = 8,			// 贷款质量分类情况汇总表
+			X_WJFLPRD_D = 64,		// 五级分类预测
 
 			// Finacial
 			F_HYB_M = 20,			// 风险贷款情况表-行业版

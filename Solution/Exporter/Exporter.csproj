@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseReport.cs" />
+    <Compile Include="X_WJFLPRD_D.cs" />
     <Compile Include="GF1200_101.cs" />
     <Compile Include="X_CSHSX_M.cs" />
     <Compile Include="X_BLDKJC_X.cs" />
