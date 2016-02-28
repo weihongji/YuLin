@@ -38,6 +38,10 @@ BEGIN
 		LEFT JOIN ImportPrivate PV ON PV.LoanAccount = L.LoanAccount AND PV.ImportId = @importIdOfLastMonthEndDay
 		LEFT JOIN ImportPublic PB ON PB.LoanAccount = L.LoanAccount AND PB.ImportId = @importIdOfLastMonthEndDay
 	WHERE L.ImportId = @importId
+			AND (
+				L.LoanState IN ('非应计', '逾期', '部分逾期')
+				OR (L.LoanState = '正常' AND L.OweYingShouInterest + L.OweCuiShouInterest != 0)
+			)
 
 	UPDATE #Result SET OweInterestDays = OweInterestDays + DATEPART(DAY, @endDayOfThisMonth) WHERE OweInterestDays > 0 --只有上月台帐显示有欠息的才计算本月末的欠息天数
 
@@ -50,7 +54,10 @@ BEGIN
 				ELSE CustomerType
 			END
 
-	SELECT OrgName, CustomerName, CapitalAmount, OweInterestAmount, LoanStartDate, LoanEndDate, OverdueDays, OweInterestDays FROM #Result
+	SELECT OrgName, CustomerName, CapitalAmount, OweInterestAmount, LoanStartDate, LoanEndDate
+		, OverdueDays = ISNULL(OverdueDays, 0)
+		, OweInterestDays = ISNULL(OweInterestDays, 0)
+	FROM #Result
 
 	DROP TABLE #Result
 END
