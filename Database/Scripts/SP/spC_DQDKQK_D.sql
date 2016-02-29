@@ -1,9 +1,9 @@
-IF EXISTS(SELECT * FROM sys.procedures WHERE name = 'spC_DQDKQK_M') BEGIN
-	DROP PROCEDURE spC_DQDKQK_M
+IF EXISTS(SELECT * FROM sys.procedures WHERE name = 'spC_DQDKQK_D') BEGIN
+	DROP PROCEDURE spC_DQDKQK_D
 END
 GO
 
-CREATE PROCEDURE dbo.spC_DQDKQK_M
+CREATE PROCEDURE dbo.spC_DQDKQK_D
 	@asOfDate as smalldatetime,
 	@tableName as nvarchar(20),
 	@customCols as nvarchar(2000)
@@ -11,8 +11,13 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @importId int	
-	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
+	DECLARE @importId int = (
+		SELECT TOP 1 Id FROM Import I
+		WHERE ImportDate <= @asOfDate
+			AND EXISTS(SELECT * FROM ImportPrivate P WHERE P.ImportId = I.Id)
+			AND EXISTS(SELECT * FROM ImportPublic P WHERE P.ImportId = I.Id)
+		ORDER BY ImportDate DESC
+	)
 
 	DECLARE @sql nvarchar(2000)
 	SET @sql='INSERT INTO #Mapping(ColName) SELECT Col = '''+ REPLACE(@customCols,',',''' UNION ALL SELECT ''')+''''
@@ -41,7 +46,7 @@ BEGIN
 			+ '			, ClassifyResult = (SELECT DangerLevel FROM ImportLoan L WHERE L.ImportId = @importId AND L.LoanAccount = P1.LoanAccount)'
 			+ '			, CreditLevel, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, ActualBusinessRate, RateFloat, VouchTypeName, BailRatio, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsAgricultureCredit, IsINRZ'
 			+ '		FROM ImportPublic P1'
-			+ '		WHERE P1.ImportId=@importId AND P1.PublicType = 1'
+			+ '		WHERE P1.ImportId=@importId AND P1.PublicType = 1 AND LoanEndDate = @asOfDate'
 			+ '			AND P1.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())'
 			+ ' ) AS P'
 			+ ' ORDER BY P.OrgName2'
@@ -53,13 +58,13 @@ BEGIN
 			+ '			, DangerLevel = (SELECT MAX(DangerLevel) FROM ImportLoan L WHERE L.ImportId = @importId AND L.LoanAccount = P1.LoanAccount)'
 			+ '			, RepaymentMethod, CustomerName, IdCardNo, CurrencyType, ContractStartDate, ContractEndDate, InterestRatio, DanBaoFangShi, LoanBalance, Direction1, Direction2, Direction3, Direction4, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance'
 			+ '		FROM ImportPrivate P1'
-			+ '		WHERE P1.ImportId=@importId'
+			+ '		WHERE P1.ImportId=@importId AND ContractEndDate = @asOfDate'
 			+ '			AND P1.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())'
 			+ ' ) AS P'
 			+ ' ORDER BY P.OrgName2'
 	END
 	
-	EXEC sp_executesql @sql, N'@importId int', @importId
+	EXEC sp_executesql @sql, N'@importId int, @asOfDate smalldatetime', @importId, @asOfDate
 	
 	DROP TABLE #Mapping
 END

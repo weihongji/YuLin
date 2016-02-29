@@ -71,6 +71,14 @@ namespace Reporting
 			this.calendarImport.Visible = false;
 			this.btnSelectColumns.Visible = false;
 
+			this.calendarExport.Left = 206;
+			this.calendarExport.Visible = false;
+
+			this.txtExportDate.Top = 111;
+			this.txtExportDate.Visible = false;
+			this.btnCalendarExport.Top = 110;
+			this.btnCalendarExport.Visible = false;
+
 			var defaultPanel = ConfigurationManager.AppSettings["defaultScreen"] ?? "about";
 			if (defaultPanel.Equals("import")) {
 				menuImport_Source_Click(null, null);
@@ -560,6 +568,19 @@ namespace Reporting
 			}
 		}
 
+		private void ShowExportDate() {
+			if (this.currentReport == XEnum.ReportType.C_DQDKQK_D) {
+				this.txtExportDate.Visible = true;
+				this.btnCalendarExport.Visible = true;
+				this.cmbReportMonth.Visible = false;
+			}
+			else {
+				this.txtExportDate.Visible = false;
+				this.btnCalendarExport.Visible = false;
+				this.cmbReportMonth.Visible = true;
+			}
+		}
+
 		private void ShowSelectColumnButton() {
 			if (this.currentReport.ToString().StartsWith("C_")) {
 				this.btnSelectColumns.Visible = true;
@@ -610,6 +631,7 @@ namespace Reporting
 			this.SelectedColumns1.Clear();
 			this.SelectedColumns2.Clear();
 			ShowAsOfDate2();
+			ShowExportDate();
 			ShowSelectColumnButton();
 
 			var dao = new SqlDbHelper();
@@ -688,7 +710,7 @@ namespace Reporting
 			asOfDate2 = new DateTime(1900, 1, 1);
 
 			var monthly = IsMonthly();
-			var dateText = this.cmbReportMonth.Text;
+			var dateText = this.txtExportDate.Visible ? this.txtExportDate.Text : this.cmbReportMonth.Text;
 
 			if (dateText == "") {
 				if (!quiet) {
@@ -760,7 +782,7 @@ namespace Reporting
 				return;
 			}
 			var exporter = new Exporter();
-			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
+			if (this.currentReport == XEnum.ReportType.C_DQDKQK_D) {
 				if (this.SelectedColumns1.Count == 0) {
 					this.SelectedColumns1.AddRange(TableMapping.GetFrozenColumnNames("ImportPublic"));
 					this.SelectedColumns1.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
@@ -817,7 +839,7 @@ namespace Reporting
 		}
 
 		private void btnSelectColumns_Click(object sender, EventArgs e) {
-			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
+			if (this.currentReport == XEnum.ReportType.C_DQDKQK_D) {
 				var form = new frmCustomizeDQDK(this.SelectedColumns1, this.SelectedColumns2);
 				var result = form.ShowDialog(this);
 				if (result == System.Windows.Forms.DialogResult.OK) {
@@ -941,6 +963,32 @@ namespace Reporting
 			if (e.KeyCode == Keys.Escape) {
 				this.calendarImport.Hide();
 			}
+		}
+
+		//Export calendar handlers
+
+		private void btnCalendarExport_Click(object sender, EventArgs e) {
+			this.calendarExport.Show();
+			this.calendarExport.Focus();
+		}
+
+		private void calendarExport_DateSelected(object sender, DateRangeEventArgs e) {
+			this.txtExportDate.Text = this.calendarExport.SelectionStart.ToString("yyyy-M-d");
+			this.calendarExport.Hide();
+		}
+
+		private void calendarExport_Leave(object sender, EventArgs e) {
+			this.calendarExport.Hide();
+		}
+
+		private void calendarExport_KeyDown(object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Escape) {
+				this.calendarExport.Hide();
+			}
+		}
+
+		private void panelReport_Click(object sender, EventArgs e) {
+			this.calendarExport.Hide();
 		}
 
 		#endregion

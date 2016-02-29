@@ -7,12 +7,12 @@ using System.Text;
 
 namespace Reporting
 {
-	public class C_DQDKQK_M : BaseReport
+	public class C_DQDKQK_D : BaseReport
 	{
 		private string PublicColumns;
 		private string PrivateColumns;
 
-		public C_DQDKQK_M(DateTime asOfDate, List<string> publicColumns, List<string> privateColumns)
+		public C_DQDKQK_D(DateTime asOfDate, List<string> publicColumns, List<string> privateColumns)
 			: base(asOfDate) {
 			PublicColumns = string.Join(",", publicColumns);
 			PrivateColumns = string.Join(",", privateColumns);
@@ -27,7 +27,7 @@ namespace Reporting
 			Logger.Debug("Selected columns Public: " + string.Join(", ", this.PublicColumns));
 			Logger.Debug("Selected columns Private: " + string.Join(", ", this.PrivateColumns));
 
-			var report = TargetTable.GetById(XEnum.ReportType.C_DQDKQK_M);
+			var report = TargetTable.GetById(XEnum.ReportType.C_DQDKQK_D);
 			var filePath = CreateReportFile(report.TemplateName, fileName);
 
 			foreach (var sheet in report.Sheets) {
@@ -40,7 +40,7 @@ namespace Reporting
 		private void PopulateSheet(string filePath, TargetTableSheet sheet) {
 			Logger.Debug("Initializing sheet " + sheet.EvaluateName(this.AsOfDate));
 
-			var sql = string.Format("EXEC spC_DQDKQK_M '{0}', '{1}', '{2}'", this.AsOfDate.ToString("yyyyMMdd")
+			var sql = string.Format("EXEC spC_DQDKQK_D '{0}', '{1}', '{2}'", this.AsOfDate.ToString("yyyyMMdd")
 				, sheet.Index == 1 ? "ImportPublic" : "ImportPrivate"
 				, sheet.Index == 1 ? PublicColumns : PrivateColumns);
 			var dao = new SqlDbHelper();

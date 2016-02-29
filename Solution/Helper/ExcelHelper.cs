@@ -810,7 +810,7 @@ namespace Reporting
 					((Range)theSheet.Cells[footerRowFrom, 1]).Value2 = "总计";
 					((Range)theSheet.Cells[footerRowFrom, 1]).HorizontalAlignment = XlHAlign.xlHAlignCenter;
 				}
-				else if (sheet.TableId == (int)XEnum.ReportType.C_DQDKQK_M) {
+				else if (sheet.TableId == (int)XEnum.ReportType.C_DQDKQK_D) {
 					columnCount = 2;
 					while (true) {
 						if (string.IsNullOrEmpty(((Range)theSheet.Cells[sheet.RowsBeforeHeader + 1, columnCount]).Value2)) {
