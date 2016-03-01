@@ -45,7 +45,7 @@ namespace Reporting
 				sql.AppendLine("	, WJFLDate AS [五级分类]");
 				sql.AppendLine("	, SUBSTRING(dbo.sfGetImportStatus(ImportDate), 1, 9) AS [导入状况]");
 				sql.AppendLine("FROM Import");
-				sql.AppendLine("ORDER BY ImportDate");
+				sql.AppendLine("ORDER BY ImportDate DESC");
 				var table = dao.ExecuteDataTable(sql.ToString());
 				this.dataGridView1.DataSource = table;
 				this.dataGridView1.Columns[0].DefaultCellStyle.Format = "yyyy-MM-dd";
