@@ -90,7 +90,10 @@ BEGIN
 			SELECT Id, LoanAccount FROM ImportLoan
 			WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND ImportId = @importId2
-				AND LoanState = '非应计'
+				AND (
+					LoanState IN ('非应计', '逾期', '部分逾期')
+					OR (LoanState = '正常' AND OweYingShouInterest + OweCuiShouInterest != 0)
+				)
 		) AS L2 ON L1.LoanAccount = L2.LoanAccount
 	WHERE L1.Id IS NULL
 
