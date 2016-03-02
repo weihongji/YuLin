@@ -743,7 +743,7 @@ namespace Reporting
 				asOfDate = DateHelper.GetLastDayInMonth(asOfDate);
 			}
 
-			if (asOfDate.Year < 2000 || asOfDate > DateTime.Today) {
+			if (asOfDate.Year < 2000 || asOfDate.Year > 2050) {
 				if (!quiet) {
 					ShowStop("日期超出范围");
 					this.cmbReportMonth.Focus();

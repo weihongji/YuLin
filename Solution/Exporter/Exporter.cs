@@ -49,6 +49,9 @@ namespace Reporting
 				case XEnum.ReportType.F_GF0102_081_M:
 					result = new GF0102_081(asOfDate).GenerateReport();
 					break;
+				case XEnum.ReportType.F_GF0102_161_M:
+					result = new GF0102_161(asOfDate).GenerateReport();
+					break;
 				case XEnum.ReportType.F_GF0107_141_M:
 					result = new GF0107_141(asOfDate).GenerateReport();
 					break;

@@ -1042,6 +1042,51 @@ namespace Reporting
 			return string.Empty;
 		}
 
+		public static string PopulateGF0102_161(string filePath, TargetTableSheet sheet, DateTime asOfDate, decimal total, decimal guanZhu, decimal ciJi, decimal keYi, decimal sunShi, decimal overdue90) {
+			logger.Debug("Populating GF0102_161");
+
+			Microsoft.Office.Interop.Excel.Application theExcelApp = new Microsoft.Office.Interop.Excel.Application();
+
+			Workbook theExcelBook = null;
+			Worksheet theSheet = null;
+			bool excelOpened = false;
+			try {
+				theExcelBook = theExcelApp.Workbooks.Open(filePath);
+				excelOpened = true;
+				theSheet = (Worksheet)theExcelBook.Sheets[1];
+				((Range)theSheet.Cells[6, 3]).Value2 = total;
+				((Range)theSheet.Cells[9, 3]).Value2 = guanZhu;
+				((Range)theSheet.Cells[11, 3]).Value2 = ciJi;
+				((Range)theSheet.Cells[12, 3]).Value2 = keYi;
+				((Range)theSheet.Cells[13, 3]).Value2 = sunShi;
+				((Range)theSheet.Cells[15, 3]).Value2 = overdue90;
+
+				SubstituteReportHeader(theSheet, sheet, asOfDate);
+
+				theExcelBook.Save();
+				logger.Debug("Population done");
+			}
+			catch (Exception ex) {
+				logger.Error(ex);
+				throw;
+			}
+			finally {
+				if (excelOpened) {
+					theExcelBook.Close(false, null, null);
+				}
+				theExcelApp.Quit();
+				if (theSheet != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theSheet);
+				}
+				if (theExcelBook != null) {
+					System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelBook);
+				}
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(theExcelApp);
+				GC.Collect();
+			}
+			return string.Empty;
+		}
+
 		public static string PopulateGF0107_141(string filePath, TargetTableSheet sheet, DateTime asOfDate, System.Data.DataTable dataTable) {
 			logger.Debug("Populating GF0107_141");
 

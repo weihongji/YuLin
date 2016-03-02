@@ -73,6 +73,7 @@
 			this.menuReport_C_JQDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
 			this.panelReport = new System.Windows.Forms.Panel();
+			this.calendarExport = new System.Windows.Forms.MonthCalendar();
 			this.btnCalendarExport = new System.Windows.Forms.Button();
 			this.txtExportDate = new System.Windows.Forms.TextBox();
 			this.btnSelectColumns = new System.Windows.Forms.Button();
@@ -136,7 +137,7 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.openFileMultiSelect = new System.Windows.Forms.OpenFileDialog();
-			this.calendarExport = new System.Windows.Forms.MonthCalendar();
+			this.menuReport_F_GF0102_161_M = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelMenu.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelContent.SuspendLayout();
@@ -344,6 +345,7 @@
 			// 
 			this.menuReport_F_Month.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuReport_F_GF0102_081_M,
+            this.menuReport_F_GF0102_161_M,
             this.menuReport_F_GF0107_141_M,
             this.menuReport_F_SF6301_141_M,
             this.menuReport_F_SF6401_141_M});
@@ -354,28 +356,29 @@
 			// menuReport_F_GF0102_081_M
 			// 
 			this.menuReport_F_GF0102_081_M.Name = "menuReport_F_GF0102_081_M";
-			this.menuReport_F_GF0102_081_M.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF0102_081_M.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF0102_081_M.Text = "GF0102-081";
+			this.menuReport_F_GF0102_081_M.Visible = false;
 			this.menuReport_F_GF0102_081_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_GF0107_141_M
 			// 
 			this.menuReport_F_GF0107_141_M.Name = "menuReport_F_GF0107_141_M";
-			this.menuReport_F_GF0107_141_M.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_GF0107_141_M.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_GF0107_141_M.Text = "GF0107-141";
 			this.menuReport_F_GF0107_141_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_SF6301_141_M
 			// 
 			this.menuReport_F_SF6301_141_M.Name = "menuReport_F_SF6301_141_M";
-			this.menuReport_F_SF6301_141_M.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_SF6301_141_M.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_SF6301_141_M.Text = "SF6301-141";
 			this.menuReport_F_SF6301_141_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_F_SF6401_141_M
 			// 
 			this.menuReport_F_SF6401_141_M.Name = "menuReport_F_SF6401_141_M";
-			this.menuReport_F_SF6401_141_M.Size = new System.Drawing.Size(145, 22);
+			this.menuReport_F_SF6401_141_M.Size = new System.Drawing.Size(152, 22);
 			this.menuReport_F_SF6401_141_M.Text = "SF6401-141";
 			this.menuReport_F_SF6401_141_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
@@ -537,6 +540,15 @@
 			this.panelReport.Size = new System.Drawing.Size(694, 583);
 			this.panelReport.TabIndex = 1;
 			this.panelReport.Click += new System.EventHandler(this.panelReport_Click);
+			// 
+			// calendarExport
+			// 
+			this.calendarExport.Location = new System.Drawing.Point(2060, 140);
+			this.calendarExport.Name = "calendarExport";
+			this.calendarExport.TabIndex = 17;
+			this.calendarExport.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calendarExport_DateSelected);
+			this.calendarExport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.calendarExport_KeyDown);
+			this.calendarExport.Leave += new System.EventHandler(this.calendarExport_Leave);
 			// 
 			// btnCalendarExport
 			// 
@@ -1190,14 +1202,12 @@
 			this.openFileMultiSelect.Filter = "Excel文件|*.xls";
 			this.openFileMultiSelect.Multiselect = true;
 			// 
-			// calendarExport
+			// menuReport_F_GF0102_161_M
 			// 
-			this.calendarExport.Location = new System.Drawing.Point(2060, 140);
-			this.calendarExport.Name = "calendarExport";
-			this.calendarExport.TabIndex = 17;
-			this.calendarExport.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calendarExport_DateSelected);
-			this.calendarExport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.calendarExport_KeyDown);
-			this.calendarExport.Leave += new System.EventHandler(this.calendarExport_Leave);
+			this.menuReport_F_GF0102_161_M.Name = "menuReport_F_GF0102_161_M";
+			this.menuReport_F_GF0102_161_M.Size = new System.Drawing.Size(152, 22);
+			this.menuReport_F_GF0102_161_M.Text = "GF0102-161";
+			this.menuReport_F_GF0102_161_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// frmMain
 			// 
@@ -1348,6 +1358,7 @@
 		private System.Windows.Forms.Button btnCalendarExport;
 		private System.Windows.Forms.TextBox txtExportDate;
 		private System.Windows.Forms.MonthCalendar calendarExport;
+		private System.Windows.Forms.ToolStripMenuItem menuReport_F_GF0102_161_M;
 
 
 	}

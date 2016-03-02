@@ -56,6 +56,7 @@ namespace Reporting
 
 			// Finacial - Month
 			F_GF0102_081_M = 21,	// GF0102-081
+			F_GF0102_161_M = 65,	// GF0102-161
 			F_GF0107_141_M = 22,	// GF0107-141
 			F_SF6301_141_M = 23,	// SF6301-141
 			F_SF6401_141_M = 24,	// SF6401-141

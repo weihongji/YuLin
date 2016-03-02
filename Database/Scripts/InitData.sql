@@ -43,6 +43,7 @@ IF NOT EXISTS(SELECT * FROM Org) BEGIN
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (27,'806052601', '榆林明珠大道支行', '明珠大道', '榆林分行明珠大道支行')
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (28,'806057777', '806057777', '806057777', NULL)
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (29,'806058888', '神府区域直属支行营业部', '神府营业部', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (30, '806050001', '榆林分行个贷中心', '个贷中心', NULL)
 END
 
 /*
@@ -1019,6 +1020,7 @@ IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (62, '新增贷款明细表', '新增贷款明细表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (63, '结清贷款明细表', '结清贷款明细表.xls')
 	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (64, '五级分类预测', '五级分类预测.xls')
+	INSERT INTO TargetTable(Id, Name, [FileName]) VALUES (65, 'GF0102-161', 'GF0102-161.xls')
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
@@ -1064,6 +1066,7 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheet) BEGIN
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (44, 5, 4, '城商行榆林地区前20大个人类贷款统计表', 5, 27, 28)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (45, 5, 5, '城商行榆林地区按揭贷款（商用房、住房）情况统计表', 5, 10, 11)
 	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (46, 64, 1, 'Sheet1', 2, 6, 6)
+	INSERT INTO TargetTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, FooterStartRow, FooterEndRow) VALUES (47, 65, 1, 'GF0102', 4, 16, 18)
 	select * from TargetTableSheet where id = 46
 END
 
@@ -1195,6 +1198,11 @@ IF NOT EXISTS(SELECT * FROM TargetTableSheetColumn) BEGIN
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 3, '人民币')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 4, '外币折人民币')
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (8, 5, '本外币合计')
+
+	/* GF0102-081 */
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (47, 1, '序号')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (47, 2, '项目')
+	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (47, 3, '本外币合计')
 
 	/* GF0107-141 */
 	INSERT INTO TargetTableSheetColumn(SheetId, [Index], Name) VALUES (9, 1, '序号')
