@@ -2017,6 +2017,10 @@ namespace Reporting
 					if (excelRow == 6) { // 1.按贷款担保方式
 						excelRow = 7;
 					}
+					else if (excelRow == 8) { // 1.2保证贷款 --留给excel公式计算
+						i++;
+						excelRow = 9;
+					}
 					else if (excelRow == 11) { // 2.按贷款逾期情况
 						excelRow = 12;
 					}

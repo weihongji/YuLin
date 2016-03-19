@@ -118,9 +118,15 @@ BEGIN
 	WHERE R.Id = 2 AND X.Name = '信用'
 
 	/* 1.3抵（质）押贷款 */
-	UPDATE R SET Total = X.Total, ZC = X.ZC, GZ = X.GZ, CJ = X.CJ, KY = X.KY, SS = X.SS
-	FROM #Result R, #ResultSingle X
-	WHERE R.Id = 4 AND X.Name IN ('抵押', '质押')
+	UPDATE R SET Total = X1.Total, ZC = X1.ZC, GZ = X1.GZ, CJ = X1.CJ, KY = X1.KY, SS = X1.SS
+	FROM #Result R, (
+			SELECT Total = SUM(X.Total), ZC = SUM(X.ZC), GZ = SUM(X.GZ), CJ = SUM(X.CJ), KY = SUM(X.KY), SS = SUM(X.SS)
+			FROM #ResultSingle X
+			WHERE X.Name IN ('抵押', '质押')
+		) X1
+	WHERE R.Id = 4
+
+
 
 
 	/* 1.4贴现及买断式转贴现 */
