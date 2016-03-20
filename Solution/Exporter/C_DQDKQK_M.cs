@@ -22,7 +22,7 @@ namespace Reporting
 		}
 
 		public override string GenerateReport() {
-			var fileName = string.Format("{0}月到期贷款情况.xls", this.AsOfDate.ToString("M.dd"));
+			var fileName = string.Format("{0}月到期贷款情况.xls", this.AsOfDate.ToString("MM").TrimStart('0'));
 			Logger.Debug("Generating " + fileName);
 			Logger.Debug("Selected columns Public: " + string.Join(", ", this.PublicColumns));
 			Logger.Debug("Selected columns Private: " + string.Join(", ", this.PrivateColumns));

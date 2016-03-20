@@ -569,16 +569,16 @@ namespace Reporting
 		}
 
 		private void ShowExportDate() {
-			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
-				this.txtExportDate.Visible = true;
-				this.btnCalendarExport.Visible = true;
-				this.cmbReportMonth.Visible = false;
-			}
-			else {
-				this.txtExportDate.Visible = false;
-				this.btnCalendarExport.Visible = false;
-				this.cmbReportMonth.Visible = true;
-			}
+			//if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
+			//	this.txtExportDate.Visible = true;
+			//	this.btnCalendarExport.Visible = true;
+			//	this.cmbReportMonth.Visible = false;
+			//}
+			//else {
+			//	this.txtExportDate.Visible = false;
+			//	this.btnCalendarExport.Visible = false;
+			//	this.cmbReportMonth.Visible = true;
+			//}
 		}
 
 		private void ShowSelectColumnButton() {
@@ -639,15 +639,21 @@ namespace Reporting
 			var lastSelectValue2 = "";
 			if (IsMonthly()) {
 				this.lblExportDate.Text = "数据月份：";
-				var table = dao.ExecuteDataTable("SELECT ImportDate, dbo.sfGetImportStatus(ImportDate) AS status FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
 				if (this.cmbReportMonth.SelectedIndex >= 0) {
 					lastSelectValue = this.cmbReportMonth.Text;
 				}
 				this.cmbReportMonth.Items.Clear();
+				DataTable table;
+				if (currentReport == XEnum.ReportType.C_DQDKQK_M) {
+					table = dao.ExecuteDataTable("SELECT * FROM dbo.sfGetMonthsInFuture()");
+				}
+				else {
+					table = dao.ExecuteDataTable("SELECT ImportDate, dbo.sfGetImportStatus(ImportDate) AS status FROM Import WHERE DAY(ImportDate + 1) = 1 ORDER BY ImportDate DESC");
+				}
 				if (table != null) {
 					foreach (DataRow row in table.Rows) {
 						var value = ((DateTime)row[0]).ToString("yyyy-MM");
-						if (!((string)row[1]).StartsWith("1111111")) {
+						if (row.ItemArray.Length > 1 && !((string)row[1]).StartsWith("1111111")) {
 							value += " *";
 						}
 						this.cmbReportMonth.Items.Add(value);
