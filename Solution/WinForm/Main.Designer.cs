@@ -68,7 +68,7 @@
 			this.menuReport_F_SF6302_131_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_F_SF6402_131_S = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuReport_C_DQDKQK_D = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuReport_C_DQDKQK_M = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C_XZDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuReport_C_JQDKMX_D = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelContent = new System.Windows.Forms.Panel();
@@ -480,19 +480,19 @@
 			// menuReport_C
 			// 
 			this.menuReport_C.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuReport_C_DQDKQK_D,
+            this.menuReport_C_DQDKQK_M,
             this.menuReport_C_XZDKMX_D,
             this.menuReport_C_JQDKMX_D});
 			this.menuReport_C.Name = "menuReport_C";
 			this.menuReport_C.Size = new System.Drawing.Size(100, 21);
 			this.menuReport_C.Text = "自定义报表 (&C)";
 			// 
-			// menuReport_C_DQDKQK_D
+			// menuReport_C_DQDKQK_M
 			// 
-			this.menuReport_C_DQDKQK_D.Name = "menuReport_C_DQDKQK_D";
-			this.menuReport_C_DQDKQK_D.Size = new System.Drawing.Size(160, 22);
-			this.menuReport_C_DQDKQK_D.Text = "到期贷款情况";
-			this.menuReport_C_DQDKQK_D.Click += new System.EventHandler(this.menu_Report_Item_Click);
+			this.menuReport_C_DQDKQK_M.Name = "menuReport_C_DQDKQK_M";
+			this.menuReport_C_DQDKQK_M.Size = new System.Drawing.Size(160, 22);
+			this.menuReport_C_DQDKQK_M.Text = "到期贷款情况";
+			this.menuReport_C_DQDKQK_M.Click += new System.EventHandler(this.menu_Report_Item_Click);
 			// 
 			// menuReport_C_XZDKMX_D
 			// 
@@ -1321,7 +1321,7 @@
 		private System.Windows.Forms.ToolStripMenuItem menuReport_F_SF6402_131_S;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_X_SZHZ_M;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_X_DKZLFL_M;
-		private System.Windows.Forms.ToolStripMenuItem menuReport_C_DQDKQK_D;
+		private System.Windows.Forms.ToolStripMenuItem menuReport_C_DQDKQK_M;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_JQDKMX_D;
 		private System.Windows.Forms.ToolStripMenuItem menuReport_C_XZDKMX_D;
 		private System.Windows.Forms.Button btnCalendarImport;

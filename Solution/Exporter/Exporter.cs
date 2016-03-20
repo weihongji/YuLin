@@ -30,7 +30,7 @@ namespace Reporting
 		public string ExportData(XEnum.ReportType report, DateTime asOfDate, DateTime asOfDate2, List<string> columnNames, List<string> columnNames2) {
 			this.AsOfDate = asOfDate;
 
-			if (report != XEnum.ReportType.C_DQDKQK_D) {
+			if (report != XEnum.ReportType.C_DQDKQK_M) {
 				var dao = new SqlDbHelper();
 				var import = dao.ExecuteScalar(string.Format("SELECT 1 FROM Import WHERE ImportDate = '{0}'", asOfDate.ToString("yyyyMMdd")));
 				if (import == null) {
@@ -67,8 +67,8 @@ namespace Reporting
 				case XEnum.ReportType.X_FXDKBH_D:
 					result = new X_FXDKBH_D(asOfDate).GenerateReport();
 					break;
-				case XEnum.ReportType.C_DQDKQK_D:
-					result = new C_DQDKQK_D(asOfDate, columnNames, columnNames2).GenerateReport();
+				case XEnum.ReportType.C_DQDKQK_M:
+					result = new C_DQDKQK_M(asOfDate, columnNames, columnNames2).GenerateReport();
 					break;
 				case XEnum.ReportType.C_XZDKMX_D:
 					result = new C_XZDKMX_D(this.AsOfDate, this.AsOfDate2, Columns).GenerateReport();

@@ -569,7 +569,7 @@ namespace Reporting
 		}
 
 		private void ShowExportDate() {
-			if (this.currentReport == XEnum.ReportType.C_DQDKQK_D) {
+			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
 				this.txtExportDate.Visible = true;
 				this.btnCalendarExport.Visible = true;
 				this.cmbReportMonth.Visible = false;
@@ -782,7 +782,7 @@ namespace Reporting
 				return;
 			}
 			var exporter = new Exporter();
-			if (this.currentReport == XEnum.ReportType.C_DQDKQK_D) {
+			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
 				if (this.SelectedColumns1.Count == 0) {
 					this.SelectedColumns1.AddRange(TableMapping.GetFrozenColumnNames("ImportPublic"));
 					this.SelectedColumns1.AddRange(new string[] { "彻底从我行退出", "倒贷", "逾期", "化解方案" });
@@ -839,7 +839,7 @@ namespace Reporting
 		}
 
 		private void btnSelectColumns_Click(object sender, EventArgs e) {
-			if (this.currentReport == XEnum.ReportType.C_DQDKQK_D) {
+			if (this.currentReport == XEnum.ReportType.C_DQDKQK_M) {
 				var form = new frmCustomizeDQDK(this.SelectedColumns1, this.SelectedColumns2);
 				var result = form.ShowDialog(this);
 				if (result == System.Windows.Forms.DialogResult.OK) {

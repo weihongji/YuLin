@@ -76,7 +76,7 @@ namespace Reporting
 			F_SF6700_151_S = 42,	// SF6700-151
 
 			// Customize
-			C_DQDKQK_D = 61,		// 到期贷款情况
+			C_DQDKQK_M = 61,		// 到期贷款情况
 			C_XZDKMX_D = 62,		// 新增贷款明细表
 			C_JQDKMX_D = 63,		// 结清贷款明细表
 		}

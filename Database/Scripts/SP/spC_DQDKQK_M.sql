@@ -1,9 +1,9 @@
-IF EXISTS(SELECT * FROM sys.procedures WHERE name = 'spC_DQDKQK_D') BEGIN
-	DROP PROCEDURE spC_DQDKQK_D
+IF EXISTS(SELECT * FROM sys.procedures WHERE name = 'spC_DQDKQK_M') BEGIN
+	DROP PROCEDURE spC_DQDKQK_M
 END
 GO
 
-CREATE PROCEDURE dbo.spC_DQDKQK_D
+CREATE PROCEDURE dbo.spC_DQDKQK_M
 	@asOfDate as smalldatetime,
 	@tableName as nvarchar(20),
 	@customCols as nvarchar(2000)
