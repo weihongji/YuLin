@@ -768,7 +768,7 @@ namespace Reporting
 				sql.AppendLine("FROM ImportPrivate P");
 				sql.AppendLine("	INNER JOIN ImportLoan L ON P.ImportId = L.ImportId");
 				sql.AppendLine("		AND P.CustomerName = L.CustomerName");
-				sql.AppendLine("		AND ABS(P.LoanBalance*10000 - L.CapitalAmount) < 0.1");
+				sql.AppendLine("		AND ABS(P.LoanBalance*10000 - L.CapitalAmount) < 1.0");
 				sql.AppendLine("		AND P.ContractStartDate = L.LoanStartDate AND P.ContractEndDate = L.LoanEndDate");
 				sql.AppendLine("WHERE P.ImportId = {0} AND P.LoanAccount IS NULL");
 				var dao = new SqlDbHelper();
