@@ -994,6 +994,7 @@ IF NOT EXISTS(SELECT * FROM TableMapping) BEGIN
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (173, 'ImportLoanJQ', 'ContractInterestRatio', '合同最初计息利率', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (174, 'ImportLoanJQ', 'ContractOverdueInterestRate', '合同最初逾期利率', 2)
 	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (175, 'ImportLoanJQ', 'ChargeAccount', '扣款账号', 2)
+	INSERT TableMapping (Id, TableId, ColName, MappingName, MappingMode) VALUES (176, 'ImportLoanJQ', 'DangerLevelOld', '原五级分类', 2)
 END
 
 IF NOT EXISTS(SELECT * FROM TargetTable) BEGIN

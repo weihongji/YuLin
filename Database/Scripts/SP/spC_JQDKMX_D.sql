@@ -104,6 +104,7 @@ BEGIN
 		, L.CustomerName
 		, CapitalAmount = ISNULL(L2.CapitalAmount, 0)
 		, PaidCapital = L.CapitalAmount - ISNULL(L2.CapitalAmount, 0)
+		, DangerLevelOld = L.DangerLevel
 		, DangerLevel = ISNULL(R.DangerLevel, L.DangerLevel)
 		, R.DanBaoFangShi
 		, L.LoanStartDate
