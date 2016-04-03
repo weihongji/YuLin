@@ -108,6 +108,7 @@ BEGIN
 		WHERE L.ImportId = @importId
 			AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
+			AND P.PublicType = 1
 	) AS X1
 
 	/* 小企业 */

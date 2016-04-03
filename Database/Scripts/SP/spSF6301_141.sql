@@ -173,8 +173,9 @@ BEGIN
 
 	/* 1.2.3抵（质）押贷款 */
 	UPDATE R SET Balance1 = X.A, Balance2 = X.B, Balance3 = X.C, Balance4 = X.D, Balance5 = X.E, Balance6 = X.F, Balance7 = X.F
-	FROM #Result R, #ResultSingle X
-	WHERE R.Sorting = 8 AND X.Category IN ('抵押', '质押')
+	FROM #Result R,
+		(SELECT A = SUM(A),  B = SUM(B),  C = SUM(C),  D = SUM(D),  E = SUM(E),  F = SUM(F) FROM #ResultSingle WHERE Category IN ('抵押', '质押')) X
+	WHERE R.Sorting = 8
 
 	/* 1.2.4贴现及买断式转贴现 */
 	UPDATE R SET Balance1 = X.A, Balance2 = X.B, Balance3 = X.C, Balance4 = X.D, Balance5 = X.E, Balance6 = X.F, Balance7 = X.F
