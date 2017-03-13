@@ -50,6 +50,7 @@ IF NOT EXISTS(SELECT * FROM Org) BEGIN
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (34, '806055555', '榆林分行会计结算部', '会计结算部', NULL)
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (35, '806056666', '长安银行榆林运行中心', '运行中心', NULL)
 	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (36, '806130001', '神府区域直属支行', '神府直属支行', NULL)
+	INSERT INTO Org(Id, OrgNo, Name, Alias1, Alias2) VALUES (37 ,'806050001', '榆林分行小企业金融服务部', '小企业金融服务部', NULL)
 END
 
 /*
