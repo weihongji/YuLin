@@ -26,6 +26,12 @@ namespace Deployer
 			}
 			this.lblVersionText.Text = ConfigurationManager.AppSettings["Version"];
 			this.lblDateText.Text = ConfigurationManager.AppSettings["ReleaseDate"];
+			this.btnUpgrade.Text = IsInstall() ? "安装" : "升级到最新版本";
+		}
+
+		private bool IsInstall() {
+			var dbScript = Path.Combine(System.Environment.CurrentDirectory, "Scripts");
+			return !Directory.Exists(dbScript);
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e) {
@@ -48,7 +54,7 @@ namespace Deployer
 				var dbScript = Path.Combine(upgradePath, "Scripts");
 				var backupPath = Path.Combine(appPath, "Backup", DateTime.Now.ToString("yyMMddHHmmss"));
 
-				if (Directory.Exists(dbScript)) { // Upgrade db with existing data reserved
+				if (!IsInstall()) { // Upgrade db with existing data reserved
 					if (MessageBox.Show(string.Format("请确认报表系统没在运行，然后选择【确定】开始{0}的升级。", this.lblVersionText.Text), this.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) {
 						return;
 					}

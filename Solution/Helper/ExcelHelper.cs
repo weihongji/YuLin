@@ -22,6 +22,7 @@ namespace Reporting
 			Workbook theExcelBook = null;
 			Worksheet theSheet = null;
 			bool excelOpened = false;
+			bool isChanged = false;
 			try {
 				theExcelBook = theExcelApp.Workbooks.Open(filePath);
 				excelOpened = true;
@@ -62,6 +63,7 @@ namespace Reporting
 						range.Select();
 						logger.DebugFormat("Removing {0} rows from sheet: {1}", sheetEntity.RowsBeforeHeader, theSheet.Name);
 						range.Delete(XlDeleteShiftDirection.xlShiftUp);
+						isChanged = true;
 					}
 
 					// Fix column header names
@@ -76,6 +78,7 @@ namespace Reporting
 							}
 							else if (val.Equals("贷款发放后投向")) {
 								cell.Value2 = val + (++direction).ToString();
+								isChanged = true;
 							}
 						}
 					}
@@ -109,19 +112,28 @@ namespace Reporting
 							}
 							if (!val.Equals(cell.Value2)) {
 								cell.Value2 = val;
+								isChanged = true;
 							}
 						}
 					}
 
 					if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
 						logger.DebugFormat("Fixing column headers for {0}", theSheet.Name);
-						((Range)theSheet.Cells[1, 1]).Value2 = "科目代号";
-						((Range)theSheet.Cells[1, 2]).Value2 = "科目名称";
+						if (((Range)theSheet.Cells[1, 1]).Value2 != "科目代号") {
+							((Range)theSheet.Cells[1, 1]).Value2 = "科目代号";
+							((Range)theSheet.Cells[1, 2]).Value2 = "科目名称";
+							isChanged = true;
+						}
 					}
 				}
 
-				theExcelBook.Save();
-				logger.Debug("Processing done");
+				if (isChanged) {
+					theExcelBook.Save();
+					logger.Debug("Processing done");
+				}
+				else {
+					logger.Debug("Processing skipped. Nothing needs to fix.");
+				}
 			}
 			catch (Exception ex) {
 				logger.Error(ex);
