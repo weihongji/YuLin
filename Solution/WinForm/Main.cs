@@ -65,7 +65,8 @@ namespace Reporting
 		}
 
 		private void Main_Load(object sender, EventArgs e) {
-			StartSqlServer();
+			// Don't start sql server service because we may not be on the same machine as DB server.
+			//StartSqlServer();
 
 			this.calendarImport.Left = 206;
 			this.calendarImport.Visible = false;
