@@ -33,7 +33,7 @@ BEGIN
 		, OweInterestDays = CASE WHEN L.CustomerType = '∂‘ÀΩ' THEN PV.InterestOverdueDays ELSE PB.OweInterestDays END
 		, CustomerType = ISNULL(PV.ProductName, PB.MyBankIndTypeName)
 	INTO #Result
-	FROM ImportLoan L
+	FROM ImportLoanView L
 		LEFT JOIN Org O ON O.Id = L.OrgId4Report
 		LEFT JOIN ImportPrivate PV ON PV.LoanAccount = L.LoanAccount AND PV.ImportId = @importIdOfLastMonthEndDay
 		LEFT JOIN ImportPublic PB ON PB.LoanAccount = L.LoanAccount AND PB.ImportId = @importIdOfLastMonthEndDay

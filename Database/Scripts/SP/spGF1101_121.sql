@@ -32,7 +32,7 @@ BEGIN
 							, CJ = CASE WHEN L.DangerLevel = '次级' THEN Balance1 ELSE 0.00 END
 							, KY = CASE WHEN L.DangerLevel = '可疑' THEN Balance1 ELSE 0.00 END
 							, SS = CASE WHEN L.DangerLevel = '损失' THEN Balance1 ELSE 0.00 END
-						FROM ImportPublic P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+						FROM ImportPublic P LEFT JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 						WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 						UNION ALL
 						SELECT Direction1, LoanBalance AS Balance
@@ -40,7 +40,7 @@ BEGIN
 							, CJ = CASE WHEN L.DangerLevel = '次级' THEN LoanBalance ELSE 0.00 END
 							, KY = CASE WHEN L.DangerLevel = '可疑' THEN LoanBalance ELSE 0.00 END
 							, SS = CASE WHEN L.DangerLevel = '损失' THEN LoanBalance ELSE 0.00 END
-						FROM ImportPrivate P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+						FROM ImportPrivate P LEFT JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 						WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 							AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 					) AS X
@@ -58,7 +58,7 @@ BEGIN
 					, CJ = CASE WHEN L.DangerLevel = '次级' THEN LoanBalance ELSE 0.00 END
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN LoanBalance ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN LoanBalance ELSE 0.00 END
-				FROM ImportPrivate P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+				FROM ImportPrivate P LEFT JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName LIKE '%公务卡%'
 			) AS X
@@ -73,7 +73,7 @@ BEGIN
 					, CJ = CASE WHEN L.DangerLevel = '次级' THEN LoanBalance ELSE 0.00 END
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN LoanBalance ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN LoanBalance ELSE 0.00 END
-				FROM ImportPrivate P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+				FROM ImportPrivate P LEFT JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName LIKE '%汽车%'
 			) AS X
@@ -88,7 +88,7 @@ BEGIN
 					, CJ = CASE WHEN L.DangerLevel = '次级' THEN LoanBalance ELSE 0.00 END
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN LoanBalance ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN LoanBalance ELSE 0.00 END
-				FROM ImportPrivate P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+				FROM ImportPrivate P LEFT JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName LIKE '%住房%'
 			) AS X
@@ -103,7 +103,7 @@ BEGIN
 					, CJ = CASE WHEN L.DangerLevel = '次级' THEN LoanBalance ELSE 0.00 END
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN LoanBalance ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN LoanBalance ELSE 0.00 END
-				FROM ImportPrivate P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+				FROM ImportPrivate P LEFT JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName NOT IN ('个人经营贷款', '个人质押贷款(经营类)')
 					AND P.ProductName NOT LIKE '%公务卡%'
@@ -121,7 +121,7 @@ BEGIN
 							, CJ = CASE WHEN L.DangerLevel = '次级' THEN Balance1 ELSE 0.00 END
 							, KY = CASE WHEN L.DangerLevel = '可疑' THEN Balance1 ELSE 0.00 END
 							, SS = CASE WHEN L.DangerLevel = '损失' THEN Balance1 ELSE 0.00 END
-					FROM ImportPublic P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+					FROM ImportPublic P LEFT JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 					WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 						AND P.BusinessType LIKE '%转贴现%'
 				) AS X1
@@ -136,7 +136,7 @@ BEGIN
 					, CJ = CASE WHEN L.DangerLevel = '次级' THEN LoanBalance ELSE 0.00 END
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN LoanBalance ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN LoanBalance ELSE 0.00 END
-				FROM ImportPrivate P LEFT JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+				FROM ImportPrivate P LEFT JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 			) AS X
@@ -175,7 +175,7 @@ BEGIN
 										, SS = CASE WHEN L.DangerLevel = '损失' THEN L.CapitalAmount ELSE 0.00 END
 										, OverdueDays = CASE WHEN L.LoanEndDate < @asOfDate AND L.CapitalAmount > 0 THEN DATEDIFF(day, L.LoanEndDate, @asOfDate) ELSE 0 END
 										, OweInterestDays = ISNULL(CASE WHEN L.CustomerType = '对私' THEN PV.InterestOverdueDays ELSE PB.OweInterestDays END, 0)
-									FROM ImportLoan L
+									FROM ImportLoanView L
 										LEFT JOIN ImportPrivate PV ON PV.LoanAccount = L.LoanAccount AND PV.ImportId = L.ImportId
 										LEFT JOIN ImportPublic PB ON PB.LoanAccount = L.LoanAccount AND PB.ImportId = L.ImportId
 									WHERE L.ImportId = @importId

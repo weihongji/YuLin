@@ -19,31 +19,31 @@ BEGIN
 		, CASE WHEN dbo.sfGetLoanBalanceOf(@asOfDate, 0, O.Id) > 0 THEN dbo.sfGetLoanBalanceOf(@asOfDate, 0, O.Id) ELSE SUM(CapitalAmount) END AS Amount
 		, SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) AS OweInterest
 	INTO #Total
-	FROM ImportLoan L
+	FROM ImportLoanView L
 		RIGHT JOIN Org O ON L.OrgId = O.Id AND ImportId = @importId
 	GROUP BY O.Id
 
 	UPDATE #Total SET Amount = dbo.sfGetLoanBalanceOf(@asOfDate, 1, 1) WHERE OrgId = 1 --公司部
 	UPDATE #Total SET Amount = dbo.sfGetLoanBalanceOf(@asOfDate, 2, 1) WHERE OrgId = 2 --营业部
 
-	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoan WHERE ImportId = @importId AND LoanTypeName != '委托贷款' AND OrgId4Report = 1) WHERE OrgId = 1 --营业部
-	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoan WHERE ImportId = @importId AND LoanTypeName != '委托贷款' AND OrgId4Report = 2) WHERE OrgId = 2 --营业部
+	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoanView WHERE ImportId = @importId AND LoanTypeName != '委托贷款' AND OrgId4Report = 1) WHERE OrgId = 1 --营业部
+	UPDATE #Total SET OweInterest = (SELECT SUM(OweYingShouInterest) + SUM(OweCuiShouInterest) FROM ImportLoanView WHERE ImportId = @importId AND LoanTypeName != '委托贷款' AND OrgId4Report = 2) WHERE OrgId = 2 --营业部
 
-	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #YB FROM ImportLoan
+	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #YB FROM ImportLoanView
 	WHERE ImportId = @importId
 		AND LoanState IN ('逾期', '部分逾期', '非应计') AND LoanTypeName != '委托贷款'
 	GROUP BY OrgId4Report
 
 	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #BL
-	FROM ImportLoan
+	FROM ImportLoanView
 	WHERE ImportId = @importId
 		AND LoanState IN ('逾期', '部分逾期', '非应计') AND LoanTypeName != '委托贷款'
 		AND LoanAccount IN (
-			SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdWJFL AND DangerLevel IN ('次级', '可疑', '损失')
+			SELECT LoanAccount FROM ImportLoanView WHERE ImportId = @importIdWJFL AND DangerLevel IN ('次级', '可疑', '损失')
 		)
 	GROUP BY OrgId4Report
 
-	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #ZQX FROM ImportLoan
+	SELECT OrgId4Report AS OrgId, SUM(CapitalAmount) AS Amount, COUNT(*) AS Number INTO #ZQX FROM ImportLoanView
 	WHERE ImportId = @importId
 			AND LoanState = '正常'
 			AND OweYingShouInterest + OweCuiShouInterest != 0

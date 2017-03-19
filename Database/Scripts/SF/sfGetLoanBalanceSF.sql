@@ -18,7 +18,7 @@ BEGIN
 	END
 
 	DECLARE @balance money
-	SELECT @balance = SUM(CapitalAmount) FROM ImportLoanSF
+	SELECT @balance = SUM(CapitalAmount) FROM ImportLoanSFView
 	WHERE ImportId = @importId
 		AND (@type = 0
 			OR @type = 1 AND CustomerType = '¶Ô¹«'

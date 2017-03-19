@@ -42,7 +42,7 @@ BEGIN
 					, F = 0.00
 			FROM ImportPublic P
 				INNER JOIN DanBaoFangShi D ON P.VouchTypeName = D.Name
-				INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+				INNER JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND PublicType = 1
 				AND L.DangerLevel IN ('次级', '可疑', '损失')
 
@@ -51,7 +51,7 @@ BEGIN
 			SELECT D.Category, A = 0.00, B = 0.00, C = 0.00, D = 0.00, E = 0.00, F = P.LoanBalance
 			FROM ImportPrivate P
 				INNER JOIN DanBaoFangShi D ON P.DanBaoFangShi = D.Name
-				INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+				INNER JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 				AND L.DangerLevel IN ('次级', '可疑', '损失')
@@ -66,7 +66,7 @@ BEGIN
 				, E = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1 < 500 THEN Balance1 ELSE 0.00 END
 				, F = 0.00
 			FROM ImportPublic P
-				INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+				INNER JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND PublicType = 1
 				AND BusinessType LIKE '%贴现%'
 				AND L.DangerLevel IN ('次级', '可疑', '损失')

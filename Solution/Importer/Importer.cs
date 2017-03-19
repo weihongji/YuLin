@@ -14,6 +14,7 @@ namespace Reporting
 		protected List<string> targetFileNames = new List<string> { "dummy", "Loan.xls", "Public.xls", "Private.xls", "NonAccrual.xls", "Overdue.xls", "YWNei.xls", "YWWai.xls" };
 		private Logger logger = Logger.GetLogger("Importer");
 		private readonly string OrgCodeYuLin = "806050000";
+		private readonly string OrgCodeSF = "806138000";
 
 		#region Create import instance and backup imported files
 		public virtual string CreateImport(DateTime asOfDate, string[] sourceFiles) {
@@ -643,7 +644,20 @@ namespace Reporting
 			if (expected.Equals("UNKNOWN")) {
 				return true;
 			}
-			return (actual.EndsWith("$") || actual.EndsWith("$'")) && actual.IndexOf(expected) >= 0;
+			bool matched = false;
+			while (!matched) {
+				matched = (actual.EndsWith("$") || actual.EndsWith("$'")) && actual.IndexOf(expected) >= 0;
+				if (!matched) {
+					if (actual.IndexOf('(') > 0) {
+						actual = actual.Replace("(", "（");
+					}
+					if (actual.IndexOf(')') > 0) {
+						actual = actual.Replace(")", "）");
+					}
+				}
+			}
+			
+			return matched;
 		}
 
 		private string GetTableSuffix(XEnum.ImportItemType itemType) {
@@ -831,6 +845,9 @@ namespace Reporting
 			if (orgNo.Equals(OrgCodeYuLin)) {
 				return (int)XEnum.OrgId.YuLin; // 榆林地区总额 (不含神府)
 			}
+			else if (orgNo.Equals(OrgCodeSF)) {
+				return (int)XEnum.OrgId.ShenFu; // 榆林地区总额 (不含神府)
+			}
 			var dao = new SqlDbHelper();
 			var orgId = dao.ExecuteScalar(string.Format("SELECT TOP 1 Id FROM Org WHERE OrgNo = '{0}'", orgNo));
 			return orgId == null ? 0 : (int)orgId;
@@ -851,7 +868,7 @@ namespace Reporting
 			}
 
 			var orgNo = fileName.Split('_').SingleOrDefault(x => x.StartsWith("806")) ?? "";
-			if (orgNo.Equals(OrgCodeYuLin)) {
+			if (orgNo.Equals(OrgCodeYuLin) || orgNo.Equals(OrgCodeSF)) {
 				return orgNo;
 			}
 			else if (orgNo.Equals("806058000")) {

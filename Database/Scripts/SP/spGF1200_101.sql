@@ -61,9 +61,9 @@ BEGIN
 					, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 					, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 					, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
+				FROM ImportLoanView L
 				WHERE ImportId = @importId
-					AND NOT EXISTS(SELECT * FROM ImportLoan LY WHERE LY.ImportId = @importIdLastYear AND LY.LoanAccount = L.LoanAccount)
+					AND NOT EXISTS(SELECT * FROM ImportLoanView LY WHERE LY.ImportId = @importIdLastYear AND LY.LoanAccount = L.LoanAccount)
 			) AS X1
 		) AS X
 	WHERE R.Id = 0
@@ -79,9 +79,9 @@ BEGIN
 					, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 					, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 					, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
+				FROM ImportLoanView L
 				WHERE ImportId = @importId
-					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdLastYear AND (DangerLevel IS NULL OR DangerLevel = '正常' ))
+					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoanView WHERE ImportId = @importIdLastYear AND (DangerLevel IS NULL OR DangerLevel = '正常' ))
 			) AS X1
 		) AS X
 	WHERE R.Id = 1
@@ -97,9 +97,9 @@ BEGIN
 					, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 					, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 					, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
+				FROM ImportLoanView L
 				WHERE ImportId = @importId
-					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdLastYear AND DangerLevel LIKE '关%')
+					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoanView WHERE ImportId = @importIdLastYear AND DangerLevel LIKE '关%')
 			) AS X1
 		) AS X
 	WHERE R.Id = 2
@@ -115,9 +115,9 @@ BEGIN
 					, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 					, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 					, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
+				FROM ImportLoanView L
 				WHERE ImportId = @importId
-					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdLastYear AND DangerLevel = '次级')
+					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoanView WHERE ImportId = @importIdLastYear AND DangerLevel = '次级')
 			) AS X1
 		) AS X
 	WHERE R.Id = 3
@@ -133,9 +133,9 @@ BEGIN
 					, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 					, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 					, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
+				FROM ImportLoanView L
 				WHERE ImportId = @importId
-					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdLastYear AND DangerLevel = '可疑')
+					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoanView WHERE ImportId = @importIdLastYear AND DangerLevel = '可疑')
 			) AS X1
 		) AS X
 	WHERE R.Id = 4
@@ -151,9 +151,9 @@ BEGIN
 					, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 					, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 					, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-				FROM ImportLoan L
+				FROM ImportLoanView L
 				WHERE ImportId = @importId
-					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoan WHERE ImportId = @importIdLastYear AND DangerLevel = '损失')
+					AND LoanAccount IN (SELECT LoanAccount FROM ImportLoanView WHERE ImportId = @importIdLastYear AND DangerLevel = '损失')
 			) AS X1
 		) AS X
 	WHERE R.Id = 5
@@ -167,7 +167,7 @@ BEGIN
 			SELECT Total = SUM(CapitalAmount)
 			FROM (
 				SELECT CapitalAmount
-				FROM ImportLoan L
+				FROM ImportLoanView L
 					LEFT JOIN ImportPublic U ON L.LoanAccount = U.LoanAccount AND U.ImportId = @importId
 					LEFT JOIN ImportPrivate V ON L.LoanAccount = V.LoanAccount AND V.ImportId = @importId
 				WHERE L.ImportId = @importId
@@ -191,9 +191,9 @@ BEGIN
 							ELSE 1
 						END
 					, CapitalAmount
-				FROM ImportLoan LY
+				FROM ImportLoanView LY
 				WHERE ImportId = @importIdLastYear
-					AND NOT EXISTS(SELECT * FROM ImportLoan L WHERE L.ImportId = @importId AND L.LoanAccount = LY.LoanAccount)
+					AND NOT EXISTS(SELECT * FROM ImportLoanView L WHERE L.ImportId = @importId AND L.LoanAccount = LY.LoanAccount)
 			) AS X1
 			GROUP BY Id
 		) AS X ON R.Id = X.Id

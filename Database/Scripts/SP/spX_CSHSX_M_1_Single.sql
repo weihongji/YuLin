@@ -85,7 +85,7 @@ BEGIN
 			, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
 			, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 		FROM ImportPublic P
-			LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+			LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 			LEFT JOIN DanBaoFangShi D ON D.Name = P.VouchTypeName
 		WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 		UNION ALL
@@ -96,7 +96,7 @@ BEGIN
 			, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
 			, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 		FROM ImportPrivate P
-			LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+			LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 			LEFT JOIN DanBaoFangShi D ON D.Name = P.DanBaoFangShi
 		WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	) AS X
@@ -145,7 +145,7 @@ BEGIN
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 				FROM ImportPublic P
-					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+					LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 					AND P.BusinessType LIKE '%贴现%'
 			) AS X1
@@ -202,7 +202,7 @@ BEGIN
 				, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
 				, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 			FROM ImportPublic P
-				LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				LEFT JOIN DanBaoFangShi D ON D.Name = P.VouchTypeName
 			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 			UNION ALL
@@ -214,7 +214,7 @@ BEGIN
 				, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
 				, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 			FROM ImportPrivate P
-				LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+				LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				LEFT JOIN DanBaoFangShi D ON D.Name = DanBaoFangShi
 			WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 		) AS X
@@ -252,7 +252,7 @@ BEGIN
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 				FROM ImportPublic P
-					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+					LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 			) AS X1
 		) AS X
@@ -274,7 +274,7 @@ BEGIN
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.Balance1 ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.Balance1 ELSE 0.00 END
 				FROM ImportPublic P
-					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+					LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 					--AND P.BusinessType = '房地产开发贷款'
 					AND P.IndustryType1 = '房地产业'
@@ -298,7 +298,7 @@ BEGIN
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 				FROM ImportPrivate P
-					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+					LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 			) AS X1
@@ -321,7 +321,7 @@ BEGIN
 					, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
 					, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 				FROM ImportPrivate P
-					LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+					LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 				WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 					AND P.ProductName LIKE '%房%'
 			) AS X1
@@ -352,7 +352,7 @@ BEGIN
 						, KY = CASE WHEN L.DangerLevel = '可疑' THEN P.LoanBalance ELSE 0.00 END
 						, SS = CASE WHEN L.DangerLevel = '损失' THEN P.LoanBalance ELSE 0.00 END
 					FROM ImportPrivate P
-						LEFT JOIN ImportLoan L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
+						LEFT JOIN ImportLoanView L ON L.LoanAccount = P.LoanAccount AND L.ImportId = P.ImportId
 					WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				) AS X1
 			) AS X

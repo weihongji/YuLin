@@ -69,7 +69,7 @@ BEGIN
 				, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-		FROM ImportLoan
+		FROM ImportLoanView
 		WHERE ImportId = @importId
 			AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	) AS X1
@@ -104,7 +104,7 @@ BEGIN
 				, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-		FROM ImportLoan L INNER JOIN ImportPublic P ON L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
+		FROM ImportLoanView L INNER JOIN ImportPublic P ON L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
 		WHERE L.ImportId = @importId
 			AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 			AND P.MyBankIndTypeName IN ('小型企业', '微型企业')
@@ -128,7 +128,7 @@ BEGIN
 				, CJ = CASE WHEN L.DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 				, KY = CASE WHEN L.DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 				, SS = CASE WHEN L.DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END
-		FROM ImportLoan L INNER JOIN ImportPrivate P ON L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
+		FROM ImportLoanView L INNER JOIN ImportPrivate P ON L.ImportId = P.ImportId AND L.LoanAccount = P.LoanAccount
 		WHERE L.ImportId = @importId
 			AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	) AS X1

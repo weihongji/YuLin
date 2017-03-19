@@ -18,7 +18,7 @@ BEGIN
 	SELECT @total = CAST(ROUND(SUM(CurrentDebitBalance)/10000, 2) AS money) FROM ImportYWNei
 	WHERE ImportId = @importId
 		AND SubjectCode BETWEEN '1301' AND '1382'
-		AND OrgId = 1001
+		AND OrgId >= 1001
 
 	SELECT @overdue90 = SUM(Balance) FROM (
 		SELECT OverdueDays = CASE WHEN P.LoanEndDate < @asOfDate AND P.Balance1 > 0 THEN DATEDIFF(day, P.LoanEndDate, @asOfDate) ELSE 0 END
@@ -35,7 +35,7 @@ BEGIN
 	) AS X
 	WHERE OverdueDays > 90 OR OweInterestDays > 90
 		
-	SELECT DangerLevel, CAST(ROUND(SUM(CapitalAmount)/10000, 2) AS money) as Amount INTO #Result FROM ImportLoan
+	SELECT DangerLevel, CAST(ROUND(SUM(CapitalAmount)/10000, 2) AS money) as Amount INTO #Result FROM ImportLoanView
 	WHERE ImportId = @importId
 		AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	GROUP BY DangerLevel

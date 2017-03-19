@@ -27,6 +27,13 @@ sqlcmd -S .\SQL2012 -d YuLin -i sfGetOrgs.sql
 echo Done
 echo.
 
+echo Creating views...
+cd ..\View
+sqlcmd -S .\SQL2012 -d YuLin -i ImportLoanSFView.sql
+sqlcmd -S .\SQL2012 -d YuLin -i ImportLoanView.sql
+echo Done
+echo.
+
 echo Creating stored procedures...
 cd ..\SP
 sqlcmd -S .\SQL2012 -d YuLin -i spLoanRiskDaily.sql

@@ -37,14 +37,8 @@ BEGIN
 	SELECT @totalBL = SUM(CapitalAmount)/10000
 	FROM (
 		SELECT L.CapitalAmount
-		FROM ImportLoan L
-			INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
-		WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
-			AND W.DangerLevel IN ('次级', '可疑', '损失')
-		UNION ALL
-		SELECT L.CapitalAmount
-		FROM ImportLoanSF L
-			INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
+		FROM ImportLoanView L
+			INNER JOIN ImportLoanView W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 		WHERE L.ImportId = @importId
 			AND W.DangerLevel IN ('次级', '可疑', '损失')
 	) AS X
@@ -80,7 +74,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan   W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPublic P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgsOf('YL'))
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 			GROUP BY P.CustomerName, P.OrgCode
 			ORDER BY Balance DESC
@@ -108,7 +102,7 @@ BEGIN
 			FROM ImportLoan L
 				INNER JOIN ImportLoan    W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdWJFL
 				INNER JOIN ImportPrivate P ON L.LoanAccount = P.LoanAccount AND P.ImportId = @importIdWJFL
-			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+			WHERE L.ImportId = @importId AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgsOf('YL'))
 				AND W.DangerLevel IN ('次级', '可疑', '损失')
 			GROUP BY P.CustomerName, P.IdCardNo
 			ORDER BY Balance DESC
@@ -122,15 +116,15 @@ BEGIN
 				, LoanStartDate = MIN(L.LoanStartDate)
 				, MBalance = (
 					SELECT Balance = SUM(L1.CapitalAmount)/10000
-					FROM ImportLoanSF L1
+					FROM ImportLoanSFView L1
 					WHERE L1.ImportId = @importIdLastMonth AND L1.DangerLevel IN ('次级', '可疑', '损失')
 				)
 				, YBalance = (
 					SELECT Balance = SUM(L1.CapitalAmount)/10000
-					FROM ImportLoanSF L1
+					FROM ImportLoanSFView L1
 					WHERE L1.ImportId = @importIdYearStart AND L1.DangerLevel IN ('次级', '可疑', '损失')
 				)
-			FROM ImportLoanSF L
+			FROM ImportLoanSFView L
 				INNER JOIN #WjflSF_Distinct W ON L.LoanAccount = W.LoanAccount
 			WHERE L.ImportId = @importId
 				AND W.DangerLevel IN ('次级', '可疑', '损失')

@@ -19,9 +19,9 @@ BEGIN
 	SELECT @importIdLastMonth = Id FROM Import WHERE ImportDate = @asOfDateLastMonth
 
 	SELECT TOP 20 P.OrgName2, P.CustomerName, D.Name AS Direction, LoanAmount = CAST(P.LoanBalance AS money), LoanBalance = CAST(P.LoanBalance AS money), P.ProductName, L.LoanStartDate, L.LoanEndDate, P.DanBaoFangShi, L.DangerLevel, DangerLevelLM = LM.DangerLevel
-	FROM ImportLoan L
+	FROM ImportLoanView L
 		INNER JOIN ImportPrivate P ON P.LoanAccount = L.LoanAccount AND P.ImportId = @importId
-		LEFT JOIN ImportLoan LM ON LM.ImportId = @importIdLastMonth AND LM.LoanAccount = L.LoanAccount
+		LEFT JOIN ImportLoanView LM ON LM.ImportId = @importIdLastMonth AND LM.LoanAccount = L.LoanAccount
 		LEFT JOIN Direction D ON D.Name = P.Direction1
 	WHERE L.ImportId = @importId
 		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())

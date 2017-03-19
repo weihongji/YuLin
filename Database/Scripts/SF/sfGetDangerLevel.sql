@@ -22,7 +22,7 @@ BEGIN
 	SELECT @asOfDate = ImportDate FROM Import WHERE Id = @importId
 	SELECT @customerType = CASE WHEN LEN(CustomerName) < 5 THEN '对私' ELSE '对公' END /*CustomerType*/
 		, @overdueDays = CASE WHEN LoanEndDate < @asOfDate THEN DATEDIFF(day, LoanEndDate, @asOfDate) ELSE 0 END
-	FROM ImportLoan
+	FROM ImportLoanView
 	WHERE ImportId = @importId AND LoanAccount = @loanAccount
 
 	IF @customerType = '对公' BEGIN

@@ -24,7 +24,7 @@ BEGIN
 
 	SELECT TOP 20 Id = MAX(Id), CustomerName, TotalBalance = CAST(SUM(CapitalAmount)/10000 AS money)
 	INTO #Top20
-	FROM ImportLoan L
+	FROM ImportLoanView L
 	WHERE ImportId = @importId
 		AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 		AND CustomerType = '¶Ô¹«'
@@ -34,9 +34,9 @@ BEGIN
 
 	SELECT P.OrgName2, T.CustomerName, D.Name AS Direction, P.IsINRZ, LoanAmount = CAST(L.LoanAmount/10000 AS money), T.TotalBalance, P.BusinessType, L.LoanStartDate, L.LoanEndDate, P.VouchTypeName, L.DangerLevel, DangerLevelLM = LM.DangerLevel
 	FROM #Top20 T
-		INNER JOIN ImportLoan L ON T.Id = L.Id
+		INNER JOIN ImportLoanView L ON T.Id = L.Id
 		INNER JOIN ImportPublic P ON P.LoanAccount = L.LoanAccount AND P.ImportId = @importId
-		LEFT JOIN ImportLoan LM ON LM.ImportId = @importIdLastMonth AND LM.LoanAccount = L.LoanAccount
+		LEFT JOIN ImportLoanView LM ON LM.ImportId = @importIdLastMonth AND LM.LoanAccount = L.LoanAccount
 		LEFT JOIN Direction D ON D.Name = P.Direction1
 	ORDER BY T.TotalBalance DESC
 

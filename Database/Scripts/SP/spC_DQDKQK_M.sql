@@ -50,7 +50,7 @@ BEGIN
 		SET @sql = 'SELECT ROW_NUMBER() OVER(ORDER BY P.OrgName2) AS [ÐòºÅ], '+ LEFT(@sql, LEN(@sql)-1)
 			+ ' FROM ('
 			+ '		SELECT OrgName, OrgName2, CustomerName, OrgType, OrgCode, ContractNo, DueBillNo, LoanStartDate, LoanEndDate, IndustryType1, IndustryType2, IndustryType3, IndustryType4, TermMonth, CurrencyType, Direction1, Direction2, Direction3, Direction4, OccurType, BusinessType, SubjectNo'
-			+ '			, ClassifyResult = (SELECT DangerLevel FROM ImportLoan L WHERE L.ImportId = @importId AND L.LoanAccount = P1.LoanAccount)'
+			+ '			, ClassifyResult = (SELECT DangerLevel FROM ImportLoanView L WHERE L.ImportId = @importId AND L.LoanAccount = P1.LoanAccount)'
 			+ '			, CreditLevel, MyBankIndTypeName, ScopeName, OverdueDays, OweInterestDays, Balance1, ActualBusinessRate, RateFloat, VouchTypeName, BailRatio, NormalBalance, OverdueBalance, BadBalance, LoanAccount, IsAgricultureCredit, IsINRZ'
 			+ '		FROM ImportPublic P1'
 			+ '		WHERE P1.ImportId=@importId AND P1.PublicType = 1 AND LoanEndDate BETWEEN @startDate AND @endDate'
@@ -62,7 +62,7 @@ BEGIN
 		SET @sql = 'SELECT ROW_NUMBER() OVER(ORDER BY P.OrgName2) AS [ÐòºÅ], '+ LEFT(@sql, LEN(@sql)-1)
 			+ ' FROM ('
 			+ '		SELECT OrgName, OrgName2, ProductName, ProductType, LoanMonths, ZongHeShouXinEDu'
-			+ '			, DangerLevel = (SELECT MAX(DangerLevel) FROM ImportLoan L WHERE L.ImportId = @importId AND L.LoanAccount = P1.LoanAccount)'
+			+ '			, DangerLevel = (SELECT MAX(DangerLevel) FROM ImportLoanView L WHERE L.ImportId = @importId AND L.LoanAccount = P1.LoanAccount)'
 			+ '			, RepaymentMethod, CustomerName, IdCardNo, CurrencyType, ContractStartDate, ContractEndDate, InterestRatio, DanBaoFangShi, LoanBalance, Direction1, Direction2, Direction3, Direction4, CapitalOverdueDays, InterestOverdueDays, OweInterestAmount, OverdueBalance, NonAccrualBalance'
 			+ '		FROM ImportPrivate P1'
 			+ '		WHERE P1.ImportId=@importId AND ContractEndDate BETWEEN @startDate AND @endDate'

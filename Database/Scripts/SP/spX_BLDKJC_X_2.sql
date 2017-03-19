@@ -49,7 +49,7 @@ BEGIN
 		SELECT @NoShenFu_1 = ISNULL(SUM(CapitalAmount), 0)
 		FROM ImportLoan
 		WHERE ImportId = @importIdToday AND DangerLevel IN ('次级', '可疑', '损失')
-			AND OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+			AND OrgId IN (SELECT Id FROM dbo.sfGetOrgsOf('YL'))
 
 		SELECT @HengShan_1 = ISNULL(SUM(CapitalAmount), 0)
 		FROM ImportLoan
@@ -67,12 +67,12 @@ BEGIN
 			AND OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
 
 		SELECT @ShenMu_1 = ISNULL(SUM(CapitalAmount), 0)
-		FROM ImportLoanSF
+		FROM ImportLoanSFView
 		WHERE ImportId = @importIdToday AND DangerLevel IN ('次级', '可疑', '损失')
 			AND OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
 
 		SELECT @FuGu_1 = ISNULL(SUM(CapitalAmount), 0)
-		FROM ImportLoanSF
+		FROM ImportLoanSFView
 		WHERE ImportId = @importIdToday AND DangerLevel IN ('次级', '可疑', '损失')
 			AND OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
 	END
@@ -80,7 +80,7 @@ BEGIN
 		SELECT @NoShenFu_1 = ISNULL(SUM(L.CapitalAmount), 0)
 		FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 		WHERE L.ImportId = @importIdToday AND W.DangerLevel IN ('次级', '可疑', '损失')
-			AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+			AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgsOf('YL'))
 
 		SELECT @HengShan_1 = ISNULL(SUM(L.CapitalAmount), 0)
 		FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
@@ -98,12 +98,12 @@ BEGIN
 			AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
 
 		SELECT @ShenMu_1 = ISNULL(SUM(L.CapitalAmount), 0)
-		FROM ImportLoanSF L INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+		FROM ImportLoanSFView L INNER JOIN ImportLoanSFView W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 		WHERE L.ImportId = @importIdToday AND W.DangerLevel IN ('次级', '可疑', '损失')
 			AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
 
 		SELECT @FuGu_1 = ISNULL(SUM(L.CapitalAmount), 0)
-		FROM ImportLoanSF L INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+		FROM ImportLoanSFView L INNER JOIN ImportLoanSFView W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 		WHERE L.ImportId = @importIdToday AND W.DangerLevel IN ('次级', '可疑', '损失')
 			AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
 	END
@@ -112,7 +112,7 @@ BEGIN
 	SELECT @NoShenFu_2 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 	WHERE L.ImportId = @importIdLastTenDays AND W.DangerLevel IN ('次级', '可疑', '损失')
-		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgsOf('YL'))
 
 	SELECT @HengShan_2 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L INNER JOIN ImportLoan W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
@@ -130,12 +130,12 @@ BEGIN
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
 
 	SELECT @ShenMu_2 = ISNULL(SUM(L.CapitalAmount), 0)
-	FROM ImportLoanSF L INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+	FROM ImportLoanSFView L INNER JOIN ImportLoanSFView W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 	WHERE L.ImportId = @importIdLastTenDays AND W.DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
 
 	SELECT @FuGu_2 = ISNULL(SUM(L.CapitalAmount), 0)
-	FROM ImportLoanSF L INNER JOIN ImportLoanSF W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
+	FROM ImportLoanSFView L INNER JOIN ImportLoanSFView W ON L.LoanAccount = W.LoanAccount AND W.ImportId = @importIdLastMonth
 	WHERE L.ImportId = @importIdLastTenDays AND W.DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
 
@@ -143,7 +143,7 @@ BEGIN
 	SELECT @NoShenFu_3 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L
 	WHERE L.ImportId = @importIdLastMonth AND L.DangerLevel IN ('次级', '可疑', '损失')
-		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgsOf('YL'))
 
 	SELECT @HengShan_3 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L
@@ -161,12 +161,12 @@ BEGIN
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
 
 	SELECT @ShenMu_3 = ISNULL(SUM(L.CapitalAmount), 0)
-	FROM ImportLoanSF L
+	FROM ImportLoanSFView L
 	WHERE L.ImportId = @importIdLastMonth AND DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
 
 	SELECT @FuGu_3 = ISNULL(SUM(L.CapitalAmount), 0)
-	FROM ImportLoanSF L
+	FROM ImportLoanSFView L
 	WHERE L.ImportId = @importIdLastMonth AND DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
 
@@ -174,7 +174,7 @@ BEGIN
 	SELECT @NoShenFu_4 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L
 	WHERE L.ImportId = @importIdYearStart AND L.DangerLevel IN ('次级', '可疑', '损失')
-		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
+		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgsOf('YL'))
 
 	SELECT @HengShan_4 = ISNULL(SUM(L.CapitalAmount), 0)
 	FROM ImportLoan L
@@ -192,12 +192,12 @@ BEGIN
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%定边%')
 
 	SELECT @ShenMu_4 = ISNULL(SUM(L.CapitalAmount), 0)
-	FROM ImportLoanSF L
+	FROM ImportLoanSFView L
 	WHERE L.ImportId = @importIdYearStart AND DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%神木%')
 
 	SELECT @FuGu_4 = ISNULL(SUM(L.CapitalAmount), 0)
-	FROM ImportLoanSF L
+	FROM ImportLoanSFView L
 	WHERE L.ImportId = @importIdYearStart AND DangerLevel IN ('次级', '可疑', '损失')
 		AND L.OrgId IN (SELECT Id FROM Org WHERE Name LIKE '%府谷%')
 

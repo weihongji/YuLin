@@ -25,7 +25,7 @@ BEGIN
 		, OweCapital = CAST(L.OweCapital/10000 AS money)
 		, OweInterestAmount = CAST((L.OweYingShouInterest + L.OweCuiShouInterest)/10000 AS money)
 		, L.DangerLevel
-	FROM ImportLoan L
+	FROM ImportLoanView L
 		INNER JOIN ImportPublic P ON P.LoanAccount = L.LoanAccount AND P.ImportId = @importId
 		LEFT JOIN Direction D ON D.Name = P.Direction1
 	WHERE L.ImportId = @importId

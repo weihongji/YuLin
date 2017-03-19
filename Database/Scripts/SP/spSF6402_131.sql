@@ -33,7 +33,7 @@ BEGIN
 								, Balance5 = CASE WHEN ScopeName IN ('小型企业', '微型企业') AND Balance1< 500 THEN Balance1 ELSE 0.00 END
 								, Balance6 = 0.00
 							FROM ImportPublic P
-								INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+								INNER JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 							WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs()) AND P.PublicType = 1
 								AND L.DangerLevel IN ('次级', '可疑', '损失')
 							UNION ALL
@@ -41,7 +41,7 @@ BEGIN
 								, Balance1 = 0.00, Balance2 = 0.00, Balance3 = 0.00, Balance4 = 0.00, Balance5 = 0.00
 								, LoanBalance AS Balance6
 							FROM ImportPrivate P
-								INNER JOIN ImportLoan L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
+								INNER JOIN ImportLoanView L ON P.ImportId = L.ImportId AND P.LoanAccount = L.LoanAccount
 							WHERE P.ImportId = @importId AND P.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 								AND P.ProductName IN ('个人经营贷款', '个人质押贷款(经营类)')
 								AND L.DangerLevel IN ('次级', '可疑', '损失')

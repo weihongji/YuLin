@@ -55,7 +55,7 @@ BEGIN
 		, OweInterestDays = CASE WHEN L.CustomerType = '对私' THEN PV.InterestOverdueDays ELSE PB.OweInterestDays END
 		, CustomerType = ISNULL(PV.ProductName, PB.MyBankIndTypeName)
 	INTO #ResultWJFL
-	FROM ImportLoan L
+	FROM ImportLoanView L
 		LEFT JOIN ImportPrivate PV ON PV.LoanAccount = L.LoanAccount AND PV.ImportId = L.ImportId
 		LEFT JOIN ImportPublic PB ON PB.LoanAccount = L.LoanAccount AND PB.ImportId = L.ImportId
 		LEFT JOIN ImportNonAccrual NA ON L.LoanAccount = NA.LoanAccount AND NA.ImportId = L.ImportId
@@ -78,7 +78,7 @@ BEGIN
 	SELECT L1.Id FROM
 		(
 			SELECT Id, LoanAccount, CapitalAmount, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
-			FROM ImportLoan
+			FROM ImportLoanView
 			WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND ImportId = @importId1
 				AND (
@@ -89,7 +89,7 @@ BEGIN
 		LEFT JOIN
 		(
 			SELECT Id, LoanAccount, CapitalAmount, OweInterestAmount = OweYingShouInterest + OweCuiShouInterest
-			FROM ImportLoan
+			FROM ImportLoanView
 			WHERE OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 				AND ImportId = @importId2
 				AND (
@@ -119,10 +119,10 @@ BEGIN
 		, LoanState = CASE WHEN L.LoanState = '正常' THEN '只欠息' ELSE L.LoanState END
 		, L.LoanType, L.LoanTypeName, L.Direction, L.ZhuanLieYuQi, L.ZhuanLieFYJ, L.InterestEndDate, L.LiLvType, L.LiLvSymbol, L.LiLvJiaJianMa, L.YuQiLiLvYiJu, L.YuQiLiLvType, L.YuQiLiLvSymbol, L.YuQiLiLvJiaJianMa, L.LiLvYiJu, L.ContractInterestRatio, L.ContractOverdueInterestRate, L.ChargeAccount
 	INTO #Result
-	FROM ImportLoan L
+	FROM ImportLoanView L
 		INNER JOIN Org O ON L.OrgId = O.Id
 		LEFT JOIN #ResultWJFL R ON L.LoanAccount = R.LoanAccount
-		LEFT JOIN ImportLoan L2 ON L.LoanAccount = L2.LoanAccount AND L2.ImportId = @importId2
+		LEFT JOIN ImportLoanView L2 ON L.LoanAccount = L2.LoanAccount AND L2.ImportId = @importId2
 	WHERE L.Id IN (SELECT Id FROM #LoanId WHERE Id > 0)
 
 	UPDATE R SET SubIndex = (SELECT COUNT(*) FROM #Result I WHERE I.OrgId = R.OrgId AND I.Id<=R.Id) FROM #Result R

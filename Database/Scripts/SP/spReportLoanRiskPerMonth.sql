@@ -13,46 +13,6 @@ BEGIN
 	DECLARE @importId int
 	SELECT @importId = Id FROM Import WHERE ImportDate = @asOfDate
 
-	SELECT -1 AS Id INTO #LoanId
-
-	IF @type = 'FYJ' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT Id FROM ImportLoan
-		WHERE ImportId = @importId
-			AND LoanState = '非应计'
-	END
-	ELSE IF @type = 'BLDK' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT Id FROM ImportLoan
-		WHERE ImportId=@importId
-			AND DangerLevel IN ('次级', '可疑', '损失')
-	END
-	ELSE IF @type = 'YQ' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT Id FROM ImportLoan
-		WHERE ImportId=@importId
-			AND LoanState IN ('逾期', '部分逾期')
-	END
-	ELSE IF @type = 'ZQX' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT Id FROM ImportLoan
-		WHERE ImportId=@importId
-			AND LoanState = '正常'
-			AND OweYingShouInterest + OweCuiShouInterest != 0
-	END
-	ELSE IF @type = 'GZDK' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT Id FROM ImportLoan
-		WHERE ImportId=@importId
-			AND DangerLevel LIKE '关%'
-	END
-	ELSE IF @type = 'F_HYB' BEGIN
-		INSERT INTO #LoanId(Id)
-		SELECT Id FROM ImportLoan
-		WHERE ImportId=@importId
-			AND (DangerLevel IN ('次级', '可疑', '损失') OR DangerLevel LIKE '关%')
-	END
-
 	DECLARE @placeTaker_IsNew nvarchar(2) = ''
 
 	SELECT L.Id, L.ImportId, L.LoanAccount, OrgName = CASE WHEN L.CustomerType = '对私' AND O.Alias1 = '公司部' THEN '营业部' ELSE O.Alias1 END
@@ -76,13 +36,21 @@ BEGIN
 		, Direction4 = ISNULL(PV.Direction4, PB.Direction4)
 		, FinalDays = 0
 	INTO #Result
-	FROM ImportLoan L
+	FROM ImportLoanView L
 		LEFT JOIN Org O ON L.OrgId = O.Id
 		LEFT JOIN ImportPrivate PV ON PV.LoanAccount = L.LoanAccount AND PV.ImportId = L.ImportId
 		LEFT JOIN ImportPublic PB ON PB.LoanAccount = L.LoanAccount AND PB.ImportId = L.ImportId
 		LEFT JOIN ImportNonAccrual NA ON L.LoanAccount = NA.LoanAccount AND NA.ImportId = L.ImportId
 		LEFT JOIN ImportOverdue OD ON L.LoanAccount = OD.LoanAccount AND OD.ImportId = L.ImportId
-	WHERE L.Id IN (SELECT Id FROM #LoanId)
+	WHERE L.ImportId = @importId
+		AND (
+			@type = 'FYJ' AND L.LoanState = '非应计'
+			OR @type = 'BLDK' AND L.DangerLevel IN ('次级', '可疑', '损失')
+			OR @type = 'YQ' AND L.LoanState IN ('逾期', '部分逾期')
+			OR @type = 'ZQX' AND L.LoanState = '正常' AND L.OweYingShouInterest + L.OweCuiShouInterest != 0
+			OR @type = 'GZDK' AND L.DangerLevel LIKE '关%'
+			OR @type = 'F_HYB' AND (L.DangerLevel IN ('次级', '可疑', '损失') OR L.DangerLevel LIKE '关%')
+		)
 		AND L.OrgId IN (SELECT Id FROM dbo.sfGetOrgs())
 	
 	UPDATE #Result SET OverdueDays = OweInterestDays WHERE OverdueDays = 0 AND OweInterestDays > 0 AND CustomerType LIKE '%房%'
@@ -105,6 +73,5 @@ BEGIN
 		SELECT * FROM #Result
 	END
 
-	DROP TABLE #LoanId
 	DROP TABLE #Result
 END
