@@ -20,7 +20,7 @@ BEGIN
 
 	DECLARE @balance money
 	SELECT @balance = SUM(CurrentDebitBalance) FROM ImportYWNei
-	WHERE ImportId = @importId AND SubjectCode BETWEEN '1301' AND '1382'
+	WHERE ImportId = @importId AND SubjectCode BETWEEN '1301' AND '1389'
 		AND OrgId = @orgId
 		AND (@type = 0
 			OR @type = 1 AND SubjectName NOT LIKE '%¸öÈË%'

@@ -17,7 +17,7 @@ BEGIN
 
 	SELECT @total = CAST(ROUND(SUM(CurrentDebitBalance)/10000, 2) AS money) FROM ImportYWNei
 	WHERE ImportId = @importId
-		AND SubjectCode BETWEEN '1301' AND '1382'
+		AND SubjectCode BETWEEN '1301' AND '1389'
 		AND OrgId >= 1001
 
 	SELECT @overdue90 = SUM(Balance) FROM (
