@@ -646,11 +646,11 @@ IF NOT EXISTS(SELECT * FROM SourceTableSheet) BEGIN
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (8, 6, 1, '业务状况表一级科目（表内）', 8, '10')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (9, 7, 1, '业务状况表一级科目（表外）', 8, '09')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (10, 8, 1, '贷款欠款查询', 4, '')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (11, 9, 1, '逾期贷款', 2, '小计')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (11, 9, 1, '逾期', 2, '小计')
 	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (12, 9, 2, '不良贷款', 2, '小计')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (13, 9, 3, '非应计贷款', 2, '小计')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (14, 9, 4, '只欠息贷款', 2, '小计')
-	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (15, 9, 5, '关注类贷款', 2, '小计')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (13, 9, 3, '非应计', 2, '小计')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (14, 9, 4, '只欠息', 2, '小计')
+	INSERT INTO SourceTableSheet(Id, TableId, [Index], Name, RowsBeforeHeader, DataRowEndingFlag) VALUES (15, 9, 5, '关注贷款', 2, '小计')
 END
 
 IF NOT EXISTS(SELECT * FROM SourceTableSheetColumn) BEGIN

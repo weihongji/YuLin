@@ -645,7 +645,9 @@ namespace Reporting
 				return true;
 			}
 			bool matched = false;
-			while (!matched) {
+			int i = 0;
+			int maxRetrial = 20;
+			while (!matched && ++i < maxRetrial) {
 				matched = (actual.EndsWith("$") || actual.EndsWith("$'")) && actual.IndexOf(expected) >= 0;
 				if (!matched) {
 					if (actual.IndexOf('(') > 0) {

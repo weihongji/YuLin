@@ -429,7 +429,7 @@ namespace Reporting
 				theExcelBook = theExcelApp.Workbooks.Open(filePath);
 				excelOpened = true;
 
-				result = UnifyColumnHeader4WJFLSF(theExcelBook, "逾期贷款");
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "逾期");
 				if (!string.IsNullOrEmpty(result)) {
 					logger.Error(result);
 					return result;
@@ -439,17 +439,17 @@ namespace Reporting
 					logger.Error(result);
 					return result;
 				}
-				result = UnifyColumnHeader4WJFLSF(theExcelBook, "非应计贷款");
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "非应计");
 				if (!string.IsNullOrEmpty(result)) {
 					logger.Error(result);
 					return result;
 				}
-				result = UnifyColumnHeader4WJFLSF(theExcelBook, "只欠息贷款");
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "只欠息");
 				if (!string.IsNullOrEmpty(result)) {
 					logger.Error(result);
 					return result;
 				}
-				result = UnifyColumnHeader4WJFLSF(theExcelBook, "关注类贷款");
+				result = UnifyColumnHeader4WJFLSF(theExcelBook, "关注贷款");
 				if (!string.IsNullOrEmpty(result)) {
 					logger.Error(result);
 					return result;
@@ -480,6 +480,8 @@ namespace Reporting
 		}
 
 		private static string UnifyColumnHeader4WJFLSF(Workbook excelBook, string sheetName) {
+			return UnifyColumnHeader4WJFL(excelBook, sheetName);
+			/*
 			logger.DebugFormat("Unifying column headers for sheet {0}", sheetName);
 			var theSheet = (Worksheet)excelBook.Sheets[sheetName];
 			theSheet.Activate();
@@ -518,6 +520,7 @@ namespace Reporting
 				}
 			}
 			return result;
+			*/
 		}
 
 		public static string GetImportDateFromWJFLSF(string filePath, out DateTime date) {
@@ -534,8 +537,8 @@ namespace Reporting
 				theExcelBook = theExcelApp.Workbooks.Open(filePath);
 				excelOpened = true;
 
-				theSheet = (Worksheet)theExcelBook.Sheets["非应计贷款"];
-				string val = ((Range)theSheet.Cells[1, 2]).Value2;
+				theSheet = (Worksheet)theExcelBook.Sheets["非应计"];
+				string val = ((Range)theSheet.Cells[1, 1]).Value2;
 				logger.DebugFormat("Title in 非应计 sheet: {0}", string.IsNullOrEmpty(val) ? "Empty" : val);
 				if (string.IsNullOrEmpty(val)) {
 					result = "在非应计工作表中没有找到标题";
