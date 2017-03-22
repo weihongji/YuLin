@@ -117,12 +117,12 @@ BEGIN
 	FROM ImportLoanView L
 		INNER JOIN Org O ON L.OrgId = O.Id
 		LEFT JOIN #ResultWJFL R ON L.LoanAccount = R.LoanAccount
-	WHERE L.Id IN (SELECT Id FROM #LoanId WHERE Id > 0)
+	WHERE L.Id IN (SELECT Id FROM #LoanId WHERE Id <> 0)
 
-	UPDATE R SET SubIndex = (SELECT COUNT(*) FROM #Result I WHERE I.OrgId = R.OrgId AND I.Id<=R.Id) FROM #Result R
+	UPDATE R SET SubIndex = (SELECT COUNT(*) FROM #Result I WHERE I.OrgId = R.OrgId AND ABS(I.Id)<=ABS(R.Id)) FROM #Result R
 
 	DECLARE @sql nvarchar(2000)
-	SET @sql='SELECT ' + @columns + ' FROM #Result ORDER BY OrgId, Id'
+	SET @sql='SELECT ' + @columns + ' FROM #Result ORDER BY OrgId, ABS(Id)'
 	EXEC sp_executesql @sql
 
 	DROP TABLE #Result
