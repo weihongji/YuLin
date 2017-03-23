@@ -198,6 +198,14 @@ namespace Reporting
 			count = dao.ExecuteNonQuery(string.Format(sql.ToString(), import.Id, (int)XEnum.WjflSheetSF.ZQX));
 			logger.DebugFormat("Done. {0} rows affected", count);
 
+			logger.Debug("Updating from BL sheet");
+			count = dao.ExecuteNonQuery(string.Format(sql.ToString(), import.Id, (int)XEnum.WjflSheetSF.BL));
+			logger.DebugFormat("Done. {0} rows affected", count);
+
+			logger.Debug("Updating from GZ sheet");
+			count = dao.ExecuteNonQuery(string.Format(sql.ToString(), import.Id, (int)XEnum.WjflSheetSF.GZ));
+			logger.DebugFormat("Done. {0} rows affected", count);
+
 			logger.Debug("Assigning LoanAccount to ImportWjflSF");
 			sql.Clear();
 			sql.AppendLine("UPDATE W SET LoanAccount = L.LoanAccount");
