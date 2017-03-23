@@ -30,8 +30,8 @@ namespace Deployer
 		}
 
 		private bool IsInstall() {
-			var dbScript = Path.Combine(System.Environment.CurrentDirectory, "Scripts");
-			return !Directory.Exists(dbScript);
+			var dbScript = Path.Combine(System.Environment.CurrentDirectory, "Database");
+			return Directory.Exists(dbScript);
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e) {
@@ -41,7 +41,7 @@ namespace Deployer
 				return;
 			}
 
-			StartSqlServer();
+			//StartSqlServer(); 1. May not deploy on the db server. 2. May not update db (only *.dll files)
 			try {
 				var appPath = ConfigurationManager.AppSettings["AppPath"];
 				if (!Directory.Exists(appPath)) {
@@ -59,15 +59,18 @@ namespace Deployer
 						return;
 					}
 					// Update db schema or data
-					Process process = new Process();
-					process.StartInfo.FileName = "cmd";
-					process.StartInfo.Arguments = string.Format("/k cd {0} && run.bat", dbScript);
-					process.Start();
-					process.WaitForExit();
-					process.Close();
+					if (Directory.Exists(Path.Combine(upgradePath, "Scripts"))) {
+						Process process = new Process();
+						process.StartInfo.FileName = "cmd";
+						process.StartInfo.Arguments = string.Format("/k cd {0} && run.bat", dbScript);
+						process.Start();
+						process.WaitForExit();
+						process.Close();
+					}
 
 					// Replace bin files
 					if (Directory.Exists(Path.Combine(upgradePath, "bin"))) {
+						Process process = new Process();
 						process.StartInfo.FileName = "cmd";
 						process.StartInfo.Arguments = string.Format("/k xcopy /E /Y \"{0}\" \"{1}\"&&exit", Path.Combine(upgradePath, "bin"), binPath);
 						process.Start();
