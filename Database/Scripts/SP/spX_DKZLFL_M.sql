@@ -63,9 +63,9 @@ BEGIN
 	SELECT CustomerType, Total = SUM(CapitalAmount), G1 = SUM(G1), G2 = SUM(G2), G3 = SUM(G3), CJ = SUM(CJ), KY = SUM(KY), SS = SUM(SS)
 	FROM (
 		SELECT CustomerType, CapitalAmount
-				, G1 = CASE WHEN DangerLevel = '关一' THEN CapitalAmount ELSE 0.00 END
-				, G2 = CASE WHEN DangerLevel = '关二' THEN CapitalAmount ELSE 0.00 END
-				, G3 = CASE WHEN DangerLevel = '关三' THEN CapitalAmount ELSE 0.00 END
+				, G1 = CASE WHEN DangerLevel IN ('关注一', '关一') THEN CapitalAmount ELSE 0.00 END
+				, G2 = CASE WHEN DangerLevel IN ('关注二', '关二') THEN CapitalAmount ELSE 0.00 END
+				, G3 = CASE WHEN DangerLevel IN ('关注三', '关三') THEN CapitalAmount ELSE 0.00 END
 				, CJ = CASE WHEN DangerLevel = '次级' THEN CapitalAmount ELSE 0.00 END
 				, KY = CASE WHEN DangerLevel = '可疑' THEN CapitalAmount ELSE 0.00 END
 				, SS = CASE WHEN DangerLevel = '损失' THEN CapitalAmount ELSE 0.00 END

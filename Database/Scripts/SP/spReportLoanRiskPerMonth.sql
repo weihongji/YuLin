@@ -61,6 +61,11 @@ BEGIN
 				WHEN CustomerType LIKE '%经营%' THEN '经营'
 				ELSE CustomerType
 			END
+	-- Get DanBaoFangShi from DanBaoFangShi2 if DanBaoFangShi is not found
+	UPDATE R SET DanBaoFangShi = DBF.Category
+	FROM #Result R INNER JOIN DanBaoFangShi DBF ON R.DanBaoFangShi2 = DBF.Name
+	WHERE DanBaoFangShi IS NULL
+
 	IF @type = 'F_HYB' BEGIN
 		UPDATE #Result SET FinalDays = ISNULL(CASE WHEN OverdueDays >= OweInterestDays THEN OverdueDays ELSE OweInterestDays END, 0)
 	END
