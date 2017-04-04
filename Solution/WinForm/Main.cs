@@ -22,6 +22,7 @@ namespace Reporting
 		private List<TableMapping> _selectedColumns;
 		private List<string> _publicColumns;
 		private List<string> _privateColumns;
+		private string[] importLoanFiles;
 		private string[] importYWNeiFiles, importYWWaiFiles;
 
 		public List<TargetTable> Reports {
@@ -178,6 +179,7 @@ namespace Reporting
 			this.txtImportDate.Text = "";
 			this.lblImportLoanSF.Text = "";
 
+			this.importLoanFiles = new string[0];
 			this.importYWNeiFiles = new string[0];
 			this.importYWWaiFiles = new string[0];
 		}
@@ -191,7 +193,7 @@ namespace Reporting
 
 				string[] sourceFiles = {
 						"dummy", // 1-based array is required
-						this.lblImportLoan.Text,
+						string.Join("|", importLoanFiles),
 						this.lblImportPublic.Text, this.lblImportPrivate.Text,
 						this.lblImportNonAccrual.Text, this.lblImportOverdue.Text,
 						string.Join("|", importYWNeiFiles),
@@ -250,8 +252,8 @@ namespace Reporting
 				return false;
 			}
 
-			if (this.lblImportLoan.Text.Length > 0) {
-				DateTime dt = DateHelper.Look4Date(this.lblImportLoan.Text);
+			if (this.importLoanFiles.Length > 0) {
+				DateTime dt = DateHelper.Look4Date(this.importLoanFiles[0]);
 				if (dt.Year > 2000) {
 					if (dt != asOfDate) {
 						ShowStop("《贷款欠款查询》的文件命名显示日期与所选的数据日期不一致。\r\n请检查输入的数据日期是否正确。");
@@ -276,10 +278,17 @@ namespace Reporting
 		}
 
 		private void btnImportLoan_Click(object sender, EventArgs e) {
-			if (this.openFileDialog1.ShowDialog() == DialogResult.OK) {
-				this.lblImportLoan.Text = this.openFileDialog1.FileName;
+			if (this.openFileMultiSelect.ShowDialog() == DialogResult.OK) {
+				if (this.openFileMultiSelect.FileNames.Length == 1) {
+					this.lblImportLoan.Text = this.openFileMultiSelect.FileNames[0];
+				}
+				else {
+					this.lblImportLoan.Text = string.Format("{0} 个文件被选中", this.openFileMultiSelect.FileNames.Length);
+				}
+				this.importLoanFiles = this.openFileMultiSelect.FileNames;
+
 				// Guess date from file name, like 贷款欠款查询_806050000_20151007.xls
-				DateTime dt = DateHelper.Look4Date(this.openFileDialog1.FileName);
+				DateTime dt = DateHelper.Look4Date(this.importLoanFiles[0]);
 				if (dt.Year > 2000) {
 					if (this.txtImportDate.Text == "") {
 						this.txtImportDate.Text = dt.ToString("yyyy-M-d");
@@ -288,6 +297,7 @@ namespace Reporting
 			}
 			else {
 				this.lblImportLoan.Text = "";
+				this.importLoanFiles = new string[0];
 			}
 		}
 

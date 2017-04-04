@@ -334,7 +334,7 @@ namespace Reporting
 			}
 
 			string targetFileName = this.targetFileNames[itemTypeId];
-			if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai) {
+			if (itemType == XEnum.ImportItemType.YWNei || itemType == XEnum.ImportItemType.YWWai || itemType == XEnum.ImportItemType.Loan) {
 				var orgId = GetOrgId4YW(sourceFilePath);
 				targetFileName = GetYWTargetFileName(itemType, orgId);
 			}
@@ -381,18 +381,42 @@ namespace Reporting
 		#region Import excel data to database
 		private string ImportLoan(int importId, string importFolder, string sourceFilePath) {
 			logger.Debug("Importing Loan data");
-			var done = CopyItem(importId, importFolder, sourceFilePath, XEnum.ImportItemType.Loan);
-			if (!done) {
-				logger.Debug("Source file not provided");
-				return ""; // Do nothing if user hasn't select a file for this table
-			}
+			var result = "";
+			var imported = false;
+			var filePathes = sourceFilePath.Split('|');
+			for (int i = 0; i < filePathes.Length; i++) {
+				var filePath = filePathes[i];
+				if (string.IsNullOrEmpty(filePath)) {
+					logger.Debug("Source file not provided");
+					continue;
+				}
+				var orgId = GetOrgId4YW(filePath);
+				// Do this check before any action
+				if (orgId == 0) {
+					var msg = "不能确定贷款欠款查询的所属银行：" + filePath;
+					logger.Error(msg);
+					return msg;
+				}
 
-			// Import to database
-			string targetFilePath = importFolder + "\\Processed\\" + targetFileNames[(int)XEnum.ImportItemType.Loan];
-			var excelColumns = "[机构号码], [贷款科目], [贷款帐号], [客户名称], [客户编号], [客户类型], [币种], [贷款总额], [本金余额], [拖欠本金], [拖欠应收利息], [拖欠催收利息], [借据编号], [放款日期], [到期日期], [置换/转让], [核销标志], [贷款状态], [贷款种类], [贷款种类说明], [贷款用途], [转列逾期], [转列非应计日期], [利息计至日], [利率种类], [利率加减符号], [利率加减码], [逾期利率依据方式], [逾期利率种类], [逾期利率加减符号], [逾期利率加减码], [利率依据方式], [合同最初计息利率], [合同最初逾期利率], [扣款账号]";
-			var dbColumns = "OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, CurrencyType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, DueBillNo, LoanStartDate, LoanEndDate, ZhiHuanZhuanRang, HeXiaoFlag, LoanState, LoanType, LoanTypeName, Direction, ZhuanLieYuQi, ZhuanLieFYJ, InterestEndDate, LiLvType, LiLvSymbol, LiLvJiaJianMa, YuQiLiLvYiJu, YuQiLiLvType, YuQiLiLvSymbol, YuQiLiLvJiaJianMa, LiLvYiJu, ContractInterestRatio, ContractOverdueInterestRate, ChargeAccount";
-			var result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.Loan, excelColumns, dbColumns);
-			if (string.IsNullOrEmpty(result)) {
+				var done = CopyItem(importId, importFolder, filePath, XEnum.ImportItemType.Loan);
+				if (!done) {
+					logger.Debug("Source file not provided");
+					return ""; // Do nothing if user hasn't select a file for this table
+				}
+
+				// Import to database
+				string targetFilePath = importFolder + "\\Processed\\" + GetYWTargetFileName(XEnum.ImportItemType.Loan, orgId);
+				var excelColumns = "[机构号码], [贷款科目], [贷款帐号], [客户名称], [客户编号], [客户类型], [币种], [贷款总额], [本金余额], [拖欠本金], [拖欠应收利息], [拖欠催收利息], [借据编号], [放款日期], [到期日期], [置换/转让], [核销标志], [贷款状态], [贷款种类], [贷款种类说明], [贷款用途], [转列逾期], [转列非应计日期], [利息计至日], [利率种类], [利率加减符号], [利率加减码], [逾期利率依据方式], [逾期利率种类], [逾期利率加减符号], [逾期利率加减码], [利率依据方式], [合同最初计息利率], [合同最初逾期利率], [扣款账号]";
+				var dbColumns = "OrgNo, LoanCatalog, LoanAccount, CustomerName, CustomerNo, CustomerType, CurrencyType, LoanAmount, CapitalAmount, OweCapital, OweYingShouInterest, OweCuiShouInterest, DueBillNo, LoanStartDate, LoanEndDate, ZhiHuanZhuanRang, HeXiaoFlag, LoanState, LoanType, LoanTypeName, Direction, ZhuanLieYuQi, ZhuanLieFYJ, InterestEndDate, LiLvType, LiLvSymbol, LiLvJiaJianMa, YuQiLiLvYiJu, YuQiLiLvType, YuQiLiLvSymbol, YuQiLiLvJiaJianMa, LiLvYiJu, ContractInterestRatio, ContractOverdueInterestRate, ChargeAccount";
+				result = ImportTable(importId, targetFilePath, XEnum.ImportItemType.Loan, excelColumns, dbColumns, 1, i + 1);
+				if (string.IsNullOrEmpty(result)) {
+					imported = true;
+				}
+				else {
+					return result;
+				}
+			}
+			if (imported) {
 				result = AssignOrgId(importId, XEnum.ImportItemType.Loan);
 			}
 			return result;
@@ -848,7 +872,7 @@ namespace Reporting
 				return (int)XEnum.OrgId.YuLin; // 榆林地区总额 (不含神府)
 			}
 			else if (orgNo.Equals(OrgCodeSF)) {
-				return (int)XEnum.OrgId.ShenFu; // 榆林地区总额 (不含神府)
+				return (int)XEnum.OrgId.ShenFu;
 			}
 			var dao = new SqlDbHelper();
 			var orgId = dao.ExecuteScalar(string.Format("SELECT TOP 1 Id FROM Org WHERE OrgNo = '{0}'", orgNo));
